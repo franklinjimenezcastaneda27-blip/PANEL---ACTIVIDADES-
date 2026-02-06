@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Panel de Actividades</title>
+<style>
+body { font-family: Arial; text-align: center; background:#f4f6f9; }
+h2 { margin-top:20px; }
+#calendar { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  gap: 5px; 
+  max-width: 900px; 
+  margin: 20px auto; 
+}
+.day { 
+  background:white;
+  border-radius:8px;
+  padding:10px; 
+  min-height:100px; 
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.activity { 
+  font-size:12px; 
+  margin-top:5px; 
+  padding:4px;
+  background:#e3f2fd;
+  border-radius:4px;
+}
+button { 
+  margin: 10px; 
+  padding: 10px 20px; 
+  border:none;
+  border-radius:6px;
+  background:#1976d2;
+  color:white;
+  cursor:pointer;
+}
+button:hover { background:#125aa0; }
+</style>
+</head>
+<body>
+
+<h2>Calendario de Actividades</h2>
+<button onclick="addActivity()">Agregar Actividad</button>
+
+<div id="calendar"></div>
+
+<script>
+const calendar = document.getElementById("calendar");
+const daysInMonth = 30;
+
+function loadCalendar() {
+  calendar.innerHTML = "";
+  for (let i = 1; i <= daysInMonth; i++) {
+    const day = document.createElement("div");
+    day.className = "day";
+    day.innerHTML = "<strong>Día " + i + "</strong>";
+    const saved = localStorage.getItem("day-" + i);
+    if (saved) {
+      const act = document.createElement("div");
+      act.className = "activity";
+      act.innerText = saved;
+      day.appendChild(act);
+    }
+    calendar.appendChild(day);
+  }
+}
+
+function addActivity() {
+  let day = prompt("¿Para qué día del mes?");
+  let text = prompt("Describe la actividad (Ej: Cobranza Cliente Pérez S/850):");
+  if (day && text) {
+    localStorage.setItem("day-" + day, text);
+    loadCalendar();
+  }
+}
+
+loadCalendar();
+</script>
+
+</body>
+</html>

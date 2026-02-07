@@ -3,19 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda de Gestión</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Agenda de Gestión - Financiera</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --rojo: #e03131;
+  --rojo: #fa5252;
   --naranja: #fd7e14;
-  --azul: #1971c2;
-  --verde: #2f9e44;
-  --amarillo: #fcc419;
-  --gris-claro: #f8f9fa;
+  --azul: #228be6;
+  --verde: #40c057;
+  --amarillo: #fab005;
+  --gris-claro: #f1f3f5;
   --borde: #dee2e6;
   --texto: #343a40;
+  --blanco-transparente: rgba(255, 255, 255, 0.95);
 }
 
 * { box-sizing: border-box; }
@@ -27,17 +28,16 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  
-  /* --- AQUÍ CAMBIAS LA IMAGEN DE FONDO --- */
+  /* Imagen de fondo */
   background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
-/* Capa oscura suave sobre la imagen para que se lean las letras */
+/* Capa para suavizar el fondo */
 .overlay {
-  background-color: rgba(255, 255, 255, 0.85); /* 0.85 es la transparencia */
+  background-color: rgba(240, 242, 245, 0.8);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -45,40 +45,56 @@ body {
 
 /* --- HEADER --- */
 header {
-  background: white;
-  padding: 15px 30px;
+  background: var(--blanco-transparente);
+  padding: 10px 20px;
   border-bottom: 1px solid var(--borde);
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  gap: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
+.header-left h1 { margin: 0; font-size: 1.2rem; font-weight: 700; color: #1c1e21; }
+.header-left small { color: #666; font-size: 0.8rem; }
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 #currentMonthDisplay {
   font-size: 1.1rem;
-  font-weight: 600;
-  min-width: 150px;
+  font-weight: 700;
+  min-width: 140px;
   text-align: center;
   text-transform: capitalize;
+  background: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.btn-nav {
+/* Botones y Selects */
+.btn-nav, .btn-tool, select {
   background: white;
   border: 1px solid var(--borde);
-  padding: 5px 12px;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
 }
-.btn-nav:hover { background: var(--gris-claro); }
+
+.btn-nav:hover, .btn-tool:hover, select:hover { background: #e9ecef; border-color: #adb5bd; }
+
+.btn-tool { display: flex; align-items: center; gap: 5px; font-weight: 600; color: #495057; }
+.btn-print { color: var(--azul); border-color: var(--azul); }
+.btn-stats { color: var(--verde); border-color: var(--verde); }
 
 /* --- CALENDARIO --- */
 .calendar-wrapper {
@@ -94,64 +110,67 @@ h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
   font-weight: 600;
   margin-bottom: 10px;
   color: #495057;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
 }
 
 #calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  auto-rows: minmax(120px, auto);
+  gap: 8px;
+  auto-rows: minmax(110px, auto);
 }
 
 .day {
-  background: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente en los días */
-  border: 1px solid var(--borde);
+  background: var(--blanco-transparente);
+  border: 1px solid #e9ecef;
   border-radius: 8px;
-  padding: 8px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
   transition: 0.2s;
   cursor: pointer;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
 }
 
-.day:hover { border-color: var(--azul); box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
-.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; backdrop-filter: none;}
+.day:hover { border-color: var(--azul); box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; backdrop-filter: none; }
 
 .day-number {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #495057;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #868e96;
+  text-align: right;
 }
 
 .today {
   background-color: #e7f5ff;
-  border-color: var(--azul);
+  border: 2px solid var(--azul);
 }
 
-/* --- EVENTOS (Etiquetas) --- */
+/* --- EVENTOS --- */
 .event {
   font-size: 11px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   border-radius: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   overflow: hidden;
   white-space: nowrap;
-  cursor: pointer; /* Cambiado para indicar que es clicable */
+  text-overflow: ellipsis;
+  cursor: pointer;
+  font-weight: 500;
+  display: block;
 }
 
-/* Estilo para eventos completados */
 .event.completed {
-  opacity: 0.5;
+  opacity: 0.6;
   text-decoration: line-through;
-  background-color: #868e96 !important; /* Gris */
+  background-color: #adb5bd !important;
+  box-shadow: none;
 }
 
 /* --- MODALES --- */
@@ -159,10 +178,11 @@ h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(3px);
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -173,7 +193,7 @@ h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
   width: 90%;
   max-width: 400px;
   position: relative;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .close-btn {
@@ -183,13 +203,13 @@ h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
   background: none;
   border: none;
   font-size: 24px;
-  color: #adb5bd;
+  color: #ced4da;
   cursor: pointer;
 }
 .close-btn:hover { color: var(--rojo); }
 
 .form-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #868e96; }
+label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 700; color: #495057; text-transform: uppercase; }
 
 input, select {
   width: 100%;
@@ -197,42 +217,54 @@ input, select {
   border-radius: 6px;
   border: 1px solid var(--borde);
   font-family: inherit;
+  background: #f8f9fa;
 }
+input:focus, select:focus { outline: none; border-color: var(--azul); background: white; }
 
-.btn-save {
-  width: 100%;
-  padding: 12px;
-  background: var(--azul);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-}
-.btn-save:hover { background: #1864ab; }
+.btn-save { width: 100%; padding: 12px; background: var(--azul); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+.btn-save:hover { background: #1971c2; }
 
-/* Botones del menú de gestión */
-.btn-action {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  color: white;
-}
+/* Botones Acción */
+.btn-action { width: 100%; padding: 10px; margin-bottom: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; display: flex; justify-content: center; gap: 8px; }
 .btn-complete { background: var(--verde); }
 .btn-delete { background: var(--rojo); }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Estilos Stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.stat-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; }
+.stat-number { font-size: 24px; font-weight: 700; color: var(--azul); display: block; }
+.stat-label { font-size: 12px; color: #868e96; }
+
+/* IMPRESIÓN */
+#printableArea { display: none; }
+
+@media print {
+  body * { visibility: hidden; }
+  .overlay { background: white; height: auto; }
+  #printableArea, #printableArea * { visibility: visible; }
+  #printableArea {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; font-family: sans-serif; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+  th { background-color: #f2f2f2; }
+  h2 { color: black; border-bottom: 2px solid #333; padding-bottom: 10px; }
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Responsive */
 @media(max-width: 768px){
   .weekdays, #calendar { grid-template-columns: repeat(1, 1fr); }
   .day { min-height: auto; }
   .empty { display: none; }
+  .controls { width: 100%; justify-content: space-between; }
+  select { width: 100%; margin-bottom: 10px; }
 }
 </style>
 </head>
@@ -240,31 +272,54 @@ input, select {
 
 <div class="overlay">
   <header>
-    <h1>Agenda de Gestión de Clientes y Operaciones</h1>
+    <div class="header-left">
+      <h1>Agenda Corporativa</h1>
+      <small>Gestión de Clientes y Operaciones</small>
+    </div>
+    
     <div class="controls">
+      <!-- Filtro -->
+      <select id="filterCategory" onchange="applyFilter()" style="min-width: 140px;">
+        <option value="all">📂 Ver Todo</option>
+        <option value="cobranza_comunal">🔴 Banco Comunal</option>
+        <option value="cobranza_individual">🟠 Crédito Indiv.</option>
+        <option value="visita">🔵 Visitas</option>
+        <option value="desembolso">🟢 Desembolsos</option>
+        <option value="reunion">🟡 Reuniones</option>
+      </select>
+
       <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay">Cargando...</div>
+      <div id="currentMonthDisplay">...</div>
       <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+      
+      <!-- Herramientas -->
+      <button class="btn-tool btn-stats" onclick="showStats()" title="Ver Métricas">📊</button>
+      <button class="btn-tool btn-print" onclick="printReport()" title="Imprimir Hoja de Ruta">🖨️</button>
     </div>
   </header>
 
   <div class="calendar-wrapper">
     <div class="weekdays">
-      <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+      <div>Domingo</div><div>Lunes</div><div>Martes</div><div>Miércoles</div><div>Jueves</div><div>Viernes</div><div>Sábado</div>
     </div>
     <div id="calendar"></div>
   </div>
 </div>
 
-<!-- MODAL CREAR NUEVA -->
+<!-- MODAL CREAR -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
     <h3 style="margin-top:0;">Nueva Actividad</h3>
     
     <div class="form-group">
-      <label>Título / Detalle</label>
-      <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo La Esperanza">
+      <label>Actividad / Descripción</label>
+      <input type="text" id="eventTitle" placeholder="Ej: Cobranza Grupo 5">
+    </div>
+
+    <div class="form-group">
+      <label>Responsable</label>
+      <input type="text" id="eventResponsible" placeholder="Ej: Juan Pérez">
     </div>
 
     <div class="form-group">
@@ -273,13 +328,13 @@ input, select {
     </div>
 
     <div class="form-group">
-      <label>Tipo de Actividad</label>
+      <label>Categoría</label>
       <select id="eventType">
-        <option value="cobranza_comunal">Cobranza Banco Comunal (Rojo)</option>
-        <option value="cobranza_individual">Cobranza Crédito Individual (Naranja)</option>
-        <option value="visita">Visita a Clientes (Azul)</option>
-        <option value="desembolso">Desembolsos (Verde)</option>
-        <option value="reunion">Reuniones (Amarillo)</option>
+        <option value="cobranza_comunal">🔴 Cobranza Banco Comunal</option>
+        <option value="cobranza_individual">🟠 Cobranza Crédito Individual</option>
+        <option value="visita">🔵 Visita a Clientes</option>
+        <option value="desembolso">🟢 Desembolsos</option>
+        <option value="reunion">🟡 Reuniones</option>
       </select>
     </div>
 
@@ -287,21 +342,53 @@ input, select {
   </div>
 </div>
 
-<!-- MODAL GESTIONAR EXISTENTE -->
+<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <h3 id="actionTitle" style="margin-top:0; color:var(--azul);">Gestión</h3>
-    <p id="actionDesc" style="color:#666; margin-bottom:20px;"></p>
+    <h3 id="actionTitle" style="margin-top:0; color:var(--azul);">Detalle</h3>
+    <div id="actionDetails" style="margin-bottom:20px; font-size:14px; color:#555; line-height:1.6;"></div>
     
-    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Marcar como Realizada/Pendiente</button>
-    <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar Actividad</button>
+    <button class="btn-action btn-complete" onclick="toggleComplete()">
+      <span id="btnCompleteText">✅ Marcar Realizada</span>
+    </button>
+    <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
   </div>
+</div>
+
+<!-- MODAL ESTADÍSTICAS -->
+<div class="modal" id="modalStats">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
+    <h3 style="margin-top:0;">Métricas del Mes</h3>
+    <p style="font-size:13px; color:#666; text-align:center;">Resumen de actividades visualizadas</p>
+    
+    <div class="stats-grid" id="statsContainer">
+      <!-- Se llena con JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ÁREA DE IMPRESIÓN (Invisible en pantalla) -->
+<div id="printableArea">
+  <h2 id="printTitle">Hoja de Ruta Mensual</h2>
+  <table id="printTable">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Actividad</th>
+        <th>Responsable</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div style="margin-top:30px; border-top:1px solid #000; width:200px; text-align:center; padding-top:5px;">Visto Bueno</div>
 </div>
 
 <!-- SCRIPTS -->
 <script type="module">
-// --- FIREBASE SETUP ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
@@ -319,18 +406,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
 
-// --- VARIABLES GLOBALES ---
+// Estado Global
 let currentDate = new Date();
 let selectedDate = null;
 let eventsArray = []; 
-let currentEventId = null; // Para saber qué evento estamos editando
+let currentEventId = null;
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
-const modal = document.getElementById("modal");
-const modalActions = document.getElementById("modalActions");
 
-// --- INICIALIZACIÓN ---
+// Carga Inicial
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => {
@@ -339,31 +424,35 @@ onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   renderCalendar();
 });
 
-// --- FUNCIONES DEL CALENDARIO ---
+// Renderizar Calendario
 function renderCalendar() {
   calendarGrid.innerHTML = "";
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   
+  // Título del Mes
   const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
   monthDisplay.textContent = monthName;
 
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Días vacíos
+  // Padding dias vacíos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
     calendarGrid.appendChild(emptyDiv);
   }
 
-  // Días del mes
+  // Filtro seleccionado
+  const filterVal = document.getElementById("filterCategory").value;
+
+  // Generar días
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
     
-    // Hoy
+    // Hoy?
     const today = new Date();
     if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()){
       dayDiv.classList.add("today");
@@ -371,34 +460,38 @@ function renderCalendar() {
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    // Filtrar eventos del día
+    // Filtrar Eventos
     const currentDayStr = new Date(year, month, day).toDateString();
+    
     const dayEvents = eventsArray.filter(e => {
-      const eDate = new Date(e.date);
-      return eDate.toDateString() === currentDayStr;
+      const isDate = new Date(e.date).toDateString() === currentDayStr;
+      const isType = filterVal === "all" || e.type === filterVal;
+      return isDate && isType;
     });
 
-    // Pintar eventos
+    // Pintar Eventos
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
-      if(evt.completed) evtDiv.classList.add("completed"); // Clase tachado
+      if(evt.completed) evtDiv.classList.add("completed");
+      evtDiv.style.backgroundColor = evt.completed ? "#adb5bd" : getColor(evt.type);
       
-      evtDiv.style.backgroundColor = evt.completed ? "#868e96" : getColor(evt.type);
+      // Texto del evento (Hora + Título)
+      evtDiv.innerHTML = `<span>${evt.time} ${evt.title}</span>`;
       
-      evtDiv.innerHTML = `<span>${evt.time || ''} ${evt.title}</span>`;
-      evtDiv.title = evt.title;
-      
-      // AL HACER CLIC EN EL EVENTO (Abrir gestión)
+      // Tooltip con Responsable
+      const resp = evt.responsible ? ` | Resp: ${evt.responsible}` : "";
+      evtDiv.title = `${evt.title} (${evt.time})${resp}`;
+
       evtDiv.onclick = (e) => {
-        e.stopPropagation(); // Evita que se abra el modal de "Crear nuevo"
+        e.stopPropagation();
         openActionModal(evt);
       };
       
       dayDiv.appendChild(evtDiv);
     });
 
-    // AL HACER CLIC EN EL CUADRO (Crear nuevo)
+    // Click en día vacío -> Crear
     dayDiv.onclick = (e) => {
       if(e.target === dayDiv || e.target.className === 'day-number') {
         openModal(year, month, day);
@@ -409,6 +502,7 @@ function renderCalendar() {
   }
 }
 
+// Helpers
 function getColor(type){
   switch(type){
     case "cobranza_comunal": return "var(--rojo)";
@@ -425,92 +519,138 @@ window.changeMonth = (step) => {
   renderCalendar();
 }
 
-// --- MODALES ---
+window.applyFilter = () => {
+  renderCalendar();
+}
+
+// --- MODAL CREAR ---
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
   document.getElementById("eventTitle").value = "";
+  document.getElementById("eventResponsible").value = "";
   document.getElementById("eventTime").value = "09:00";
-  modal.style.display = "flex";
+  document.getElementById("modal").style.display = "flex";
   document.getElementById("eventTitle").focus();
 }
 
-function openActionModal(eventData) {
-  currentEventId = eventData.id;
-  document.getElementById("actionTitle").textContent = eventData.title;
-  document.getElementById("actionDesc").textContent = `Hora: ${eventData.time} - Estado: ${eventData.completed ? "Realizada" : "Pendiente"}`;
-  modalActions.style.display = "flex";
+// --- MODAL ACCIONES ---
+function openActionModal(evt) {
+  currentEventId = evt.id;
+  document.getElementById("actionTitle").textContent = evt.title;
+  document.getElementById("actionDetails").innerHTML = `
+    <strong>Fecha:</strong> ${new Date(evt.date).toLocaleDateString()}<br>
+    <strong>Hora:</strong> ${evt.time}<br>
+    <strong>Responsable:</strong> ${evt.responsible || "Sin asignar"}<br>
+    <strong>Estado:</strong> ${evt.completed ? "✅ Realizada" : "⏳ Pendiente"}
+  `;
+  document.getElementById("btnCompleteText").textContent = evt.completed ? "⏪ Marcar Pendiente" : "✅ Marcar Realizada";
+  document.getElementById("modalActions").style.display = "flex";
 }
 
-window.closeModal = (modalId) => {
-  document.getElementById(modalId).style.display = "none";
+// --- MODAL STATS ---
+window.showStats = () => {
+  const monthEvents = getMonthEvents(); // Obtiene eventos filtrados del mes actual
+  const total = monthEvents.length;
+  const completed = monthEvents.filter(e => e.completed).length;
+  const pending = total - completed;
+
+  const container = document.getElementById("statsContainer");
+  container.innerHTML = `
+    <div class="stat-box"><span class="stat-number">${total}</span><span class="stat-label">Total Actividades</span></div>
+    <div class="stat-box"><span class="stat-number" style="color:var(--verde)">${completed}</span><span class="stat-label">Realizadas</span></div>
+    <div class="stat-box"><span class="stat-number" style="color:var(--rojo)">${pending}</span><span class="stat-label">Pendientes</span></div>
+    <div class="stat-box"><span class="stat-number" style="color:var(--naranja)">${Math.round((completed/total)*100) || 0}%</span><span class="stat-label">Cumplimiento</span></div>
+  `;
+  document.getElementById("modalStats").style.display = "flex";
 }
 
-window.onclick = (event) => {
-  if (event.target == modal) closeModal('modal');
-  if (event.target == modalActions) closeModal('modalActions');
+// --- IMPRIMIR ---
+window.printReport = () => {
+  const monthEvents = getMonthEvents().sort((a,b) => {
+    // Ordenar por fecha y luego hora
+    return new Date(a.date) - new Date(b.date) || a.time.localeCompare(b.time);
+  });
+  
+  const tbody = document.querySelector("#printTable tbody");
+  tbody.innerHTML = "";
+  
+  document.getElementById("printTitle").textContent = `Hoja de Ruta - ${monthDisplay.textContent}`;
+
+  if(monthEvents.length === 0){
+    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay actividades para mostrar</td></tr>";
+  }
+
+  monthEvents.forEach(e => {
+    const row = `<tr>
+      <td>${new Date(e.date).toLocaleDateString()}</td>
+      <td>${e.time}</td>
+      <td>${e.title}</td>
+      <td>${e.responsible || "-"}</td>
+      <td>${e.completed ? "Realizada" : "Pendiente"}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+
+  window.print();
 }
 
-// --- ACCIONES FIREBASE ---
+function getMonthEvents() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const filterVal = document.getElementById("filterCategory").value;
 
-// Guardar Nuevo
+  return eventsArray.filter(e => {
+    const d = new Date(e.date);
+    const isSameMonth = d.getMonth() === month && d.getFullYear() === year;
+    const isType = filterVal === "all" || e.type === filterVal;
+    return isSameMonth && isType;
+  });
+}
+
+// --- UTILS MODALES ---
+window.closeModal = (id) => document.getElementById(id).style.display = "none";
+window.onclick = (e) => {
+  if (e.target.classList.contains('modal')) e.target.style.display = "none";
+}
+
+// --- FIRESTORE ACTIONS ---
 window.saveEvent = async function() {
   const title = document.getElementById("eventTitle").value;
+  const responsible = document.getElementById("eventResponsible").value;
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
 
-  if (!title) { alert("Escribe una descripción"); return; }
+  if (!title) { alert("Falta el título"); return; }
 
   const btn = document.querySelector(".btn-save");
-  btn.textContent = "Guardando...";
-  btn.disabled = true;
+  btn.textContent = "Guardando..."; btn.disabled = true;
 
   try {
     await addDoc(eventsRef, {
-      title, time, type,
+      title, responsible, time, type,
       date: selectedDate.toISOString(),
-      createdAt: new Date().toISOString(),
-      completed: false // Por defecto pendiente
+      completed: false
     });
     closeModal('modal');
-  } catch (error) {
-    console.error(error);
-    alert("Error al guardar");
-  } finally {
-    btn.textContent = "Guardar Actividad";
-    btn.disabled = false;
-  }
+  } catch (err) { console.error(err); alert("Error"); }
+  finally { btn.textContent = "Guardar Actividad"; btn.disabled = false; }
 }
 
-// Marcar Realizada / Pendiente
 window.toggleComplete = async function() {
   if(!currentEventId) return;
-  
-  // Buscar estado actual
-  const event = eventsArray.find(e => e.id === currentEventId);
-  const newStatus = !event.completed;
-
+  const evt = eventsArray.find(e => e.id === currentEventId);
   try {
-    const eventDoc = doc(db, "eventos", currentEventId);
-    await updateDoc(eventDoc, { completed: newStatus });
+    await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
     closeModal('modalActions');
-  } catch (error) {
-    console.error(error);
-    alert("Error al actualizar");
-  }
+  } catch (e) { alert("Error al actualizar"); }
 }
 
-// Eliminar
 window.deleteEvent = async function() {
-  if(!currentEventId) return;
-  if(!confirm("¿Seguro que quieres eliminar esta actividad?")) return;
-
+  if(!currentEventId || !confirm("¿Eliminar actividad?")) return;
   try {
     await deleteDoc(doc(db, "eventos", currentEventId));
     closeModal('modalActions');
-  } catch (error) {
-    console.error(error);
-    alert("Error al eliminar");
-  }
+  } catch (e) { alert("Error al eliminar"); }
 }
 
 renderCalendar();

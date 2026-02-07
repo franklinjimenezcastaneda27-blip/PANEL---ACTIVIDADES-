@@ -9,9 +9,7 @@
 
 <style>
 :root {
-  /* Paleta de Colores Moderna */
   --primary: #4f46e5;
-  --bg-body: #f3f4f6;
   --text-main: #1f2937;
   --text-light: #6b7280;
   --border: #e5e7eb;
@@ -24,11 +22,9 @@
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
   --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
-  /* Efecto Glass */
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.3);
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Efecto Glass Ajustado (Más transparente para ver el fondo) */
+  --glass-bg: rgba(255, 255, 255, 0.88); 
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -36,7 +32,11 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+  /* IMAGEN DE FONDO APLICADA */
+  background-image: url('https://i.imghippo.com/files/jdb9603WY.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--text-main);
   height: 100vh;
   display: flex;
@@ -53,14 +53,14 @@ body {
   width: 100%;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(5px); /* Desenfoque ligero */
 }
 
 /* --- HEADER --- */
 header {
   padding: 15px 20px;
   border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.7);
   z-index: 10;
 }
 
@@ -71,7 +71,7 @@ header {
   margin-bottom: 12px;
 }
 
-.brand h1 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.025em; color: var(--primary); }
+.brand h1 { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
 .brand small { font-size: 0.85rem; color: var(--text-light); font-weight: 500; }
 
 .actions { display: flex; gap: 8px; }
@@ -83,17 +83,14 @@ header {
   width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  font-size: 1.1rem;
   color: var(--text-light);
 }
-.btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
 .controls-bar {
   display: flex;
   gap: 10px;
   align-items: center;
-  background: #f9fafb;
+  background: rgba(255,255,255,0.9);
   padding: 6px;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -116,25 +113,14 @@ select.filter-select {
   align-items: center;
   background: white;
   border-radius: 6px;
-  box-shadow: var(--shadow-sm);
   padding: 2px;
 }
 
 .month-nav button {
-  border: none;
-  background: transparent;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-weight: 700;
-  color: var(--text-light);
+  border: none; background: transparent; padding: 6px 12px; cursor: pointer; font-weight: 700;
 }
-.month-nav button:hover { color: var(--primary); }
 #currentMonthDisplay {
-  min-width: 120px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-transform: capitalize;
+  min-width: 120px; text-align: center; font-weight: 700; font-size: 0.95rem; text-transform: capitalize;
 }
 
 /* --- CALENDARIO --- */
@@ -142,8 +128,6 @@ select.filter-select {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  display: flex;
-  flex-direction: column;
 }
 
 .weekdays {
@@ -151,10 +135,9 @@ select.filter-select {
   grid-template-columns: repeat(7, 1fr);
   text-align: right;
   padding: 0 10px 10px;
-  color: var(--text-light);
+  color: #4b5563; /* Color sólido para mejor lectura sobre fondo */
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 #calendar {
@@ -165,34 +148,23 @@ select.filter-select {
 }
 
 .day {
-  background: white;
+  background: rgba(255, 255, 255, 0.95); /* Celdas más sólidas */
   border: 1px solid var(--border);
   border-radius: 10px;
   min-height: 100px;
   padding: 6px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.1s, box-shadow 0.1s;
   cursor: pointer;
-  position: relative;
 }
 
-.day:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
 .day.empty { background: transparent; border: none; cursor: default; }
 
-.day-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 4px;
-}
+.day-header { display: flex; justify-content: flex-end; margin-bottom: 4px; }
 
 .day-number {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-light);
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
+  font-size: 0.9rem; font-weight: 600; color: var(--text-light);
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
 }
 
 .day.today { border: 2px solid var(--primary); }
@@ -209,14 +181,11 @@ select.filter-select {
   overflow: hidden;
   text-overflow: ellipsis;
   border-left: 3px solid transparent;
-  transition: opacity 0.2s;
   text-transform: uppercase;
 }
 
-.event:hover { opacity: 0.8; }
-.event.completed { text-decoration: line-through; opacity: 0.5; filter: grayscale(1); }
+.event.completed { text-decoration: line-through; opacity: 0.6; filter: grayscale(1); }
 
-/* Colores */
 .evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
 .evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); border-left-color: var(--tag-orange-text); }
 .evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); border-left-color: var(--tag-blue-text); }
@@ -227,37 +196,17 @@ select.filter-select {
 /* --- MODALES --- */
 .modal {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.2s ease-out;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+  justify-content: center; align-items: center;
 }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  position: relative;
-  transform: scale(0.95);
-  animation: popIn 0.2s ease-out forwards;
+  background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 400px;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.2); position: relative;
 }
 
-@keyframes popIn { to { transform: scale(1); } }
-
-.modal-header h3 { margin: 0 0 15px 0; color: var(--text-main); font-size: 1.2rem; }
-.close-btn {
-  position: absolute; top: 15px; right: 20px;
-  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);
-}
+.close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+.modal-header h3 { margin: 0 0 15px 0; font-size: 1.2rem; }
 
 .form-group { margin-bottom: 12px; }
 .form-group label { display: block; font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; font-weight: 600; }
@@ -266,37 +215,35 @@ input, select {
   width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
   background: #f9fafb; font-family: inherit; font-size: 0.9rem;
 }
-input:focus, select:focus { border-color: var(--primary); background: white; }
+
+/* NUEVO SELECTOR DE HORA AM/PM */
+.time-selector-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.time-select { flex: 1; text-align: center; }
+.time-separator { font-weight: bold; padding: 0 2px; }
 
 .btn-main {
   width: 100%; padding: 12px; border-radius: 8px; border: none;
   background: var(--primary); color: white; font-weight: 600; cursor: pointer; margin-top: 10px;
 }
-.btn-danger { background: #ef4444; color: white; }
-.btn-success { background: #10b981; color: white; }
-.btn-row { display: flex; gap: 10px; margin-top: 15px; }
-.btn-row button { flex: 1; margin: 0; }
+.btn-danger { background: #ef4444; } .btn-success { background: #10b981; }
+.btn-row { display: flex; gap: 10px; margin-top: 15px; } .btn-row button { flex: 1; margin: 0; }
 
 /* IMPRESION Y ESTADISTICAS */
 #printableArea { display: none; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .stat-card { background: #f3f4f6; padding: 15px; border-radius: 10px; text-align: center; }
 .stat-val { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
-.stat-lbl { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-lbl { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; }
 
-/* RESPONSIVE */
 @media(max-width: 768px) {
-  header { padding: 10px; }
-  .header-row { margin-bottom: 8px; }
-  .controls-bar { flex-direction: column; align-items: stretch; gap: 8px; }
-  .weekdays { display: none; } 
-  #calendar { gap: 4px; }
+  .weekdays { display: none; }
   .day { min-height: 70px; padding: 3px; }
   .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; align-self: flex-end; }
-  .event {
-    font-size: 0.65rem; padding: 2px 4px; margin-bottom: 2px; line-height: 1.1;
-    border-left-width: 2px;
-  }
+  .event { font-size: 0.65rem; padding: 2px 4px; border-left-width: 2px; }
 }
 
 @media print {
@@ -305,7 +252,6 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   #printableArea { display: block; padding: 20px; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
   th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-  th { background: #f3f4f6; }
 }
 </style>
 </head>
@@ -330,7 +276,6 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
         <div id="currentMonthDisplay">Cargando...</div>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
-      <!-- FILTRO ACTUALIZADO (MAYUSCULAS) -->
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
         <option value="all">📂 VER TODO</option>
         <option value="cobranza_comunal">🔴 COBRANZA DE BC Y GS</option>
@@ -376,12 +321,35 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
       </select>
     </div>
     
+    <!-- NUEVO SELECTOR DE HORA AM/PM -->
     <div class="form-group">
       <label>Hora</label>
-      <input type="time" id="eventTime">
+      <div class="time-selector-row">
+        <!-- Hora 1-12 -->
+        <select id="selHour" class="time-select">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option><option value="9" selected>9</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+        <span class="time-separator">:</span>
+        <!-- Minutos 00-59 -->
+        <select id="selMin" class="time-select">
+          <option value="00">00</option><option value="05">05</option>
+          <option value="10">10</option><option value="15">15</option>
+          <option value="20">20</option><option value="25">25</option>
+          <option value="30">30</option><option value="35">35</option>
+          <option value="40">40</option><option value="45">45</option>
+          <option value="50">50</option><option value="55">55</option>
+        </select>
+        <!-- AM/PM -->
+        <select id="selAmpm" class="time-select">
+          <option value="AM" selected>AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
     </div>
     
-    <!-- LISTA DE ACTIVIDADES ACTUALIZADA -->
     <div class="form-group">
       <label>Tipo de Actividad</label>
       <select id="eventType">
@@ -421,9 +389,8 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   </div>
 </div>
 
-<!-- IMPRESION -->
 <div id="printableArea">
-  <h2 id="printTitle" style="text-align:center; margin-bottom:20px;">Reporte de Actividades</h2>
+  <h2 id="printTitle" style="text-align:center;">Reporte de Actividades</h2>
   <table id="printTable">
     <thead>
       <tr>
@@ -470,14 +437,14 @@ onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   renderCalendar();
 });
 
-// FUNCION MAESTRA PARA CONVERTIR HORA 24h a 12h AM/PM
+// Función para mostrar la hora guardada (formato 24h) en formato 12h
 function formatTime12h(time24) {
   if (!time24) return "";
   const [hours, minutes] = time24.split(':');
   let h = parseInt(hours);
   const ampm = h >= 12 ? 'PM' : 'AM';
   h = h % 12;
-  h = h ? h : 12; // Si es 0 se vuelve 12
+  h = h ? h : 12;
   return `${h}:${minutes} ${ampm}`;
 }
 
@@ -503,28 +470,20 @@ function renderCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
-    
     const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-      dayDiv.classList.add("today");
-    }
-
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
     dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
     
     const currentDayStr = new Date(year, month, day).toDateString();
     const dayEvents = eventsArray.filter(e => {
       const eDate = new Date(e.date);
-      const isDate = eDate.toDateString() === currentDayStr;
-      const isType = filterVal === "all" || e.type === filterVal;
-      return isDate && isType;
+      return eDate.toDateString() === currentDayStr && (filterVal === "all" || e.type === filterVal);
     });
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
-      
-      // AQUI SE FUERZA EL FORMATO DE HORA PARA VISUALIZACION
       evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
@@ -535,7 +494,6 @@ function renderCalendar() {
         openModal(year, month, day);
       }
     };
-
     calendarGrid.appendChild(dayDiv);
   }
 }
@@ -559,7 +517,12 @@ function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
   document.getElementById("eventTitle").value = "";
   document.getElementById("eventResponsible").value = "";
-  document.getElementById("eventTime").value = "09:00";
+  
+  // Resetear selects a valores por defecto (9:00 AM)
+  document.getElementById("selHour").value = "9";
+  document.getElementById("selMin").value = "00";
+  document.getElementById("selAmpm").value = "AM";
+  
   document.getElementById("modal").style.display = "flex";
   document.getElementById("eventTitle").focus();
 }
@@ -570,8 +533,6 @@ function openActionModal(evt) {
   const statusHtml = evt.completed 
     ? '<span style="color:green; font-weight:bold">Completado</span>' 
     : '<span style="color:orange; font-weight:bold">Pendiente</span>';
-    
-  // MOSTRAR HORA FORMATEADA
   document.getElementById("actionDetails").innerHTML = `
     <strong>Responsable:</strong> ${evt.responsible || "No asignado"}<br>
     <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
@@ -586,8 +547,19 @@ window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.sty
 window.saveEvent = async function() {
   const title = document.getElementById("eventTitle").value;
   const responsible = document.getElementById("eventResponsible").value;
-  const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
+  
+  // OBTENER HORA DE LOS SELECTORES
+  let h = parseInt(document.getElementById("selHour").value);
+  const m = document.getElementById("selMin").value;
+  const ampm = document.getElementById("selAmpm").value;
+  
+  // Convertir a formato 24h para guardar en base de datos y que ordene bien
+  if(ampm === "PM" && h !== 12) h += 12;
+  if(ampm === "AM" && h === 12) h = 0;
+  
+  // Formatear HH:MM (ej: 09:05 o 14:30)
+  const time = `${h.toString().padStart(2, '0')}:${m}`;
   
   if (!title) return alert("Escribe un título");
   
@@ -630,30 +602,16 @@ window.showStats = () => {
     const d = new Date(e.date);
     return (d.getMonth() + "-" + d.getFullYear()) === currentMonthStr;
   });
-
   const total = monthEvents.length;
   const completed = monthEvents.filter(e => e.completed).length;
   const pending = total - completed;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-
   const container = document.getElementById("statsContainer");
   container.innerHTML = `
-    <div class="stat-card">
-      <span class="stat-val">${total}</span>
-      <span class="stat-lbl">Actividades</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-val" style="color:#10b981">${percent}%</span>
-      <span class="stat-lbl">Cumplimiento</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-val" style="color:#f59e0b">${pending}</span>
-      <span class="stat-lbl">Pendientes</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-val" style="color:#3b82f6">${completed}</span>
-      <span class="stat-lbl">Realizadas</span>
-    </div>
+    <div class="stat-card"><span class="stat-val">${total}</span><span class="stat-lbl">Actividades</span></div>
+    <div class="stat-card"><span class="stat-val" style="color:#10b981">${percent}%</span><span class="stat-lbl">Cumplimiento</span></div>
+    <div class="stat-card"><span class="stat-val" style="color:#f59e0b">${pending}</span><span class="stat-lbl">Pendientes</span></div>
+    <div class="stat-card"><span class="stat-val" style="color:#3b82f6">${completed}</span><span class="stat-lbl">Realizadas</span></div>
   `;
   document.getElementById("modalStats").style.display = "flex";
 }
@@ -661,30 +619,16 @@ window.showStats = () => {
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  
   const sortedEvents = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date));
   const currentMonthEvents = sortedEvents.filter(e => {
      const d = new Date(e.date);
      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
   });
-
   document.getElementById("printTitle").textContent = "Reporte - " + monthDisplay.textContent;
-  
-  if(currentMonthEvents.length === 0){
-    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos</td></tr>";
-  }
-
+  if(currentMonthEvents.length === 0) tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos</td></tr>";
   currentMonthEvents.forEach(e => {
     const d = new Date(e.date);
-    // HORA FORMATEADA EN REPORTE
-    tbody.innerHTML += `
-      <tr>
-        <td>${d.getDate()}</td>
-        <td>${formatTime12h(e.time)}</td>
-        <td>${e.title}</td>
-        <td>${e.responsible||""}</td>
-        <td>${e.completed ? "OK" : "Pend"}</td>
-      </tr>`;
+    tbody.innerHTML += `<tr><td>${d.getDate()}</td><td>${formatTime12h(e.time)}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed ? "OK" : "Pend"}</td></tr>`;
   });
   window.print();
 }

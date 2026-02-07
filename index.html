@@ -1,360 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Móvil & Web</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Icono para la pestaña -->
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
-
-<style>
-:root{
-  --rojo: #fa5252;
-  --naranja: #fd7e14;
-  --azul: #228be6;
-  --verde: #40c057;
-  --amarillo: #fab005;
-  --gris-claro: #f1f3f5;
-  --borde: #dee2e6;
-  --texto: #343a40;
-  --blanco-transparente: rgba(255, 255, 255, 0.95);
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  color: var(--texto);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-image: url('https://i.postimg.cc/C1Mkj2dD/Captura-de-pantalla-(40).png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
-.overlay {
-  background-color: rgba(240, 242, 245, 0.85);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* --- HEADER --- */
-header {
-  background: var(--blanco-transparente);
-  padding: 10px;
-  border-bottom: 1px solid var(--borde);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
-small { color: #666; font-size: 0.8rem; }
-
-.controls-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 5px;
-}
-
-#currentMonthDisplay {
-  font-size: 1rem;
-  font-weight: 700;
-  min-width: 100px;
-  text-align: center;
-  text-transform: capitalize;
-  background: white;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-}
-
-.btn-nav, .btn-tool {
-  background: white;
-  border: 1px solid var(--borde);
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: white;
-  font-size: 14px;
-  width: 100%;
-}
-
-/* --- CALENDARIO --- */
-.calendar-wrapper {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-}
-
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #495057;
-  font-size: 0.8rem;
-}
-
-#calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr); /* SIEMPRE 7 COLUMNAS */
-  gap: 4px;
-  auto-rows: minmax(80px, auto); /* Altura mínima */
-}
-
-.day {
-  background: var(--blanco-transparente);
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  overflow: hidden; /* Evita que se salga el texto */
-}
-
-.day.empty { background: transparent; border: none; cursor: default; }
-
-.day-number {
-  font-weight: 700;
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #868e96;
-  text-align: right;
-}
-
-.today {
-  background-color: #e7f5ff;
-  border: 1px solid var(--azul);
-}
-
-/* --- EVENTOS --- */
-.event {
-  font-size: 10px; /* Letra pequeña para eventos */
-  padding: 2px 4px;
-  border-radius: 3px;
-  margin-bottom: 2px;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* Pone ... si es muy largo */
-}
-
-.event.completed {
-  opacity: 0.6;
-  text-decoration: line-through;
-  background-color: #adb5bd !important;
-}
-
-/* --- MODALES --- */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(2px);
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 350px;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #adb5bd;
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: #f8f9fa;
-}
-
-.btn-save, .btn-action {
-  width: 100%;
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
-  color: white;
-  font-weight: 600;
-  margin-top: 5px;
-}
-.btn-save { background: var(--azul); }
-.btn-complete { background: var(--verde); margin-bottom: 10px; }
-.btn-delete { background: var(--rojo); }
-
-/* Stats y Print ocultos por defecto */
-#printableArea { display: none; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
-.stat-box { background: #f1f3f5; padding: 10px; border-radius: 8px; }
-.stat-number { font-size: 20px; font-weight: bold; display: block; }
-
-/* --- OPTIMIZACIÓN MÓVIL (CRÍTICO) --- */
-@media(max-width: 768px){
-  /* Forzamos que se vean 7 columnas pero más apretadas */
-  #calendar { gap: 2px; }
-  
-  .day { 
-    min-height: 60px; /* Cuadros más bajitos */
-    padding: 2px; 
-  }
-  
-  .day-number { font-size: 10px; margin-bottom: 2px; }
-  
-  /* El texto del evento muy pequeño para que quepa */
-  .event { 
-    font-size: 8px; 
-    padding: 1px 2px; 
-    line-height: 1.2;
-  }
-  
-  .weekdays { font-size: 10px; } /* Texto LUN, MAR pequeño */
-  
-  h1 { font-size: 1rem; }
-  .controls-row { gap: 2px; }
-  .btn-nav, .btn-tool { padding: 6px 8px; }
-}
-
-@media print {
-  body * { visibility: hidden; }
-  #printableArea, #printableArea * { visibility: visible; }
-  #printableArea { display: block; position: absolute; top: 0; left: 0; width: 100%; }
-  table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
-  th, td { border: 1px solid #ddd; padding: 5px; }
-}
-</style>
-</head>
-<body>
-
-<div class="overlay">
-  <header>
-    <div class="header-top">
-      <div>
-        <h1>Agenda Corporativa</h1>
-        <small>Gestión Operativa</small>
-      </div>
-      <div>
-        <button class="btn-tool" onclick="showStats()">📊</button>
-        <button class="btn-tool" onclick="printReport()">🖨️</button>
-      </div>
-    </div>
-    
-    <!-- Filtro -->
-    <select id="filterCategory" onchange="applyFilter()">
-      <option value="all">📂 Ver Todo</option>
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visitas</option>
-      <option value="desembolso">🟢 Desembolsos</option>
-      <option value="reunion">🟡 Reuniones</option>
-    </select>
-
-    <!-- Controles Mes -->
-    <div class="controls-row">
-      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay">...</div>
-      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
-    </div>
-  </header>
-
-  <div class="calendar-wrapper">
-    <!-- Nombres cortos para celular -->
-    <div class="weekdays">
-      <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
-    </div>
-    <div id="calendar"></div>
-  </div>
-</div>
-
-<!-- MODALES (Igual que antes pero ajustados) -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modal')">&times;</button>
-    <h3>Nueva Actividad</h3>
-    <input type="text" id="eventTitle" placeholder="Descripción">
-    <input type="text" id="eventResponsible" placeholder="Responsable">
-    <input type="time" id="eventTime">
-    <select id="eventType" style="margin-bottom:0">
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visita</option>
-      <option value="desembolso">🟢 Desembolso</option>
-      <option value="reunion">🟡 Reunión</option>
-    </select>
-    <button class="btn-save" onclick="saveEvent()">Guardar</button>
-  </div>
-</div>
-
-<div class="modal" id="modalActions">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <h3 id="actionTitle" style="color:var(--azul);">Detalle</h3>
-    <p id="actionDetails" style="font-size:13px; color:#555;"></p>
-    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Cambiar Estado</button>
-    <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
-  </div>
-</div>
-
-<div class="modal" id="modalStats">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
-    <h3>Métricas</h3>
-    <div class="stats-grid" id="statsContainer"></div>
-  </div>
-</div>
-
-<!-- IMPRESIÓN -->
-<div id="printableArea">
-  <h2 id="printTitle">Reporte</h2>
-  <table id="printTable">
-    <thead><tr><th>Fec</th><th>Hr</th><th>Actividad</th><th>Resp</th><th>Est</th></tr></thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<!-- LOGICA JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, 
+  onSnapshot, query, where, orderBy, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
@@ -371,29 +20,40 @@ const eventsRef = collection(db, "eventos");
 
 let currentDate = new Date();
 let selectedDate = null;
-let eventsArray = []; 
+let eventsArray = [];
 let currentEventId = null;
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 
-onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
-  eventsArray = [];
-  snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
-  renderCalendar();
-});
+function loadEvents() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const q = query(
+    eventsRef,
+    where("year", "==", year),
+    where("month", "==", month),
+    orderBy("time")
+  );
+
+  onSnapshot(q, (snapshot) => {
+    eventsArray = [];
+    snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
+    renderCalendar();
+  });
+}
 
 function renderCalendar() {
   calendarGrid.innerHTML = "";
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  
+
   monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
 
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Dias vacíos (Padding) - IMPORTANTE: Se deben mostrar para alinear el día 1
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -405,19 +65,25 @@ function renderCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
+    dayDiv.style.overflowY = "auto";
+
     const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) 
+      dayDiv.classList.add("today");
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
     const currentDayStr = new Date(year, month, day).toDateString();
+
     const dayEvents = eventsArray.filter(e => {
       const isDate = new Date(e.date).toDateString() === currentDayStr;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
     });
 
-    dayEvents.forEach(evt => {
+    const visibleEvents = dayEvents.slice(0,3);
+
+    visibleEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
       if(evt.completed) evtDiv.classList.add("completed");
@@ -427,92 +93,131 @@ function renderCalendar() {
       dayDiv.appendChild(evtDiv);
     });
 
-    dayDiv.onclick = (e) => {
-      if(e.target === dayDiv || e.target.className === 'day-number') openModal(year, month, day);
-    };
+    if(dayEvents.length > 3){
+      const more = document.createElement("div");
+      more.style.fontSize = "9px";
+      more.textContent = `+ ${dayEvents.length - 3} más...`;
+      dayDiv.appendChild(more);
+    }
 
+    dayDiv.onclick = () => openModal(year, month, day);
     calendarGrid.appendChild(dayDiv);
   }
 }
 
 function getColor(type){
   switch(type){
-    case "cobranza_comunal": return "var(--rojo)";
-    case "cobranza_individual": return "var(--naranja)";
-    case "visita": return "var(--azul)";
-    case "desembolso": return "var(--verde)";
-    case "reunion": return "var(--amarillo)";
+    case "cobranza_comunal": return "#fa5252";
+    case "cobranza_individual": return "#fd7e14";
+    case "visita": return "#228be6";
+    case "desembolso": return "#40c057";
+    case "reunion": return "#fab005";
     default: return "#868e96";
   }
 }
 
-window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
+window.changeMonth = (step) => { 
+  currentDate.setMonth(currentDate.getMonth() + step); 
+  loadEvents();
+}
+
 window.applyFilter = () => renderCalendar();
 
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
-  document.getElementById("eventTitle").value = "";
-  document.getElementById("eventResponsible").value = "";
-  document.getElementById("eventTime").value = "09:00";
   document.getElementById("modal").style.display = "flex";
 }
 
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
-  document.getElementById("actionDetails").innerHTML = `<b>Resp:</b> ${evt.responsible || "-"}<br><b>Hora:</b> ${evt.time}`;
+  document.getElementById("actionDetails").innerHTML = `
+    <b>Resp:</b> ${evt.responsible || "-"}<br>
+    <b>Hora:</b> ${evt.time}<br>
+    <b>Ubicación:</b> ${evt.location ? `<a href="${evt.location}" target="_blank">Ver</a>` : "-"}
+  `;
   document.getElementById("modalActions").style.display = "flex";
 }
 
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
-window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
 window.saveEvent = async function() {
   const title = document.getElementById("eventTitle").value;
   const responsible = document.getElementById("eventResponsible").value;
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
+  const location = document.getElementById("eventLocation")?.value || "";
+
   if (!title) return;
-  const btn = document.querySelector(".btn-save"); btn.textContent="..."; btn.disabled=true;
-  try {
-    await addDoc(eventsRef, { title, responsible, time, type, date: selectedDate.toISOString(), completed: false });
-    closeModal('modal');
-  } catch(e){} finally { btn.textContent="Guardar"; btn.disabled=false; }
+
+  const conflict = eventsArray.find(e => 
+    new Date(e.date).toDateString() === selectedDate.toDateString() &&
+    e.time === time &&
+    e.responsible === responsible
+  );
+
+  if(conflict){
+    alert("⚠️ El responsable ya tiene actividad a esa hora.");
+    return;
+  }
+
+  await addDoc(eventsRef, { 
+    title, 
+    responsible, 
+    time, 
+    type, 
+    location,
+    date: selectedDate.toISOString(),
+    year: selectedDate.getFullYear(),
+    month: selectedDate.getMonth(),
+    completed: false,
+    createdAt: serverTimestamp()
+  });
+
+  closeModal('modal');
 }
 
 window.toggleComplete = async function() {
-  if(!currentEventId) return;
   const evt = eventsArray.find(e => e.id === currentEventId);
   await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
   closeModal('modalActions');
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); }
+  if(confirm("¿Eliminar?")) { 
+    await deleteDoc(doc(db, "eventos", currentEventId)); 
+    closeModal('modalActions'); 
+  }
 }
 
 window.showStats = () => {
   const total = eventsArray.length;
   const completed = eventsArray.filter(e => e.completed).length;
+  const percent = total ? Math.round((completed/total)*100) : 0;
+
+  const byType = {};
+  eventsArray.forEach(e => {
+    byType[e.type] = (byType[e.type] || 0) + 1;
+  });
+
   const container = document.getElementById("statsContainer");
   container.innerHTML = `
     <div class="stat-box"><span class="stat-number">${total}</span><small>Total</small></div>
     <div class="stat-box"><span class="stat-number">${completed}</span><small>Listas</small></div>
+    <div class="stat-box"><span class="stat-number">${percent}%</span><small>Cumplimiento</small></div>
   `;
+
+  for(const type in byType){
+    container.innerHTML += `
+      <div class="stat-box">
+        <span class="stat-number">${byType[type]}</span>
+        <small>${type}</small>
+      </div>
+    `;
+  }
+
   document.getElementById("modalStats").style.display = "flex";
 }
 
-window.printReport = () => {
-  const tbody = document.querySelector("#printTable tbody");
-  tbody.innerHTML = "";
-  document.getElementById("printTitle").textContent = "Reporte " + monthDisplay.textContent;
-  eventsArray.forEach(e => {
-    tbody.innerHTML += `<tr><td>${new Date(e.date).getDate()}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
-  });
-  window.print();
-}
-
-renderCalendar();
+loadEvents();
 </script>
-</body>
-</html>

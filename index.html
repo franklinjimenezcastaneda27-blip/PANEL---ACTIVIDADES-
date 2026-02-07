@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Corporativa</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Icono pestaña -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
 <style>
@@ -30,8 +29,6 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  
-  /* --- TU FONDO NUEVO --- */
   background-image: url('https://i.imgur.com/fHtDYPl.jpeg');
   background-size: cover;
   background-position: center;
@@ -39,39 +36,34 @@ body {
 }
 
 .overlay {
-  background-color: rgba(240, 242, 245, 0.85); /* Capa para que se lea el texto */
+  background-color: rgba(240, 242, 245, 0.85);
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* --- HEADER OPTIMIZADO --- */
+/* --- HEADER --- */
 header {
   background: var(--blanco-transparente);
   padding: 10px 15px;
   border-bottom: 1px solid var(--borde);
   display: flex;
-  justify-content: space-between; /* Separa Título - Controles - Herramientas */
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  flex-wrap: wrap; /* Para que se adapte al móvil */
+  flex-wrap: wrap;
 }
 
 .header-left h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
 .header-left small { color: #666; font-size: 0.8rem; }
 
-/* Controles del Mes (Centro) */
-.header-center {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+.header-center { display: flex; align-items: center; gap: 5px; }
 
 #currentMonthDisplay {
   font-size: 1rem;
   font-weight: 700;
-  min-width: 110px;
+  min-width: 130px; /* Un poco más ancho */
   text-align: center;
   text-transform: capitalize;
   background: white;
@@ -80,14 +72,8 @@ header {
   border: 1px solid var(--borde);
 }
 
-/* Herramientas (Derecha: Filtro + Botones) */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.header-right { display: flex; align-items: center; gap: 8px; }
 
-/* El select del filtro ahora es más compacto */
 #filterCategory {
   padding: 6px 10px;
   border-radius: 6px;
@@ -104,14 +90,16 @@ header {
   padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.btn-tool:hover, .btn-nav:hover { background: #e9ecef; }
+.btn-tool:hover, .btn-nav:hover { background: #e9ecef; transform: translateY(-1px); }
 
 /* --- CALENDARIO --- */
-.calendar-wrapper {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
+.calendar-wrapper { flex: 1; padding: 10px; overflow-y: auto; position: relative; }
+
+.loading-indicator {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 1.2rem; font-weight: bold; color: var(--azul); display: none;
 }
 
 .weekdays {
@@ -129,6 +117,7 @@ header {
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   auto-rows: minmax(80px, auto);
+  padding-bottom: 20px;
 }
 
 .day {
@@ -139,28 +128,18 @@ header {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  overflow: hidden;
+  transition: background 0.2s;
 }
+.day:hover { background: white; border-color: var(--azul); }
 
 .day.empty { background: transparent; border: none; cursor: default; }
-
-.day-number {
-  font-weight: 700;
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #868e96;
-  text-align: right;
-}
-
-.today {
-  background-color: #e7f5ff;
-  border: 1px solid var(--azul);
-}
+.day-number { font-weight: 700; font-size: 12px; margin-bottom: 4px; color: #868e96; text-align: right; }
+.today { background-color: #e7f5ff; border: 1px solid var(--azul); }
 
 /* --- EVENTOS --- */
 .event {
   font-size: 10px;
-  padding: 2px 4px;
+  padding: 3px 5px;
   border-radius: 3px;
   margin-bottom: 2px;
   color: white;
@@ -168,7 +147,9 @@ header {
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
+.event:hover { filter: brightness(90%); }
 .event.completed { opacity: 0.6; text-decoration: line-through; background-color: #adb5bd !important; }
 
 /* --- MODALES --- */
@@ -180,61 +161,52 @@ header {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 
 .modal-content {
   background: white;
-  padding: 20px;
+  padding: 25px;
   border-radius: 12px;
   width: 90%;
   max-width: 350px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideIn 0.2s ease-out;
 }
+
+@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; color: #adb5bd; cursor: pointer; }
 
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: #f8f9fa;
-}
+label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
+input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid var(--borde); background: #f8f9fa; }
+input:focus, select:focus { outline: none; border-color: var(--azul); background: white; }
 
 .btn-save { width: 100%; padding: 12px; border-radius: 6px; border: none; background: var(--azul); color: white; font-weight: 600; cursor: pointer; }
+.btn-save:disabled { background: #adb5bd; cursor: not-allowed; }
+
 .btn-action { width: 100%; padding: 12px; border-radius: 6px; border: none; color: white; font-weight: 600; margin-top: 5px; cursor: pointer; }
 .btn-complete { background: var(--verde); margin-bottom: 10px; }
 .btn-delete { background: var(--rojo); }
 
-/* Stats & Print */
+/* --- IMPRESIÓN --- */
 #printableArea { display: none; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
-.stat-box { background: #f1f3f5; padding: 10px; border-radius: 8px; }
-.stat-number { font-size: 20px; font-weight: bold; display: block; }
-
-/* --- RESPONSIVE --- */
-@media(max-width: 768px){
-  header { flex-direction: column; align-items: stretch; gap: 8px; }
-  .header-left { text-align: center; }
-  .header-center { justify-content: center; margin-bottom: 5px; }
-  .header-right { justify-content: space-between; }
-  #filterCategory { flex-grow: 1; } /* Filtro ocupa espacio disponible */
-  
-  #calendar { gap: 2px; }
-  .day { min-height: 60px; padding: 2px; }
-  .day-number { font-size: 10px; }
-  .event { font-size: 8px; padding: 1px 2px; }
-}
-
 @media print {
   body * { visibility: hidden; }
   #printableArea, #printableArea * { visibility: visible; }
   #printableArea { display: block; position: absolute; top: 0; left: 0; width: 100%; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
-  th, td { border: 1px solid #ddd; padding: 5px; }
+  th, td { border: 1px solid #ddd; padding: 5px; text-align: left; }
+  th { background: #f1f3f5; }
+}
+
+/* --- RESPONSIVE --- */
+@media(max-width: 768px){
+  header { flex-direction: column; align-items: stretch; gap: 8px; }
+  .header-center { justify-content: center; margin-bottom: 5px; }
+  .day { min-height: 60px; padding: 2px; }
+  .event { font-size: 9px; padding: 2px; }
 }
 </style>
 </head>
@@ -242,22 +214,19 @@ input, select {
 
 <div class="overlay">
   <header>
-    <!-- Izquierda: Título -->
     <div class="header-left">
       <h1>Agenda Corporativa</h1>
       <small>Gestión Operativa</small>
     </div>
 
-    <!-- Centro: Navegación Mes -->
     <div class="header-center">
       <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay">...</div>
+      <div id="currentMonthDisplay">Cargando...</div>
       <button class="btn-nav" onclick="changeMonth(1)">▶</button>
     </div>
 
-    <!-- Derecha: Filtro y Herramientas -->
     <div class="header-right">
-      <select id="filterCategory" onchange="applyFilter()" title="Filtrar Categoría">
+      <select id="filterCategory" onchange="applyFilter()">
         <option value="all">📂 Ver Todo</option>
         <option value="cobranza_comunal">🔴 B. Comunal</option>
         <option value="cobranza_individual">🟠 C. Indiv.</option>
@@ -265,13 +234,13 @@ input, select {
         <option value="desembolso">🟢 Desemb.</option>
         <option value="reunion">🟡 Reunión</option>
       </select>
-      
       <button class="btn-tool" onclick="showStats()" title="Métricas">📊</button>
       <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️</button>
     </div>
   </header>
 
   <div class="calendar-wrapper">
+    <div id="loading" class="loading-indicator">Cargando datos...</div>
     <div class="weekdays">
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
@@ -279,58 +248,75 @@ input, select {
   </div>
 </div>
 
-<!-- MODALES -->
+<!-- MODAL NUEVO EVENTO -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
-    <h3>Nueva Actividad</h3>
-    <input type="text" id="eventTitle" placeholder="Descripción">
-    <input type="text" id="eventResponsible" placeholder="Responsable">
+    <h3 style="margin-top:0">Nueva Actividad</h3>
+    
+    <label>Actividad:</label>
+    <input type="text" id="eventTitle" placeholder="Ej. Visita a Cliente">
+    
+    <label>Responsable:</label>
+    <input type="text" id="eventResponsible" placeholder="Nombre del asesor">
+    
+    <label>Hora:</label>
     <input type="time" id="eventTime">
-    <select id="eventType" style="margin-bottom:0">
+    
+    <label>Tipo:</label>
+    <select id="eventType">
       <option value="cobranza_comunal">🔴 Banco Comunal</option>
       <option value="cobranza_individual">🟠 Crédito Individual</option>
       <option value="visita">🔵 Visita</option>
       <option value="desembolso">🟢 Desembolso</option>
       <option value="reunion">🟡 Reunión</option>
     </select>
-    <button class="btn-save" onclick="saveEvent()">Guardar</button>
+    
+    <button class="btn-save" onclick="saveEvent()">Guardar Evento</button>
   </div>
 </div>
 
+<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <h3 id="actionTitle" style="color:var(--azul);">Detalle</h3>
-    <p id="actionDetails" style="font-size:13px; color:#555;"></p>
+    <h3 id="actionTitle" style="color:var(--azul); margin-top:0;">Detalle</h3>
+    <div id="actionDetails" style="font-size:14px; color:#555; margin-bottom:15px; background:#f8f9fa; padding:10px; border-radius:6px;"></div>
     <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Cambiar Estado</button>
     <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
   </div>
 </div>
 
+<!-- MODAL ESTADÍSTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
-    <h3>Métricas</h3>
-    <div class="stats-grid" id="statsContainer"></div>
+    <h3>Métricas del Mes</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+        <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
+            <span id="statTotal" style="font-size:24px; font-weight:bold; color:var(--azul)">0</span><br><small>Total</small>
+        </div>
+        <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
+            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Completados</small>
+        </div>
+    </div>
   </div>
 </div>
 
-<!-- IMPRESIÓN -->
 <div id="printableArea">
   <h2 id="printTitle">Reporte</h2>
   <table id="printTable">
-    <thead><tr><th>Fec</th><th>Hr</th><th>Actividad</th><th>Resp</th><th>Est</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Actividad</th><th>Responsable</th><th>Estado</th></tr></thead>
     <tbody></tbody>
   </table>
 </div>
 
-<!-- LOGICA JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+// TU CONFIGURACIÓN (Mantén esto privado si es producción)
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
@@ -351,11 +337,20 @@ let currentEventId = null;
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
+const loadingIndicator = document.getElementById("loading");
 
-onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
+// Mostrar loading
+loadingIndicator.style.display = "block";
+
+// Listener de Firebase
+onSnapshot(query(eventsRef), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
+  loadingIndicator.style.display = "none";
   renderCalendar();
+}, (error) => {
+    console.error("Error al leer datos:", error);
+    loadingIndicator.innerText = "Error de conexión";
 });
 
 function renderCalendar() {
@@ -368,6 +363,7 @@ function renderCalendar() {
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  // Días vacíos previos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -380,23 +376,37 @@ function renderCalendar() {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
     const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
+    
+    // Marcar día actual
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+        dayDiv.classList.add("today");
+    }
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    const currentDayStr = new Date(year, month, day).toDateString();
-    const dayEvents = eventsArray.filter(e => {
-      const isDate = new Date(e.date).toDateString() === currentDayStr;
+    // Crear fecha local segura para comparación
+    const checkDate = new Date(year, month, day).toDateString();
+
+    let dayEvents = eventsArray.filter(e => {
+      // Convertir la fecha ISO guardada a fecha local para comparar
+      const eventDate = new Date(e.date).toDateString(); 
+      const isDate = eventDate === checkDate;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
     });
+
+    // ORDENAR eventos por hora dentro de la celda
+    dayEvents.sort((a, b) => a.time.localeCompare(b.time));
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
       if(evt.completed) evtDiv.classList.add("completed");
+      
+      // Color según tipo
       evtDiv.style.backgroundColor = evt.completed ? "#adb5bd" : getColor(evt.type);
-      evtDiv.innerHTML = `${evt.time} ${evt.title}`;
+      
+      evtDiv.innerHTML = `<b>${evt.time}</b> ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
@@ -410,78 +420,138 @@ function renderCalendar() {
 }
 
 function getColor(type){
-  switch(type){
-    case "cobranza_comunal": return "var(--rojo)";
-    case "cobranza_individual": return "var(--naranja)";
-    case "visita": return "var(--azul)";
-    case "desembolso": return "var(--verde)";
-    case "reunion": return "var(--amarillo)";
-    default: return "#868e96";
-  }
+  const colors = {
+      "cobranza_comunal": "var(--rojo)",
+      "cobranza_individual": "var(--naranja)",
+      "visita": "var(--azul)",
+      "desembolso": "var(--verde)",
+      "reunion": "var(--amarillo)"
+  };
+  return colors[type] || "#868e96";
 }
 
+// Funciones Globales (Attach to window)
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
+window.closeModal = (id) => document.getElementById(id).style.display = "none";
+
+// Cerrar modal al hacer click fuera
+window.onclick = (e) => { 
+    if (e.target.classList.contains('modal')) e.target.style.display = "none"; 
+}
 
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
+  // Ajuste para evitar problemas de zona horaria al guardar
+  selectedDate.setHours(12, 0, 0, 0); 
+  
   document.getElementById("eventTitle").value = "";
   document.getElementById("eventResponsible").value = "";
   document.getElementById("eventTime").value = "09:00";
   document.getElementById("modal").style.display = "flex";
+  document.getElementById("eventTitle").focus();
 }
 
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
-  document.getElementById("actionDetails").innerHTML = `<b>Resp:</b> ${evt.responsible || "-"}<br><b>Hora:</b> ${evt.time}`;
+  
+  const typeLabels = {
+      "cobranza_comunal": "Banco Comunal",
+      "cobranza_individual": "Crédito Individual",
+      "visita": "Visita",
+      "desembolso": "Desembolso",
+      "reunion": "Reunión"
+  };
+
+  document.getElementById("actionDetails").innerHTML = `
+    <p style="margin:5px 0"><b>📅 Fecha:</b> ${new Date(evt.date).toLocaleDateString()}</p>
+    <p style="margin:5px 0"><b>⏰ Hora:</b> ${evt.time}</p>
+    <p style="margin:5px 0"><b>👤 Resp:</b> ${evt.responsible || "Sin asignar"}</p>
+    <p style="margin:5px 0"><b>🏷️ Tipo:</b> ${typeLabels[evt.type] || evt.type}</p>
+  `;
   document.getElementById("modalActions").style.display = "flex";
 }
 
-window.closeModal = (id) => document.getElementById(id).style.display = "none";
-window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
-
 window.saveEvent = async function() {
-  const title = document.getElementById("eventTitle").value;
-  const responsible = document.getElementById("eventResponsible").value;
+  const title = document.getElementById("eventTitle").value.trim();
+  const responsible = document.getElementById("eventResponsible").value.trim();
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
-  if (!title) return;
-  const btn = document.querySelector(".btn-save"); btn.textContent="..."; btn.disabled=true;
+
+  if (!title) { alert("Por favor escribe una descripción."); return; }
+  if (!responsible) { alert("Por favor indica un responsable."); return; }
+
+  const btn = document.querySelector(".btn-save"); 
+  const originalText = btn.textContent;
+  btn.textContent = "Guardando..."; 
+  btn.disabled = true;
+
   try {
-    await addDoc(eventsRef, { title, responsible, time, type, date: selectedDate.toISOString(), completed: false });
+    await addDoc(eventsRef, { 
+        title, 
+        responsible, 
+        time, 
+        type, 
+        date: selectedDate.toISOString(), 
+        completed: false 
+    });
     closeModal('modal');
-  } catch(e){} finally { btn.textContent="Guardar"; btn.disabled=false; }
+  } catch(e) {
+      alert("Error al guardar: " + e.message);
+  } finally { 
+      btn.textContent = originalText; 
+      btn.disabled = false; 
+  }
 }
 
 window.toggleComplete = async function() {
   if(!currentEventId) return;
   const evt = eventsArray.find(e => e.id === currentEventId);
-  await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
-  closeModal('modalActions');
+  try {
+      await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
+      closeModal('modalActions');
+  } catch(e) { console.error(e); }
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); }
+  if(confirm("¿Estás seguro de eliminar esta actividad?")) { 
+      try {
+        await deleteDoc(doc(db, "eventos", currentEventId)); 
+        closeModal('modalActions');
+      } catch(e) { console.error(e); }
+  }
 }
 
 window.showStats = () => {
   const total = eventsArray.length;
   const completed = eventsArray.filter(e => e.completed).length;
-  const container = document.getElementById("statsContainer");
-  container.innerHTML = `
-    <div class="stat-box"><span class="stat-number">${total}</span><small>Total</small></div>
-    <div class="stat-box"><span class="stat-number">${completed}</span><small>Listas</small></div>
-  `;
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statCompleted").textContent = completed;
   document.getElementById("modalStats").style.display = "flex";
 }
 
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  document.getElementById("printTitle").textContent = "Reporte " + monthDisplay.textContent;
-  eventsArray.forEach(e => {
-    tbody.innerHTML += `<tr><td>${new Date(e.date).getDate()}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
+  document.getElementById("printTitle").textContent = "Reporte de Actividades - " + monthDisplay.textContent;
+  
+  // Ordenar para impresión (Por fecha y luego hora)
+  const sortedEvents = [...eventsArray].sort((a,b) => {
+      const da = new Date(a.date); const db = new Date(b.date);
+      return da - db || a.time.localeCompare(b.time);
+  });
+
+  sortedEvents.forEach(e => {
+    const d = new Date(e.date);
+    tbody.innerHTML += `
+        <tr>
+            <td>${d.getDate()}/${d.getMonth()+1}</td>
+            <td>${e.time}</td>
+            <td>${e.title}</td>
+            <td>${e.responsible||""}</td>
+            <td>${e.completed ? "Completado" : "Pendiente"}</td>
+        </tr>`;
   });
   window.print();
 }

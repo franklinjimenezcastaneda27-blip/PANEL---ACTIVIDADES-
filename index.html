@@ -22,8 +22,8 @@
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
   --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
-  /* Efecto Glass Ajustado (Más transparente para ver el fondo) */
-  --glass-bg: rgba(255, 255, 255, 0.2); 
+  /* Transparencia ajustada para ver mejor el fondo */
+  --glass-bg: rgba(255, 255, 255, 0.6); 
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -32,7 +32,7 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  /* IMAGEN DE FONDO APLICADA */
+  /* IMAGEN DE FONDO */
   background-image: url('https://i.imghippo.com/files/jdb9603WY.png');
   background-size: cover;
   background-position: center;
@@ -53,7 +53,7 @@ body {
   width: 100%;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(5px); /* Desenfoque ligero */
+  backdrop-filter: blur(5px);
 }
 
 /* --- HEADER --- */
@@ -130,15 +130,25 @@ select.filter-select {
   padding: 10px;
 }
 
+/* --- ARREGLO DE LOS DÍAS (DOM, LUN, ETC) --- */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 Columnas obligatorias */
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+/* Estilo de los cuadritos azules de la cabecera */
 .weekdays div {
-  background: #003366; /* Azul Marino de fondo */
-  color: white;        /* Letras blancas */
-  padding: 8px 0;      /* Relleno arriba y abajo */
-  text-align: center;  /* Centrado perfecto */
-  border-radius: 6px;  /* Bordes redondeados */
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra suave */
+  background-color: #003366; /* Azul Marino */
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 #calendar {
@@ -149,8 +159,8 @@ select.filter-select {
 }
 
 .day {
-  background: rgba(255, 255, 255, 0.7); /* Celdas más sólidas */
-  border: 2px solid #003366;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #003366; /* Borde Azul Marino en los días */
   border-radius: 10px;
   min-height: 100px;
   padding: 6px;
@@ -217,12 +227,8 @@ input, select {
   background: #f9fafb; font-family: inherit; font-size: 0.9rem;
 }
 
-/* NUEVO SELECTOR DE HORA AM/PM */
-.time-selector-row {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
+/* SELECTOR DE HORA AM/PM */
+.time-selector-row { display: flex; gap: 5px; align-items: center; }
 .time-select { flex: 1; text-align: center; }
 .time-separator { font-weight: bold; padding: 0 2px; }
 
@@ -290,6 +296,7 @@ input, select {
   </header>
 
   <div class="calendar-wrapper">
+    <!-- Aquí están los días que se verán en cuadritos azules -->
     <div class="weekdays">
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
@@ -322,7 +329,7 @@ input, select {
       </select>
     </div>
     
-    <!-- NUEVO SELECTOR DE HORA AM/PM -->
+    <!-- SELECTOR DE HORA AM/PM -->
     <div class="form-group">
       <label>Hora</label>
       <div class="time-selector-row">
@@ -438,7 +445,6 @@ onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   renderCalendar();
 });
 
-// Función para mostrar la hora guardada (formato 24h) en formato 12h
 function formatTime12h(time24) {
   if (!time24) return "";
   const [hours, minutes] = time24.split(':');
@@ -519,7 +525,6 @@ function openModal(year, month, day) {
   document.getElementById("eventTitle").value = "";
   document.getElementById("eventResponsible").value = "";
   
-  // Resetear selects a valores por defecto (9:00 AM)
   document.getElementById("selHour").value = "9";
   document.getElementById("selMin").value = "00";
   document.getElementById("selAmpm").value = "AM";
@@ -550,16 +555,13 @@ window.saveEvent = async function() {
   const responsible = document.getElementById("eventResponsible").value;
   const type = document.getElementById("eventType").value;
   
-  // OBTENER HORA DE LOS SELECTORES
   let h = parseInt(document.getElementById("selHour").value);
   const m = document.getElementById("selMin").value;
   const ampm = document.getElementById("selAmpm").value;
   
-  // Convertir a formato 24h para guardar en base de datos y que ordene bien
   if(ampm === "PM" && h !== 12) h += 12;
   if(ampm === "AM" && h === 12) h = 0;
   
-  // Formatear HH:MM (ej: 09:05 o 14:30)
   const time = `${h.toString().padStart(2, '0')}:${m}`;
   
   if (!title) return alert("Escribe un título");

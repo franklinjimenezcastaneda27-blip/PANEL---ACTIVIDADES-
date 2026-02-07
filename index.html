@@ -31,17 +31,15 @@ body {
   display: flex;
   flex-direction: column;
   
-  /* --- FONDO NUEVO (Imagen de oficina) --- */
+  /* --- FONDO DE PANTALLA --- */
   background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  background-color: #f0f2f5; /* Color de respaldo */
 }
 
 .overlay {
-  /* Capa blanca semi-transparente para leer bien las letras sobre la foto */
-  background-color: rgba(245, 247, 250, 0.85); 
+  background-color: rgba(245, 247, 250, 0.88); /* Un poco más opaco para lectura */
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -58,7 +56,6 @@ header {
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-/* Títulos Superiores */
 .header-top {
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -67,7 +64,6 @@ header {
 .header-top h1 { margin: 0; font-size: 1.4rem; font-weight: 800; color: #1c1e21; letter-spacing: -0.5px; }
 .header-top small { color: #444; font-size: 0.95rem; font-weight: 600; display: block; margin-top: 4px; }
 
-/* Barra de Herramientas */
 .header-toolbar {
   display: flex;
   justify-content: space-between; 
@@ -76,7 +72,6 @@ header {
   gap: 10px;
 }
 
-/* Navegación Mes */
 .month-nav { display: flex; align-items: center; gap: 8px; }
 
 #currentMonthDisplay {
@@ -84,10 +79,10 @@ header {
   font-weight: 700;
   color: var(--azul);
   text-transform: capitalize;
-  min-width: 150px;
+  min-width: 160px;
+  text-align: center;
 }
 
-/* Botones Derecha */
 .tools-right { display: flex; align-items: center; gap: 8px; }
 
 #filterCategory {
@@ -118,7 +113,7 @@ header {
 .loading-indicator {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 1.2rem; font-weight: bold; color: var(--azul); display: none;
-    background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;
+    background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .weekdays {
@@ -139,12 +134,13 @@ header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
+  /* Asegura que las celdas tengan altura mínima */
   auto-rows: minmax(100px, auto); 
   padding-bottom: 20px;
 }
 
 .day {
-  background: rgba(255, 255, 255, 0.8); /* Un poco transparente para ver el fondo sutilmente */
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid #e9ecef;
   border-radius: 8px;
   padding: 6px;
@@ -352,7 +348,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
 
-let currentDate = new Date();
+// --- CORRECCIÓN DEFINITIVA DE FECHA ---
+// No usamos un objeto "Date" para navegar, usamos números enteros.
+// Esto evita problemas de "overflow" cuando hoy es 31 y pasamos a un mes de 30 días.
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // 0 = Enero, 1 = Febrero...
+
 let selectedDate = null;
 let eventsArray = []; 
 let currentEventId = null;
@@ -375,14 +376,19 @@ onSnapshot(query(eventsRef), (snapshot) => {
 
 function renderCalendar() {
   calendarGrid.innerHTML = "";
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
   
-  monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
+  // Creamos la fecha para visualizar el nombre del mes
+  const displayDate = new Date(currentYear, currentMonth, 1);
+  monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(displayDate);
 
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // 1. Encontrar en qué día de la semana cae el día 1 (0=Domingo, 1=Lunes...)
+  const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+  
+  // 2. Encontrar cuántos días tiene el mes actual
+  // El día "0" del mes siguiente nos da el último día del mes actual.
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
+  // Celdas vacías antes del día 1
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -391,17 +397,21 @@ function renderCalendar() {
 
   const filterVal = document.getElementById("filterCategory").value;
 
+  // Renderizar días reales
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
+    
+    // Verificar si es HOY
     const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+    if(day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
         dayDiv.classList.add("today");
     }
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    const checkDate = new Date(year, month, day).toDateString();
+    // Fecha para comparar eventos
+    const checkDate = new Date(currentYear, currentMonth, day).toDateString();
 
     let dayEvents = eventsArray.filter(e => {
       const eventDate = new Date(e.date).toDateString(); 
@@ -423,7 +433,7 @@ function renderCalendar() {
     });
 
     dayDiv.onclick = (e) => {
-      if(e.target === dayDiv || e.target.className === 'day-number') openModal(year, month, day);
+      if(e.target === dayDiv || e.target.className === 'day-number') openModal(currentYear, currentMonth, day);
     };
 
     calendarGrid.appendChild(dayDiv);
@@ -441,11 +451,17 @@ function getColor(type){
   return colors[type] || "#868e96";
 }
 
-// --- AQUÍ ESTÁ LA CORRECCIÓN DE FEBRERO ---
+// --- NUEVA LÓGICA DE CAMBIO DE MES ---
+// Matemáticas puras, sin objetos Date que fallen.
 window.changeMonth = (step) => { 
-    // Truco: Ponemos el día en 1 para que al cambiar de mes no salte días que no existen (ej: 30 de feb)
-    currentDate.setDate(1); 
-    currentDate.setMonth(currentDate.getMonth() + step); 
+    currentMonth += step;
+    if(currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    } else if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
     renderCalendar(); 
 }
 
@@ -503,8 +519,14 @@ window.deleteEvent = async function() {
 
 window.showStats = () => {
   const total = eventsArray.length;
-  const completed = eventsArray.filter(e => e.completed).length;
-  document.getElementById("statTotal").textContent = total;
+  // Filtrar eventos solo del mes actual para las estadísticas
+  const currentMonthEvents = eventsArray.filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+  const completed = currentMonthEvents.filter(e => e.completed).length;
+  
+  document.getElementById("statTotal").textContent = currentMonthEvents.length;
   document.getElementById("statCompleted").textContent = completed;
   document.getElementById("modalStats").style.display = "flex";
 }
@@ -514,7 +536,14 @@ window.printReport = () => {
   tbody.innerHTML = "";
   document.getElementById("printTitle").textContent = "Reporte CEPRODEMIC - " + monthDisplay.textContent;
   const sorted = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date) || a.time.localeCompare(b.time));
-  sorted.forEach(e => {
+  
+  // Solo imprimir eventos del mes actual
+  const monthEvents = sorted.filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+
+  monthEvents.forEach(e => {
     const d = new Date(e.date);
     tbody.innerHTML += `<tr><td>${d.getDate()}/${d.getMonth()+1}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
   });

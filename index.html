@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Móvil & Web</title>
+<title>Agenda Corporativa</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Icono para la pestaña -->
+<!-- Icono pestaña -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
 <style>
@@ -30,42 +30,40 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
+  
+  /* --- TU FONDO NUEVO --- */
+  background-image: url('https://i.imgur.com/fHtDYPl.jpeg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .overlay {
-  background-color: rgba(240, 242, 245, 0.85);
+  background-color: rgba(240, 242, 245, 0.85); /* Capa para que se lea el texto */
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* --- HEADER --- */
+/* --- HEADER OPTIMIZADO --- */
 header {
   background: var(--blanco-transparente);
-  padding: 10px;
+  padding: 10px 15px;
   border-bottom: 1px solid var(--borde);
   display: flex;
-  flex-direction: column;
+  justify-content: space-between; /* Separa Título - Controles - Herramientas */
+  align-items: center;
   gap: 10px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  flex-wrap: wrap; /* Para que se adapte al móvil */
 }
 
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.header-left h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
+.header-left small { color: #666; font-size: 0.8rem; }
 
-h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
-small { color: #666; font-size: 0.8rem; }
-
-.controls-row {
+/* Controles del Mes (Centro) */
+.header-center {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 5px;
 }
@@ -73,13 +71,31 @@ small { color: #666; font-size: 0.8rem; }
 #currentMonthDisplay {
   font-size: 1rem;
   font-weight: 700;
-  min-width: 100px;
+  min-width: 110px;
   text-align: center;
   text-transform: capitalize;
   background: white;
   padding: 6px;
   border-radius: 6px;
   border: 1px solid var(--borde);
+}
+
+/* Herramientas (Derecha: Filtro + Botones) */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* El select del filtro ahora es más compacto */
+#filterCategory {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 120px;
 }
 
 .btn-nav, .btn-tool {
@@ -89,15 +105,7 @@ small { color: #666; font-size: 0.8rem; }
   border-radius: 6px;
   cursor: pointer;
 }
-
-select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: white;
-  font-size: 14px;
-  width: 100%;
-}
+.btn-tool:hover, .btn-nav:hover { background: #e9ecef; }
 
 /* --- CALENDARIO --- */
 .calendar-wrapper {
@@ -118,9 +126,9 @@ select {
 
 #calendar {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* SIEMPRE 7 COLUMNAS */
+  grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  auto-rows: minmax(80px, auto); /* Altura mínima */
+  auto-rows: minmax(80px, auto);
 }
 
 .day {
@@ -131,7 +139,7 @@ select {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  overflow: hidden; /* Evita que se salga el texto */
+  overflow: hidden;
 }
 
 .day.empty { background: transparent; border: none; cursor: default; }
@@ -151,21 +159,17 @@ select {
 
 /* --- EVENTOS --- */
 .event {
-  font-size: 10px; /* Letra pequeña para eventos */
+  font-size: 10px;
   padding: 2px 4px;
   border-radius: 3px;
   margin-bottom: 2px;
   color: white;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Pone ... si es muy largo */
+  text-overflow: ellipsis;
+  cursor: pointer;
 }
-
-.event.completed {
-  opacity: 0.6;
-  text-decoration: line-through;
-  background-color: #adb5bd !important;
-}
+.event.completed { opacity: 0.6; text-decoration: line-through; background-color: #adb5bd !important; }
 
 /* --- MODALES --- */
 .modal {
@@ -189,15 +193,7 @@ select {
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #adb5bd;
-}
+.close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; color: #adb5bd; cursor: pointer; }
 
 input, select {
   width: 100%;
@@ -208,49 +204,29 @@ input, select {
   background: #f8f9fa;
 }
 
-.btn-save, .btn-action {
-  width: 100%;
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
-  color: white;
-  font-weight: 600;
-  margin-top: 5px;
-}
-.btn-save { background: var(--azul); }
+.btn-save { width: 100%; padding: 12px; border-radius: 6px; border: none; background: var(--azul); color: white; font-weight: 600; cursor: pointer; }
+.btn-action { width: 100%; padding: 12px; border-radius: 6px; border: none; color: white; font-weight: 600; margin-top: 5px; cursor: pointer; }
 .btn-complete { background: var(--verde); margin-bottom: 10px; }
 .btn-delete { background: var(--rojo); }
 
-/* Stats y Print ocultos por defecto */
+/* Stats & Print */
 #printableArea { display: none; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
 .stat-box { background: #f1f3f5; padding: 10px; border-radius: 8px; }
 .stat-number { font-size: 20px; font-weight: bold; display: block; }
 
-/* --- OPTIMIZACIÓN MÓVIL (CRÍTICO) --- */
+/* --- RESPONSIVE --- */
 @media(max-width: 768px){
-  /* Forzamos que se vean 7 columnas pero más apretadas */
+  header { flex-direction: column; align-items: stretch; gap: 8px; }
+  .header-left { text-align: center; }
+  .header-center { justify-content: center; margin-bottom: 5px; }
+  .header-right { justify-content: space-between; }
+  #filterCategory { flex-grow: 1; } /* Filtro ocupa espacio disponible */
+  
   #calendar { gap: 2px; }
-  
-  .day { 
-    min-height: 60px; /* Cuadros más bajitos */
-    padding: 2px; 
-  }
-  
-  .day-number { font-size: 10px; margin-bottom: 2px; }
-  
-  /* El texto del evento muy pequeño para que quepa */
-  .event { 
-    font-size: 8px; 
-    padding: 1px 2px; 
-    line-height: 1.2;
-  }
-  
-  .weekdays { font-size: 10px; } /* Texto LUN, MAR pequeño */
-  
-  h1 { font-size: 1rem; }
-  .controls-row { gap: 2px; }
-  .btn-nav, .btn-tool { padding: 6px 8px; }
+  .day { min-height: 60px; padding: 2px; }
+  .day-number { font-size: 10px; }
+  .event { font-size: 8px; padding: 1px 2px; }
 }
 
 @media print {
@@ -266,37 +242,36 @@ input, select {
 
 <div class="overlay">
   <header>
-    <div class="header-top">
-      <div>
-        <h1>Agenda Corporativa</h1>
-        <small>Gestión Operativa</small>
-      </div>
-      <div>
-        <button class="btn-tool" onclick="showStats()">📊</button>
-        <button class="btn-tool" onclick="printReport()">🖨️</button>
-      </div>
+    <!-- Izquierda: Título -->
+    <div class="header-left">
+      <h1>Agenda Corporativa</h1>
+      <small>Gestión Operativa</small>
     </div>
-    
-    <!-- Filtro -->
-    <select id="filterCategory" onchange="applyFilter()">
-      <option value="all">📂 Ver Todo</option>
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visitas</option>
-      <option value="desembolso">🟢 Desembolsos</option>
-      <option value="reunion">🟡 Reuniones</option>
-    </select>
 
-    <!-- Controles Mes -->
-    <div class="controls-row">
+    <!-- Centro: Navegación Mes -->
+    <div class="header-center">
       <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
       <div id="currentMonthDisplay">...</div>
       <button class="btn-nav" onclick="changeMonth(1)">▶</button>
     </div>
+
+    <!-- Derecha: Filtro y Herramientas -->
+    <div class="header-right">
+      <select id="filterCategory" onchange="applyFilter()" title="Filtrar Categoría">
+        <option value="all">📂 Ver Todo</option>
+        <option value="cobranza_comunal">🔴 B. Comunal</option>
+        <option value="cobranza_individual">🟠 C. Indiv.</option>
+        <option value="visita">🔵 Visitas</option>
+        <option value="desembolso">🟢 Desemb.</option>
+        <option value="reunion">🟡 Reunión</option>
+      </select>
+      
+      <button class="btn-tool" onclick="showStats()" title="Métricas">📊</button>
+      <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️</button>
+    </div>
   </header>
 
   <div class="calendar-wrapper">
-    <!-- Nombres cortos para celular -->
     <div class="weekdays">
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
@@ -304,7 +279,7 @@ input, select {
   </div>
 </div>
 
-<!-- MODALES (Igual que antes pero ajustados) -->
+<!-- MODALES -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
@@ -393,7 +368,6 @@ function renderCalendar() {
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Dias vacíos (Padding) - IMPORTANTE: Se deben mostrar para alinear el día 1
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";

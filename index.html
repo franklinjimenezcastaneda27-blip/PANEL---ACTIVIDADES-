@@ -6,113 +6,172 @@
 <title>Calendario Corporativo</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Segoe UI;
-  background:#f1f3f5;
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
 }
 
-header{
-  background:white;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+header {
+  background: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-#calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:10px;
-  padding:20px;
+h2 { margin: 0; color: #333; }
+
+/* Cabecera de días (Dom, Lun, Mar...) */
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #e9ecef;
+  padding: 10px 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #495057;
+  gap: 10px;
 }
 
-.day{
-  background:white;
-  border-radius:10px;
-  padding:8px;
-  min-height:100px;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 20px;
 }
 
-.day-number{
-  font-weight:bold;
-  font-size:14px;
+.day {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 100px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  transition: transform 0.2s;
+  border: 1px solid #dee2e6;
 }
 
-.event{
-  font-size:11px;
-  margin-top:4px;
-  padding:4px;
-  border-radius:5px;
-  color:white;
+.day:hover {
+  transform: translateY(-2px);
+  border-color: #adb5bd;
 }
 
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
+.day-number {
+  font-weight: bold;
+  font-size: 16px;
+  color: #495057;
+  margin-bottom: 5px;
 }
 
-.modal-content{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  width:300px;
+/* Espacio vacío para alinear el día 1 */
+.empty-day {
+  background: transparent;
+  pointer-events: none;
 }
 
-input,select{
-  width:100%;
-  padding:6px;
-  margin:5px 0;
+.event {
+  font-size: 11px;
+  margin-top: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-button{
-  padding:6px 10px;
-  border:none;
-  border-radius:5px;
-  background:#228be6;
-  color:white;
-  cursor:pointer;
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 320px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 { margin-top: 0; }
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary { background: #228be6; color: white; }
+.btn-secondary { background: #ced4da; color: #333; }
+.nav-btn { background: #e7f5ff; color: #1971c2; font-size: 18px; }
+
 </style>
 </head>
 <body>
 
 <header>
-<h2>Calendario Corporativo</h2>
-<div>
-<button onclick="prevMonth()">◀</button>
-<button onclick="nextMonth()">▶</button>
-</div>
+  <h2 id="monthYear">Calendario</h2>
+  <div>
+    <button class="nav-btn" onclick="prevMonth()">◀</button>
+    <button class="nav-btn" onclick="nextMonth()">▶</button>
+  </div>
 </header>
+
+<!-- Cabecera de días de la semana -->
+<div class="week-days">
+  <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+</div>
 
 <div id="calendar"></div>
 
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h3>Nueva Actividad</h3>
-    <input id="title" placeholder="Descripción">
+    <h3 id="modalDateDisplay">Nueva Actividad</h3>
+    <input id="title" placeholder="Descripción de la actividad">
     <select id="type">
       <option>Cobranza Banco Comunal</option>
       <option>Visita a Clientes</option>
       <option>Desembolsos</option>
       <option>Reuniones</option>
     </select>
-    <button onclick="saveEvent()">Guardar</button>
+    <div class="modal-buttons">
+      <button class="btn-primary" onclick="saveEvent()">Guardar</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+    </div>
   </div>
 </div>
 
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+// Usamos una versión estable de Firebase (v10.7.1)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZTwRXaR89ItkFTKGaqWo3cyfBAv5Cc4",
@@ -125,89 +184,139 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const eventsRef = collection(db,"eventos");
+const eventsRef = collection(db, "eventos");
 
 let currentDate = new Date();
+let eventsList = []; // Almacén local de eventos para redibujar rápido
 const calendar = document.getElementById("calendar");
+const monthYearLabel = document.getElementById("monthYear");
 
-function renderCalendar(){
-  if(!calendar) return;
-  calendar.innerHTML="";
-  const year=currentDate.getFullYear();
-  const month=currentDate.getMonth();
-  const days=new Date(year,month+1,0).getDate();
+// --- Lógica Principal del Calendario ---
 
-  for(let i=1;i<=days;i++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.innerHTML=`<div class="day-number">${i}</div>`;
-    day.onclick=()=>openModal(year,month,i);
+function renderCalendar() {
+  if (!calendar) return;
+  calendar.innerHTML = "";
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  
+  // Actualizar título
+  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  monthYearLabel.textContent = `${monthNames[month]} ${year}`;
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayIndex = new Date(year, month, 1).getDay(); // 0 = Domingo, 1 = Lunes...
+
+  // 1. Rellenar espacios vacíos antes del día 1
+  for (let i = 0; i < firstDayIndex; i++) {
+    const empty = document.createElement("div");
+    empty.className = "empty-day";
+    calendar.appendChild(empty);
+  }
+
+  // 2. Crear los días
+  for (let i = 1; i <= daysInMonth; i++) {
+    const day = document.createElement("div");
+    day.className = "day";
+    day.innerHTML = `<div class="day-number">${i}</div>`;
+    
+    // Asignar evento de clic (usando window.openModal que definiremos abajo)
+    day.onclick = () => window.openModal(year, month, i);
+
+    // 3. Insertar eventos correspondientes a este día
+    const currentDayEvents = eventsList.filter(ev => {
+      const evDate = new Date(ev.date);
+      // Ajustamos la zona horaria comparando componentes locales
+      return evDate.getDate() === i && 
+             evDate.getMonth() === month && 
+             evDate.getFullYear() === year;
+    });
+
+    currentDayEvents.forEach(evData => {
+      const evDiv = document.createElement("div");
+      evDiv.className = "event";
+      evDiv.textContent = evData.title;
+      evDiv.style.background = getColor(evData.type);
+      day.appendChild(evDiv);
+    });
+
     calendar.appendChild(day);
   }
 }
 
-renderCalendar();
+function getColor(type) {
+  switch(type) {
+    case "Cobranza Banco Comunal": return "#ff6b6b"; // Rojo suave
+    case "Visita a Clientes": return "#339af0"; // Azul
+    case "Desembolsos": return "#51cf66"; // Verde
+    case "Reuniones": return "#fcc419"; // Amarillo
+    default: return "#868e96"; // Gris
+  }
+}
 
-onSnapshot(eventsRef,(snapshot)=>{
-  renderCalendar();
-  snapshot.forEach(doc=>{
-    const data=doc.data();
-    const date=new Date(data.date);
+// --- Firebase Listener ---
 
-    if(date.getMonth()===currentDate.getMonth() &&
-       date.getFullYear()===currentDate.getFullYear()){
-
-      const box=calendar.children[date.getDate()-1];
-      if(!box) return;
-
-      const ev=document.createElement("div");
-      ev.className="event";
-      ev.textContent=data.title;
-      ev.style.background=getColor(data.type);
-      box.appendChild(ev);
-    }
+// Escucha cambios en tiempo real
+onSnapshot(query(eventsRef), (snapshot) => {
+  eventsList = [];
+  snapshot.forEach(doc => {
+    eventsList.push({ id: doc.id, ...doc.data() });
   });
+  renderCalendar(); // Redibujar cuando lleguen datos
 });
 
-function getColor(type){
-  if(type==="Cobranza Banco Comunal") return "#ff6b6b";
-  if(type==="Visita a Clientes") return "#4dabf7";
-  if(type==="Desembolsos") return "#51cf66";
-  if(type==="Reuniones") return "#ffd43b";
-}
+// --- Funciones Globales (conectadas a window) ---
 
-let selectedDate=null;
+let selectedDate = null;
 
-function openModal(y,m,d){
-  selectedDate=new Date(y,m,d);
-  document.getElementById("modal").style.display="flex";
-}
-
-async function saveEvent(){
-  const title=document.getElementById("title").value;
-  const type=document.getElementById("type").value;
-
-  if(!title) return;
-
-  await addDoc(eventsRef,{
-    title,
-    type,
-    date:selectedDate.toISOString()
-  });
-
-  document.getElementById("modal").style.display="none";
-  document.getElementById("title").value="";
-}
-
-window.prevMonth=()=>{
-  currentDate.setMonth(currentDate.getMonth()-1);
+// Exponemos las funciones al objeto global window para que el HTML onclick las vea
+window.prevMonth = () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar();
-}
+};
 
-window.nextMonth=()=>{
-  currentDate.setMonth(currentDate.getMonth()+1);
+window.nextMonth = () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar();
-}
+};
+
+window.openModal = (y, m, d) => {
+  selectedDate = new Date(y, m, d);
+  document.getElementById("modalDateDisplay").innerText = `Nueva Actividad (${d}/${m+1})`;
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("title").focus();
+};
+
+window.closeModal = () => {
+  document.getElementById("modal").style.display = "none";
+  document.getElementById("title").value = "";
+};
+
+window.saveEvent = async () => {
+  const title = document.getElementById("title").value;
+  const type = document.getElementById("type").value;
+
+  if (!title) {
+    alert("Por favor ingresa una descripción");
+    return;
+  }
+
+  try {
+    await addDoc(eventsRef, {
+      title,
+      type,
+      date: selectedDate.toISOString(),
+      createdAt: new Date().toISOString()
+    });
+    window.closeModal();
+  } catch (error) {
+    console.error("Error guardando:", error);
+    alert("Error al guardar: " + error.message);
+  }
+};
+
+// Render inicial
+renderCalendar();
 
 </script>
 

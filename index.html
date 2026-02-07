@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corporativa</title>
+<title>Agenda Corporativa CEPRODEMIC</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
@@ -42,40 +42,59 @@ body {
   flex-direction: column;
 }
 
-/* --- HEADER --- */
+/* --- NUEVO HEADER --- */
 header {
   background: var(--blanco-transparente);
-  padding: 10px 15px;
+  padding: 15px 20px;
   border-bottom: 1px solid var(--borde);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column; /* Elementos uno debajo del otro */
+  gap: 15px; /* Espacio entre el título y la barra de herramientas */
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  flex-wrap: wrap;
 }
 
-.header-left h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
-.header-left small { color: #666; font-size: 0.8rem; }
+/* Fila Superior: Títulos */
+.header-top {
+  text-align: left;
+  border-bottom: 1px solid #eee; /* Línea suave separadora */
+  padding-bottom: 10px;
+}
+.header-top h1 { margin: 0; font-size: 1.4rem; font-weight: 800; color: #1c1e21; letter-spacing: -0.5px; }
+.header-top small { color: #555; font-size: 0.95rem; font-weight: 500; display: block; margin-top: 2px; }
 
-.header-center { display: flex; align-items: center; gap: 5px; }
+/* Fila Inferior: Barra de herramientas */
+.header-toolbar {
+  display: flex;
+  justify-content: space-between; /* Mes a la izq, Herramientas a la der */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Mes y navegación (Izquierda) */
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 #currentMonthDisplay {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  min-width: 130px; /* Un poco más ancho */
-  text-align: center;
+  color: var(--azul);
   text-transform: capitalize;
-  background: white;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
+  min-width: 150px;
 }
 
-.header-right { display: flex; align-items: center; gap: 8px; }
+/* Botones y Filtros (Derecha) */
+.tools-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 #filterCategory {
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid var(--borde);
   background: white;
@@ -87,15 +106,17 @@ header {
 .btn-nav, .btn-tool {
   background: white;
   border: 1px solid var(--borde);
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  color: #495057;
+  font-weight: 600;
 }
-.btn-tool:hover, .btn-nav:hover { background: #e9ecef; transform: translateY(-1px); }
+.btn-nav:hover, .btn-tool:hover { background: #e9ecef; border-color: #adb5bd; }
 
 /* --- CALENDARIO --- */
-.calendar-wrapper { flex: 1; padding: 10px; overflow-y: auto; position: relative; }
+.calendar-wrapper { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
 
 .loading-indicator {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -107,41 +128,44 @@ header {
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   color: #495057;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  background: white;
+  padding: 10px 0;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
 }
 
 #calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  auto-rows: minmax(80px, auto);
+  gap: 6px;
+  auto-rows: minmax(100px, auto); /* Celdas un poco más altas */
   padding-bottom: 20px;
 }
 
 .day {
   background: var(--blanco-transparente);
   border: 1px solid #e9ecef;
-  border-radius: 6px;
-  padding: 4px;
+  border-radius: 8px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
-.day:hover { background: white; border-color: var(--azul); }
-
-.day.empty { background: transparent; border: none; cursor: default; }
-.day-number { font-weight: 700; font-size: 12px; margin-bottom: 4px; color: #868e96; text-align: right; }
-.today { background-color: #e7f5ff; border: 1px solid var(--azul); }
+.day:hover { background: white; border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; }
+.day-number { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: #495057; text-align: right; }
+.today { background-color: #e7f5ff; border: 2px solid var(--azul); }
 
 /* --- EVENTOS --- */
 .event {
-  font-size: 10px;
-  padding: 3px 5px;
-  border-radius: 3px;
-  margin-bottom: 2px;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-bottom: 3px;
   color: white;
   white-space: nowrap;
   overflow: hidden;
@@ -163,29 +187,22 @@ header {
   z-index: 1000;
   backdrop-filter: blur(3px);
 }
-
 .modal-content {
   background: white;
   padding: 25px;
   border-radius: 12px;
   width: 90%;
-  max-width: 350px;
+  max-width: 380px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   animation: slideIn 0.2s ease-out;
 }
-
 @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
 .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; color: #adb5bd; cursor: pointer; }
 
 label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
 input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid var(--borde); background: #f8f9fa; }
-input:focus, select:focus { outline: none; border-color: var(--azul); background: white; }
-
 .btn-save { width: 100%; padding: 12px; border-radius: 6px; border: none; background: var(--azul); color: white; font-weight: 600; cursor: pointer; }
-.btn-save:disabled { background: #adb5bd; cursor: not-allowed; }
-
 .btn-action { width: 100%; padding: 12px; border-radius: 6px; border: none; color: white; font-weight: 600; margin-top: 5px; cursor: pointer; }
 .btn-complete { background: var(--verde); margin-bottom: 10px; }
 .btn-delete { background: var(--rojo); }
@@ -203,8 +220,11 @@ input:focus, select:focus { outline: none; border-color: var(--azul); background
 
 /* --- RESPONSIVE --- */
 @media(max-width: 768px){
-  header { flex-direction: column; align-items: stretch; gap: 8px; }
-  .header-center { justify-content: center; margin-bottom: 5px; }
+  .header-toolbar { flex-direction: column; align-items: stretch; }
+  .month-nav { justify-content: space-between; margin-bottom: 10px; }
+  .tools-right { justify-content: space-between; }
+  #filterCategory { flex-grow: 1; }
+  
   .day { min-height: 60px; padding: 2px; }
   .event { font-size: 9px; padding: 2px; }
 }
@@ -214,41 +234,51 @@ input:focus, select:focus { outline: none; border-color: var(--azul); background
 
 <div class="overlay">
   <header>
-    <div class="header-left">
+    <!-- 1. Parte Superior: Título y Subtítulo -->
+    <div class="header-top">
       <h1>Agenda Corporativa</h1>
-      <small>Gestión Operativa</small>
+      <small>Gestión Operativa - CEPRODEMIC</small>
     </div>
 
-    <div class="header-center">
-      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay">Cargando...</div>
-      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
-    </div>
+    <!-- 2. Parte Inferior del Header: Controles -->
+    <div class="header-toolbar">
+      
+      <!-- Lado Izquierdo: Mes y Año -->
+      <div class="month-nav">
+        <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
+        <div id="currentMonthDisplay">Cargando...</div>
+        <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+      </div>
 
-    <div class="header-right">
-      <select id="filterCategory" onchange="applyFilter()">
-        <option value="all">📂 Ver Todo</option>
-        <option value="cobranza_comunal">🔴 B. Comunal</option>
-        <option value="cobranza_individual">🟠 C. Indiv.</option>
-        <option value="visita">🔵 Visitas</option>
-        <option value="desembolso">🟢 Desemb.</option>
-        <option value="reunion">🟡 Reunión</option>
-      </select>
-      <button class="btn-tool" onclick="showStats()" title="Métricas">📊</button>
-      <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️</button>
+      <!-- Lado Derecho: Herramientas -->
+      <div class="tools-right">
+        <select id="filterCategory" onchange="applyFilter()">
+          <option value="all">📂 Ver Todo</option>
+          <option value="cobranza_comunal">🔴 B. Comunal</option>
+          <option value="cobranza_individual">🟠 C. Indiv.</option>
+          <option value="visita">🔵 Visitas</option>
+          <option value="desembolso">🟢 Desemb.</option>
+          <option value="reunion">🟡 Reunión</option>
+        </select>
+        
+        <button class="btn-tool" onclick="showStats()" title="Métricas">📊 Stats</button>
+        <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️ Imprimir</button>
+      </div>
+
     </div>
   </header>
 
+  <!-- 3. Calendario (Parte inferior) -->
   <div class="calendar-wrapper">
     <div id="loading" class="loading-indicator">Cargando datos...</div>
     <div class="weekdays">
-      <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
+      <div>DOMINGO</div><div>LUNES</div><div>MARTES</div><div>MIÉRCOLES</div><div>JUEVES</div><div>VIERNES</div><div>SÁBADO</div>
     </div>
     <div id="calendar"></div>
   </div>
 </div>
 
-<!-- MODAL NUEVO EVENTO -->
+<!-- MODALES (Sin cambios en lógica, solo estructura interna) -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
@@ -272,22 +302,20 @@ input:focus, select:focus { outline: none; border-color: var(--azul); background
       <option value="reunion">🟡 Reunión</option>
     </select>
     
-    <button class="btn-save" onclick="saveEvent()">Guardar Evento</button>
+    <button class="btn-save" onclick="saveEvent()">Guardar</button>
   </div>
 </div>
 
-<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
     <h3 id="actionTitle" style="color:var(--azul); margin-top:0;">Detalle</h3>
     <div id="actionDetails" style="font-size:14px; color:#555; margin-bottom:15px; background:#f8f9fa; padding:10px; border-radius:6px;"></div>
-    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Cambiar Estado</button>
+    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Completado / Pendiente</button>
     <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
   </div>
 </div>
 
-<!-- MODAL ESTADÍSTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
@@ -297,7 +325,7 @@ input:focus, select:focus { outline: none; border-color: var(--azul); background
             <span id="statTotal" style="font-size:24px; font-weight:bold; color:var(--azul)">0</span><br><small>Total</small>
         </div>
         <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
-            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Completados</small>
+            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Listas</small>
         </div>
     </div>
   </div>
@@ -313,10 +341,9 @@ input:focus, select:focus { outline: none; border-color: var(--azul); background
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-// TU CONFIGURACIÓN (Mantén esto privado si es producción)
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
@@ -339,17 +366,15 @@ const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 const loadingIndicator = document.getElementById("loading");
 
-// Mostrar loading
 loadingIndicator.style.display = "block";
 
-// Listener de Firebase
 onSnapshot(query(eventsRef), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
   loadingIndicator.style.display = "none";
   renderCalendar();
 }, (error) => {
-    console.error("Error al leer datos:", error);
+    console.error(error);
     loadingIndicator.innerText = "Error de conexión";
 });
 
@@ -363,7 +388,6 @@ function renderCalendar() {
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Días vacíos previos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -376,36 +400,28 @@ function renderCalendar() {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
     const today = new Date();
-    
-    // Marcar día actual
     if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
         dayDiv.classList.add("today");
     }
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    // Crear fecha local segura para comparación
     const checkDate = new Date(year, month, day).toDateString();
 
     let dayEvents = eventsArray.filter(e => {
-      // Convertir la fecha ISO guardada a fecha local para comparar
       const eventDate = new Date(e.date).toDateString(); 
       const isDate = eventDate === checkDate;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
     });
 
-    // ORDENAR eventos por hora dentro de la celda
     dayEvents.sort((a, b) => a.time.localeCompare(b.time));
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
       if(evt.completed) evtDiv.classList.add("completed");
-      
-      // Color según tipo
       evtDiv.style.backgroundColor = evt.completed ? "#adb5bd" : getColor(evt.type);
-      
       evtDiv.innerHTML = `<b>${evt.time}</b> ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
@@ -430,21 +446,14 @@ function getColor(type){
   return colors[type] || "#868e96";
 }
 
-// Funciones Globales (Attach to window)
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
-
-// Cerrar modal al hacer click fuera
-window.onclick = (e) => { 
-    if (e.target.classList.contains('modal')) e.target.style.display = "none"; 
-}
+window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
-  // Ajuste para evitar problemas de zona horaria al guardar
   selectedDate.setHours(12, 0, 0, 0); 
-  
   document.getElementById("eventTitle").value = "";
   document.getElementById("eventResponsible").value = "";
   document.getElementById("eventTime").value = "09:00";
@@ -455,15 +464,7 @@ function openModal(year, month, day) {
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
-  
-  const typeLabels = {
-      "cobranza_comunal": "Banco Comunal",
-      "cobranza_individual": "Crédito Individual",
-      "visita": "Visita",
-      "desembolso": "Desembolso",
-      "reunion": "Reunión"
-  };
-
+  const typeLabels = { "cobranza_comunal": "Banco Comunal", "cobranza_individual": "Crédito Individual", "visita": "Visita", "desembolso": "Desembolso", "reunion": "Reunión" };
   document.getElementById("actionDetails").innerHTML = `
     <p style="margin:5px 0"><b>📅 Fecha:</b> ${new Date(evt.date).toLocaleDateString()}</p>
     <p style="margin:5px 0"><b>⏰ Hora:</b> ${evt.time}</p>
@@ -478,49 +479,24 @@ window.saveEvent = async function() {
   const responsible = document.getElementById("eventResponsible").value.trim();
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
-
-  if (!title) { alert("Por favor escribe una descripción."); return; }
-  if (!responsible) { alert("Por favor indica un responsable."); return; }
-
+  if (!title) { alert("Describe la actividad"); return; }
+  
   const btn = document.querySelector(".btn-save"); 
-  const originalText = btn.textContent;
-  btn.textContent = "Guardando..."; 
-  btn.disabled = true;
-
+  const txt = btn.textContent; btn.textContent="Guardando..."; btn.disabled=true;
   try {
-    await addDoc(eventsRef, { 
-        title, 
-        responsible, 
-        time, 
-        type, 
-        date: selectedDate.toISOString(), 
-        completed: false 
-    });
+    await addDoc(eventsRef, { title, responsible, time, type, date: selectedDate.toISOString(), completed: false });
     closeModal('modal');
-  } catch(e) {
-      alert("Error al guardar: " + e.message);
-  } finally { 
-      btn.textContent = originalText; 
-      btn.disabled = false; 
-  }
+  } catch(e) { alert("Error"); } finally { btn.textContent=txt; btn.disabled=false; }
 }
 
 window.toggleComplete = async function() {
   if(!currentEventId) return;
   const evt = eventsArray.find(e => e.id === currentEventId);
-  try {
-      await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
-      closeModal('modalActions');
-  } catch(e) { console.error(e); }
+  try { await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed }); closeModal('modalActions'); } catch(e){}
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Estás seguro de eliminar esta actividad?")) { 
-      try {
-        await deleteDoc(doc(db, "eventos", currentEventId)); 
-        closeModal('modalActions');
-      } catch(e) { console.error(e); }
-  }
+  if(confirm("¿Eliminar?")) { try { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); } catch(e){} }
 }
 
 window.showStats = () => {
@@ -534,24 +510,11 @@ window.showStats = () => {
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  document.getElementById("printTitle").textContent = "Reporte de Actividades - " + monthDisplay.textContent;
-  
-  // Ordenar para impresión (Por fecha y luego hora)
-  const sortedEvents = [...eventsArray].sort((a,b) => {
-      const da = new Date(a.date); const db = new Date(b.date);
-      return da - db || a.time.localeCompare(b.time);
-  });
-
-  sortedEvents.forEach(e => {
+  document.getElementById("printTitle").textContent = "Reporte CEPRODEMIC - " + monthDisplay.textContent;
+  const sorted = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date) || a.time.localeCompare(b.time));
+  sorted.forEach(e => {
     const d = new Date(e.date);
-    tbody.innerHTML += `
-        <tr>
-            <td>${d.getDate()}/${d.getMonth()+1}</td>
-            <td>${e.time}</td>
-            <td>${e.title}</td>
-            <td>${e.responsible||""}</td>
-            <td>${e.completed ? "Completado" : "Pendiente"}</td>
-        </tr>`;
+    tbody.innerHTML += `<tr><td>${d.getDate()}/${d.getMonth()+1}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
   });
   window.print();
 }

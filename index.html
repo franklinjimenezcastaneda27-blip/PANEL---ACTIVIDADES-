@@ -2,628 +2,431 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corporativa</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --bg-dark: #0f172a;
-  --card-dark: #1e293b;
-  --soft-dark: #334155;
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-
-  --rojo: #ef4444;
-  --naranja: #f97316;
-  --azul: #3b82f6;
-  --verde: #22c55e;
-  --amarillo: #eab308;
-}
-
-*{
-  box-sizing:border-box;
-  -webkit-font-smoothing: antialiased;
-}
-
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background: var(--bg-dark);
-  color: var(--text-main);
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-
-/* HEADER */
-header{
-  background: var(--card-dark);
-  padding:20px;
-  border-bottom:1px solid var(--soft-dark);
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.header-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-h1{
-  margin:0;
-  font-size:1.5rem;
-  font-weight:700;
-  letter-spacing:-0.5px;
-}
-
-small{
-  color:var(--text-muted);
-}
-
-.controls-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-#currentMonthDisplay{
-  font-weight:700;
-  background:var(--soft-dark);
-  padding:8px 14px;
-  border-radius:12px;
-  text-transform:capitalize;
-}
-
-.btn-nav,.btn-tool{
-  background:var(--soft-dark);
-  border:none;
-  padding:8px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  color:var(--text-main);
-  transition:0.2s ease;
-}
-
-.btn-nav:hover,.btn-tool:hover{
-  background:var(--azul);
-}
-
-select{
-  background:var(--soft-dark);
-  color:var(--text-main);
-  border:none;
-  padding:10px;
-  border-radius:12px;
-  font-size:14px;
-}
-
-/* CALENDARIO */
-.calendar-wrapper{
-  flex:1;
-  padding:20px;
-  overflow-y:auto;
-}
-
-.weekdays{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  text-align:center;
-  font-size:0.75rem;
-  letter-spacing:1px;
-  color:var(--text-muted);
-  margin-bottom:10px;
-}
-
-#calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-  auto-rows:minmax(100px,auto);
-}
-
-.day{
-  background:var(--card-dark);
-  border-radius:16px;
-  padding:8px;
-  display:flex;
-  flex-direction:column;
-  transition:0.2s ease;
-  cursor:pointer;
-}
-
-.day:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-.day.empty{
-  background:transparent;
-  cursor:default;
-}
-
-.day-number{
-  font-size:12px;
-  font-weight:600;
-  color:var(--text-muted);
-  text-align:right;
-  margin-bottom:6px;
-}
-
-.today{
-  border:2px solid var(--azul);
-  box-shadow:0 0 0 3px rgba(59,130,246,0.2);
-}
-
-/* EVENTOS */
-.event{
-  font-size:11px;
-  padding:4px 6px;
-  border-radius:8px;
-  margin-bottom:4px;
-  color:white;
-  font-weight:500;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.event.completed{
-  opacity:0.6;
-  text-decoration:line-through;
-  background:#64748b !important;
-}
-
-/* MODALES */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.7);
-  justify-content:center;
-  align-items:center;
-  z-index:1000;
-}
-
-.modal-content{
-  background:var(--card-dark);
-  padding:24px;
-  border-radius:20px;
-  width:90%;
-  max-width:380px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.4);
-  animation:fadeIn .2s ease;
-}
-
-@keyframes fadeIn{
-  from{transform:scale(.9);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-input,select{
-  width:100%;
-  padding:10px;
-  border-radius:12px;
-  border:none;
-  background:var(--soft-dark);
-  color:var(--text-main);
-  margin-bottom:10px;
-}
-
-.btn-save,.btn-action{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  font-weight:600;
-  margin-top:8px;
-  cursor:pointer;
-  color:white;
-}
-
-.btn-save{background:var(--azul);}
-.btn-complete{background:var(--verde);}
-.btn-delete{background:var(--rojo);}
-
-@media(max-width:768px){
-  #calendar{gap:6px;}
-  .day{min-height:80px;}
-  .event{font-size:9px;}
-}
-</style>
-</head>
-
-<body>
-
-<div class="overlay">
-  <header>
-    <div class="header-top">
-      <div>
-        <h1>Agenda Ejecutiva</h1>
-        <small>Panel Operativo</small>
-      </div>
-      <div>
-        <button class="btn-tool" onclick="showStats()">📊</button>
-        <button class="btn-tool" onclick="printReport()">🖨️</button>
-      </div>
-    </div>
-
-    <select id="filterCategory" onchange="applyFilter()">
-      <option value="all">📂 Ver Todo</option>
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visitas</option>
-      <option value="desembolso">🟢 Desembolsos</option>
-      <option value="reunion">🟡 Reuniones</option>
-    </select>
-
-    <div class="controls-row">
-      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay"></div>
-      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
-    </div>
-  </header>
-
-  <div class="calendar-wrapper">
-    <div class="weekdays">
-      <div>DOM</div><div>LUN</div><div>MAR</div>
-      <div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
-    </div>
-    <div id="calendar"></div>
-  </div>
-</div>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Móvil & Web</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Icono para la pestaña -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Agenda Corporativa Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
 <style>
-:root{
-  --rojo: #fa5252;
-  --naranja: #fd7e14;
-  --azul: #228be6;
-  --verde: #40c057;
-  --amarillo: #fab005;
-  --gris-claro: #f1f3f5;
-  --borde: #dee2e6;
-  --texto: #343a40;
-  --blanco-transparente: rgba(255, 255, 255, 0.95);
+:root {
+  /* Paleta de Colores Moderna */
+  --primary: #4f46e5; /* Indigo vibrante */
+  --bg-body: #f3f4f6;
+  --text-main: #1f2937;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
+  
+  /* Colores de Eventos (Pastel + Intenso) */
+  --tag-red-bg: #fee2e2; --tag-red-text: #991b1b;
+  --tag-orange-bg: #ffedd5; --tag-orange-text: #9a3412;
+  --tag-blue-bg: #dbeafe; --tag-blue-text: #1e40af;
+  --tag-green-bg: #dcfce7; --tag-green-text: #166534;
+  --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
+
+  /* Efecto Glass */
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  color: var(--texto);
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+  color: var(--text-main);
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  overflow: hidden;
 }
 
-.overlay {
-  background-color: rgba(240, 242, 245, 0.85);
-  height: 100%;
+/* --- CONTENEDOR PRINCIPAL --- */
+.app-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-lg);
 }
 
 /* --- HEADER --- */
 header {
-  background: var(--blanco-transparente);
-  padding: 10px;
-  border-bottom: 1px solid var(--borde);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+  z-index: 10;
 }
 
-.header-top {
+.header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
 }
 
-h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
-small { color: #666; font-size: 0.8rem; }
+.brand h1 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.025em; color: var(--primary); }
+.brand small { font-size: 0.85rem; color: var(--text-light); font-weight: 500; }
 
-.controls-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 5px;
-}
+.actions { display: flex; gap: 8px; }
 
-#currentMonthDisplay {
-  font-size: 1rem;
-  font-weight: 700;
-  min-width: 100px;
-  text-align: center;
-  text-transform: capitalize;
+.btn-icon {
   background: white;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-}
-
-.btn-nav, .btn-tool {
-  background: white;
-  border: 1px solid var(--borde);
-  padding: 8px 10px;
-  border-radius: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1.1rem;
+  color: var(--text-light);
+}
+.btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+.controls-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #f9fafb;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
-select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
+select.filter-select {
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+  padding: 5px 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
   background: white;
-  font-size: 14px;
-  width: 100%;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  padding: 2px;
+}
+
+.month-nav button {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-light);
+}
+.month-nav button:hover { color: var(--primary); }
+#currentMonthDisplay {
+  min-width: 120px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: capitalize;
 }
 
 /* --- CALENDARIO --- */
 .calendar-wrapper {
   flex: 1;
-  padding: 10px;
   overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #495057;
-  font-size: 0.8rem;
+  text-align: right;
+  padding: 0 10px 10px;
+  color: var(--text-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 #calendar {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* SIEMPRE 7 COLUMNAS */
-  gap: 4px;
-  auto-rows: minmax(80px, auto); /* Altura mínima */
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  padding-bottom: 20px;
 }
 
 .day {
-  background: var(--blanco-transparente);
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  padding: 4px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-height: 100px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
+  transition: transform 0.1s, box-shadow 0.1s;
   cursor: pointer;
-  overflow: hidden; /* Evita que se salga el texto */
+  position: relative;
+}
+
+.day:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .day.empty { background: transparent; border: none; cursor: default; }
 
-.day-number {
-  font-weight: 700;
-  font-size: 12px;
+.day-header {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 4px;
-  color: #868e96;
-  text-align: right;
 }
 
-.today {
-  background-color: #e7f5ff;
-  border: 1px solid var(--azul);
+.day-number {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
 }
 
-/* --- EVENTOS --- */
+.day.today { border: 2px solid var(--primary); }
+.day.today .day-number { background: var(--primary); color: white; }
+
+/* EVENTOS */
 .event {
-  font-size: 10px; /* Letra pequeña para eventos */
-  padding: 2px 4px;
-  border-radius: 3px;
-  margin-bottom: 2px;
-  color: white;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 3px;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Pone ... si es muy largo */
+  text-overflow: ellipsis;
+  border-left: 3px solid transparent;
+  transition: opacity 0.2s;
 }
 
-.event.completed {
-  opacity: 0.6;
-  text-decoration: line-through;
-  background-color: #adb5bd !important;
-}
+.event:hover { opacity: 0.8; }
+.event.completed { text-decoration: line-through; opacity: 0.5; filter: grayscale(1); }
+
+/* Colores de Eventos */
+.evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
+.evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); border-left-color: var(--tag-orange-text); }
+.evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); border-left-color: var(--tag-blue-text); }
+.evt-desem { background: var(--tag-green-bg); color: var(--tag-green-text); border-left-color: var(--tag-green-text); }
+.evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); border-left-color: var(--tag-yellow-text); }
 
 /* --- MODALES --- */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-out;
 }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 25px;
+  border-radius: 16px;
   width: 90%;
-  max-width: 350px;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transform: scale(0.95);
+  animation: popIn 0.2s ease-out forwards;
 }
 
+@keyframes popIn { to { transform: scale(1); } }
+
+.modal-header h3 { margin: 0 0 15px 0; color: var(--text-main); font-size: 1.2rem; }
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #adb5bd;
+  position: absolute; top: 15px; right: 20px;
+  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);
 }
+
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; font-weight: 600; }
 
 input, select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: #f8f9fa;
+  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: #f9fafb; font-family: inherit; font-size: 0.9rem;
 }
+input:focus, select:focus { border-color: var(--primary); background: white; }
 
-.btn-save, .btn-action {
-  width: 100%;
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
-  color: white;
-  font-weight: 600;
-  margin-top: 5px;
+.btn-main {
+  width: 100%; padding: 12px; border-radius: 8px; border: none;
+  background: var(--primary); color: white; font-weight: 600; cursor: pointer; margin-top: 10px;
 }
-.btn-save { background: var(--azul); }
-.btn-complete { background: var(--verde); margin-bottom: 10px; }
-.btn-delete { background: var(--rojo); }
+.btn-danger { background: #ef4444; color: white; }
+.btn-success { background: #10b981; color: white; }
+.btn-row { display: flex; gap: 10px; margin-top: 15px; }
+.btn-row button { flex: 1; margin: 0; }
 
-/* Stats y Print ocultos por defecto */
+/* IMPRESION Y ESTADISTICAS */
 #printableArea { display: none; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
-.stat-box { background: #f1f3f5; padding: 10px; border-radius: 8px; }
-.stat-number { font-size: 20px; font-weight: bold; display: block; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.stat-card { background: #f3f4f6; padding: 15px; border-radius: 10px; text-align: center; }
+.stat-val { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+.stat-lbl { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; }
 
-/* --- OPTIMIZACIÓN MÓVIL (CRÍTICO) --- */
-@media(max-width: 768px){
-  /* Forzamos que se vean 7 columnas pero más apretadas */
-  #calendar { gap: 2px; }
+/* RESPONSIVE */
+@media(max-width: 768px) {
+  header { padding: 10px; }
+  .header-row { margin-bottom: 8px; }
+  .controls-bar { flex-direction: column; align-items: stretch; gap: 8px; }
   
-  .day { 
-    min-height: 60px; /* Cuadros más bajitos */
-    padding: 2px; 
+  .weekdays { display: none; } /* Ocultar días texto en móvil para ganar espacio */
+  
+  #calendar { gap: 4px; }
+  .day { min-height: 70px; padding: 3px; }
+  .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; align-self: flex-end; }
+  
+  .event {
+    font-size: 0.65rem; padding: 2px 4px; margin-bottom: 2px; line-height: 1.1;
+    border-left-width: 2px;
   }
-  
-  .day-number { font-size: 10px; margin-bottom: 2px; }
-  
-  /* El texto del evento muy pequeño para que quepa */
-  .event { 
-    font-size: 8px; 
-    padding: 1px 2px; 
-    line-height: 1.2;
-  }
-  
-  .weekdays { font-size: 10px; } /* Texto LUN, MAR pequeño */
-  
-  h1 { font-size: 1rem; }
-  .controls-row { gap: 2px; }
-  .btn-nav, .btn-tool { padding: 6px 8px; }
 }
 
 @media print {
-  body * { visibility: hidden; }
-  #printableArea, #printableArea * { visibility: visible; }
-  #printableArea { display: block; position: absolute; top: 0; left: 0; width: 100%; }
-  table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
-  th, td { border: 1px solid #ddd; padding: 5px; }
+  body { background: white; height: auto; overflow: visible; }
+  .app-container, .modal { display: none; }
+  #printableArea { display: block; padding: 20px; }
+  table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background: #f3f4f6; }
 }
 </style>
 </head>
 <body>
 
-<div class="overlay">
+<div class="app-container">
   <header>
-    <div class="header-top">
-      <div>
+    <div class="header-row">
+      <div class="brand">
         <h1>Agenda Corporativa</h1>
-        <small>Gestión Operativa</small>
+        <small>Panel de Gestión</small>
       </div>
-      <div>
-        <button class="btn-tool" onclick="showStats()">📊</button>
-        <button class="btn-tool" onclick="printReport()">🖨️</button>
+      <div class="actions">
+        <button class="btn-icon" onclick="showStats()" title="Estadísticas">📊</button>
+        <button class="btn-icon" onclick="printReport()" title="Imprimir">🖨️</button>
       </div>
     </div>
     
-    <!-- Filtro -->
-    <select id="filterCategory" onchange="applyFilter()">
-      <option value="all">📂 Ver Todo</option>
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visitas</option>
-      <option value="desembolso">🟢 Desembolsos</option>
-      <option value="reunion">🟡 Reuniones</option>
-    </select>
-
-    <!-- Controles Mes -->
-    <div class="controls-row">
-      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-      <div id="currentMonthDisplay">...</div>
-      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+    <div class="controls-bar">
+      <div class="month-nav">
+        <button onclick="changeMonth(-1)">&#8249;</button>
+        <div id="currentMonthDisplay">Cargando...</div>
+        <button onclick="changeMonth(1)">&#8250;</button>
+      </div>
+      <select id="filterCategory" class="filter-select" onchange="applyFilter()">
+        <option value="all">📂 Todas las actividades</option>
+        <option value="cobranza_comunal">🔴 Banco Comunal</option>
+        <option value="cobranza_individual">🟠 Crédito Individual</option>
+        <option value="visita">🔵 Visitas de Campo</option>
+        <option value="desembolso">🟢 Desembolsos</option>
+        <option value="reunion">🟡 Reuniones</option>
+      </select>
     </div>
   </header>
 
   <div class="calendar-wrapper">
-    <!-- Nombres cortos para celular -->
+    <!-- Encabezado Días -->
     <div class="weekdays">
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
+    <!-- Grid Calendario -->
     <div id="calendar"></div>
   </div>
 </div>
 
-<!-- MODALES (Igual que antes pero ajustados) -->
+<!-- MODAL NUEVO EVENTO -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
-    <h3>Nueva Actividad</h3>
-    <input type="text" id="eventTitle" placeholder="Descripción">
-    <input type="text" id="eventResponsible" placeholder="Responsable">
-    <input type="time" id="eventTime">
-    <select id="eventType" style="margin-bottom:0">
-      <option value="cobranza_comunal">🔴 Banco Comunal</option>
-      <option value="cobranza_individual">🟠 Crédito Individual</option>
-      <option value="visita">🔵 Visita</option>
-      <option value="desembolso">🟢 Desembolso</option>
-      <option value="reunion">🟡 Reunión</option>
-    </select>
-    <button class="btn-save" onclick="saveEvent()">Guardar</button>
+    <div class="modal-header"><h3>Nueva Actividad</h3></div>
+    
+    <div class="form-group">
+      <label>Título / Cliente</label>
+      <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo A">
+    </div>
+    
+    <div class="form-group">
+      <label>Responsable</label>
+      <input type="text" id="eventResponsible" placeholder="Ej: Juan Pérez">
+    </div>
+    
+    <div class="form-group">
+      <label>Hora</label>
+      <input type="time" id="eventTime">
+    </div>
+    
+    <div class="form-group">
+      <label>Tipo de Actividad</label>
+      <select id="eventType">
+        <option value="cobranza_comunal">🔴 Banco Comunal</option>
+        <option value="cobranza_individual">🟠 Crédito Individual</option>
+        <option value="visita">🔵 Visita</option>
+        <option value="desembolso">🟢 Desembolso</option>
+        <option value="reunion">🟡 Reunión</option>
+      </select>
+    </div>
+    
+    <button class="btn-main" onclick="saveEvent()">Guardar Evento</button>
   </div>
 </div>
 
+<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <h3 id="actionTitle" style="color:var(--azul);">Detalle</h3>
-    <p id="actionDetails" style="font-size:13px; color:#555;"></p>
-    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Cambiar Estado</button>
-    <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
+    <div class="modal-header"><h3 id="actionTitle">Detalles</h3></div>
+    <div id="actionDetails" style="margin-bottom: 20px; color: #4b5563; font-size: 0.95rem; line-height: 1.5;"></div>
+    
+    <div class="btn-row">
+      <button class="btn-main btn-success" onclick="toggleComplete()">✅ Completar</button>
+      <button class="btn-main btn-danger" onclick="deleteEvent()">🗑️ Eliminar</button>
+    </div>
   </div>
 </div>
 
+<!-- MODAL ESTADISTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
-    <h3>Métricas</h3>
+    <div class="modal-header"><h3>Resumen del Mes</h3></div>
     <div class="stats-grid" id="statsContainer"></div>
   </div>
 </div>
 
-<!-- IMPRESIÓN -->
+<!-- AREA IMPRESION -->
 <div id="printableArea">
-  <h2 id="printTitle">Reporte</h2>
+  <h2 id="printTitle" style="text-align:center; margin-bottom:20px;">Reporte de Actividades</h2>
   <table id="printTable">
-    <thead><tr><th>Fec</th><th>Hr</th><th>Actividad</th><th>Resp</th><th>Est</th></tr></thead>
+    <thead>
+      <tr>
+        <th style="width:50px">Día</th>
+        <th style="width:60px">Hora</th>
+        <th>Actividad</th>
+        <th>Responsable</th>
+        <th style="width:60px">Estado</th>
+      </tr>
+    </thead>
     <tbody></tbody>
   </table>
 </div>
@@ -634,6 +437,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebas
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+// TU CONFIGURACIÓN DE FIREBASE (INTACTA)
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
@@ -655,6 +459,7 @@ let currentEventId = null;
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 
+// Carga en tiempo real
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
@@ -666,12 +471,14 @@ function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   
-  monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
+  // Capitalizar mes
+  const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
+  monthDisplay.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Dias vacíos (Padding) - IMPORTANTE: Se deben mostrar para alinear el día 1
+  // Padding de días vacíos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -683,47 +490,62 @@ function renderCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
-    const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
-
-    dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
+    const today = new Date();
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+      dayDiv.classList.add("today");
+    }
+
+    dayDiv.innerHTML = `
+      <div class="day-header">
+        <span class="day-number">${day}</span>
+      </div>
+    `;
+    
+    // Filtrar eventos del día
     const currentDayStr = new Date(year, month, day).toDateString();
     const dayEvents = eventsArray.filter(e => {
-      const isDate = new Date(e.date).toDateString() === currentDayStr;
+      const eDate = new Date(e.date);
+      // Ajuste de zona horaria simple para asegurar coincidencia de fecha
+      const isDate = eDate.toDateString() === currentDayStr;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
     });
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
-      evtDiv.className = "event";
+      evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
-      evtDiv.style.backgroundColor = evt.completed ? "#adb5bd" : getColor(evt.type);
+      
+      // Contenido del evento
       evtDiv.innerHTML = `${evt.time} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
 
+    // Click en celda vacía para crear
     dayDiv.onclick = (e) => {
-      if(e.target === dayDiv || e.target.className === 'day-number') openModal(year, month, day);
+      if(e.target === dayDiv || e.target.classList.contains('day-header') || e.target.classList.contains('day-number')) {
+        openModal(year, month, day);
+      }
     };
 
     calendarGrid.appendChild(dayDiv);
   }
 }
 
-function getColor(type){
+function getClassByType(type) {
   switch(type){
-    case "cobranza_comunal": return "var(--rojo)";
-    case "cobranza_individual": return "var(--naranja)";
-    case "visita": return "var(--azul)";
-    case "desembolso": return "var(--verde)";
-    case "reunion": return "var(--amarillo)";
-    default: return "#868e96";
+    case "cobranza_comunal": return "evt-banco";
+    case "cobranza_individual": return "evt-credito";
+    case "visita": return "evt-visita";
+    case "desembolso": return "evt-desem";
+    case "reunion": return "evt-reunion";
+    default: return "";
   }
 }
 
+// Funciones globales para HTML
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
 
@@ -733,12 +555,21 @@ function openModal(year, month, day) {
   document.getElementById("eventResponsible").value = "";
   document.getElementById("eventTime").value = "09:00";
   document.getElementById("modal").style.display = "flex";
+  document.getElementById("eventTitle").focus();
 }
 
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
-  document.getElementById("actionDetails").innerHTML = `<b>Resp:</b> ${evt.responsible || "-"}<br><b>Hora:</b> ${evt.time}`;
+  const statusHtml = evt.completed 
+    ? '<span style="color:green; font-weight:bold">Completado</span>' 
+    : '<span style="color:orange; font-weight:bold">Pendiente</span>';
+    
+  document.getElementById("actionDetails").innerHTML = `
+    <strong>Responsable:</strong> ${evt.responsible || "No asignado"}<br>
+    <strong>Hora:</strong> ${evt.time}<br>
+    <strong>Estado:</strong> ${statusHtml}
+  `;
   document.getElementById("modalActions").style.display = "flex";
 }
 
@@ -750,12 +581,26 @@ window.saveEvent = async function() {
   const responsible = document.getElementById("eventResponsible").value;
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
-  if (!title) return;
-  const btn = document.querySelector(".btn-save"); btn.textContent="..."; btn.disabled=true;
+  
+  if (!title) return alert("Por favor escribe un título");
+  
+  const btn = document.querySelector("#modal .btn-main");
+  const originalText = btn.textContent;
+  btn.textContent = "Guardando..."; btn.disabled = true;
+
   try {
-    await addDoc(eventsRef, { title, responsible, time, type, date: selectedDate.toISOString(), completed: false });
+    await addDoc(eventsRef, { 
+      title, responsible, time, type, 
+      date: selectedDate.toISOString(), 
+      completed: false 
+    });
     closeModal('modal');
-  } catch(e){} finally { btn.textContent="Guardar"; btn.disabled=false; }
+  } catch(e){
+    console.error(e);
+    alert("Error al guardar");
+  } finally { 
+    btn.textContent = originalText; btn.disabled = false; 
+  }
 }
 
 window.toggleComplete = async function() {
@@ -766,16 +611,44 @@ window.toggleComplete = async function() {
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); }
+  if(confirm("¿Estás seguro de eliminar esta actividad?")) { 
+    await deleteDoc(doc(db, "eventos", currentEventId)); 
+    closeModal('modalActions'); 
+  }
 }
 
 window.showStats = () => {
-  const total = eventsArray.length;
-  const completed = eventsArray.filter(e => e.completed).length;
+  // Filtramos eventos solo del mes actual visible
+  const currentMonthStr = currentDate.getMonth() + "-" + currentDate.getFullYear();
+  
+  const monthEvents = eventsArray.filter(e => {
+    const d = new Date(e.date);
+    return (d.getMonth() + "-" + d.getFullYear()) === currentMonthStr;
+  });
+
+  const total = monthEvents.length;
+  const completed = monthEvents.filter(e => e.completed).length;
+  const pending = total - completed;
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
   const container = document.getElementById("statsContainer");
   container.innerHTML = `
-    <div class="stat-box"><span class="stat-number">${total}</span><small>Total</small></div>
-    <div class="stat-box"><span class="stat-number">${completed}</span><small>Listas</small></div>
+    <div class="stat-card">
+      <span class="stat-val">${total}</span>
+      <span class="stat-lbl">Actividades</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val" style="color:#10b981">${percent}%</span>
+      <span class="stat-lbl">Cumplimiento</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val" style="color:#f59e0b">${pending}</span>
+      <span class="stat-lbl">Pendientes</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-val" style="color:#3b82f6">${completed}</span>
+      <span class="stat-lbl">Realizadas</span>
+    </div>
   `;
   document.getElementById("modalStats").style.display = "flex";
 }
@@ -783,13 +656,37 @@ window.showStats = () => {
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  document.getElementById("printTitle").textContent = "Reporte " + monthDisplay.textContent;
-  eventsArray.forEach(e => {
-    tbody.innerHTML += `<tr><td>${new Date(e.date).getDate()}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
+  
+  // Ordenar por fecha y hora para el reporte
+  const sortedEvents = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date));
+  
+  // Filtrar solo mes actual
+  const currentMonthEvents = sortedEvents.filter(e => {
+     const d = new Date(e.date);
+     return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+  });
+
+  document.getElementById("printTitle").textContent = "Reporte de Actividades - " + monthDisplay.textContent;
+  
+  if(currentMonthEvents.length === 0){
+    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos para este mes</td></tr>";
+  }
+
+  currentMonthEvents.forEach(e => {
+    const d = new Date(e.date);
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.getDate()}</td>
+        <td>${e.time}</td>
+        <td>${e.title}</td>
+        <td>${e.responsible||""}</td>
+        <td>${e.completed ? "OK" : "Pendiente"}</td>
+      </tr>`;
   });
   window.print();
 }
 
+// Inicializar
 renderCalendar();
 </script>
 </body>

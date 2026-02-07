@@ -394,12 +394,12 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
       </div>
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
         <option value="all">📂 VER TODO</option>
-        <option value="cobranza_comunal">🔴 COBRANZA DE BC Y GS</option>
-        <option value="cobranza_individual">🟠 COBRANZA CREDITO INDIVIDUAL</option>
-        <option value="morosos">🟣 COBRANZA DE MOROSOS</option>
-        <option value="visita">🔵 VISITAS A CLIENTES</option>
-        <option value="desembolso">🟢 DESEMBOLSOS</option>
-        <option value="reunion">🟡 REUNIONES</option>
+        <option value="cobranza_comunal">👥 COBRANZA DE BC Y GS</option>
+        <option value="cobranza_individual">👤 COBRANZA CREDITO INDIVIDUAL</option>
+        <option value="morosos">🛑 COBRANZA DE MOROSOS</option>
+        <option value="visita">🏠 VISITAS A CLIENTES</option>
+        <option value="desembolso">💵 DESEMBOLSOS</option>
+        <option value="reunion">📅 REUNIONES</option>
       </select>
     </div>
   </header>
@@ -486,12 +486,12 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     <div class="form-group">
       <label>Tipo de Actividad</label>
       <select id="eventType">
-        <option value="cobranza_comunal">🔴 COBRANZA DE BC Y GS</option>
-        <option value="cobranza_individual">🟠 COBRANZA CREDITO INDIVIDUAL</option>
-        <option value="morosos">🟣 COBRANZA DE MOROSOS</option>
-        <option value="visita">🔵 VISITAS A CLIENTES</option>
-        <option value="desembolso">🟢 DESEMBOLSOS</option>
-        <option value="reunion">🟡 REUNIONES</option>
+        <option value="cobranza_comunal">👥 COBRANZA DE BC Y GS</option>
+        <option value="cobranza_individual">👤 COBRANZA CREDITO INDIVIDUAL</option>
+        <option value="morosos">🛑 COBRANZA DE MOROSOS</option>
+        <option value="visita">🏠 VISITAS A CLIENTES</option>
+        <option value="desembolso">💵 DESEMBOLSOS</option>
+        <option value="reunion">📅 REUNIONES</option>
       </select>
     </div>
 
@@ -591,6 +591,16 @@ let selectedDateForSidebar = new Date(); // Para saber qué mostrar en el sideba
 let eventsArray = []; 
 let currentEventId = null;
 
+// DEFINICIÓN DE ICONOS
+const typeIcons = {
+  "cobranza_comunal": "👥",
+  "cobranza_individual": "👤",
+  "morosos": "🛑",
+  "visita": "🏠",
+  "desembolso": "💵",
+  "reunion": "📅"
+};
+
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 const sidebarList = document.getElementById("sidebarList");
@@ -672,7 +682,10 @@ function renderCalendar() {
       const evtDiv = document.createElement("div");
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
-      evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
+      
+      const icon = typeIcons[evt.type] || "";
+      evtDiv.innerHTML = `<span style="margin-right:4px;">${icon}</span> ${formatTime12h(evt.time)} ${evt.title}`;
+      
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
@@ -717,7 +730,7 @@ function renderSidebar(dateObj) {
   eventsForDay.forEach(evt => {
     const li = document.createElement("li");
     li.className = "sidebar-item";
-    // Obtener color manual si no funciona la variable css directa en JS
+    
     let borderColor = "#ccc";
     if(evt.type === "cobranza_comunal") borderColor = "#991b1b";
     else if(evt.type === "cobranza_individual") borderColor = "#9a3412";
@@ -728,9 +741,10 @@ function renderSidebar(dateObj) {
     li.style.borderLeftColor = borderColor;
 
     const statusIcon = evt.completed ? "✅" : "⏳";
+    const typeIcon = typeIcons[evt.type] || "";
     
     li.innerHTML = `
-      <h4>${statusIcon} ${evt.title}</h4>
+      <h4>${statusIcon} <span style="margin:0 5px;">${typeIcon}</span> ${evt.title}</h4>
       <p>⏰ ${formatTime12h(evt.time)} | 👤 ${evt.responsible || '?'}</p>
     `;
     li.onclick = () => openActionModal(evt);
@@ -750,7 +764,7 @@ function getClassByType(type) {
   }
 }
 
-function getColorTag(type) { // Función auxiliar para el color del borde del sidebar
+function getColorTag(type) { 
   switch(type){
     case "cobranza_comunal": return "red";
     case "cobranza_individual": return "orange";
@@ -811,7 +825,7 @@ function openActionModal(evt) {
   document.getElementById("actionDetails").innerHTML = `
     <strong>Fecha:</strong> ${dateStr}<br>
     <strong>Responsable:</strong> ${evt.responsible || "---"}<br>
-    <strong>Tipo:</strong> ${typeLabels[evt.type] || evt.type}<br>
+    <strong>Tipo:</strong> ${typeIcons[evt.type]||''} ${typeLabels[evt.type] || evt.type}<br>
     <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
     <strong>Estado:</strong> ${statusHtml}
   `;
@@ -841,7 +855,7 @@ window.handleSearch = () => {
         const d = new Date(e.date);
         const div = document.createElement("div");
         div.className = "search-result-item";
-        div.innerHTML = `<strong>${d.toLocaleDateString()}</strong> - ${e.title} <br><small>${e.responsible || ''}</small>`;
+        div.innerHTML = `<strong>${d.toLocaleDateString()}</strong> - ${typeIcons[e.type]||''} ${e.title} <br><small>${e.responsible || ''}</small>`;
         div.onclick = () => {
           closeModal('modalSearch');
           // Ir al mes del evento y seleccionarlo
@@ -867,7 +881,6 @@ window.saveEvent = async function() {
   const type = document.getElementById("eventType").value;
   const dateInputVal = document.getElementById("eventDateInput").value; // YYYY-MM-DD
   
-  // NUEVO: Obtener el número de meses a repetir
   const repeatMonthsSelect = document.getElementById("repeatMonths");
   const numMonthsToRepeat = (type === "cobranza_comunal") ? parseInt(repeatMonthsSelect.value, 10) : 1;
 
@@ -888,18 +901,14 @@ window.saveEvent = async function() {
   btn.textContent = "Guardando..."; btn.disabled = true;
 
   try {
-    const baseDate = new Date(dateInputVal + "T00:00:00"); // Fecha inicial seleccionada por el usuario
-    const dayOfMonth = baseDate.getDate(); // Día del mes para la repetición
+    const baseDate = new Date(dateInputVal + "T00:00:00"); 
+    const dayOfMonth = baseDate.getDate(); 
 
     const eventsToSave = [];
 
     for (let i = 0; i < numMonthsToRepeat; i++) {
-      let scheduledDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1); // Empezar por el día 1 del mes objetivo
-      
-      // Calcular el último día del mes objetivo
+      let scheduledDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
       const lastDayOfTargetMonth = new Date(scheduledDate.getFullYear(), scheduledDate.getMonth() + 1, 0).getDate();
-      
-      // Establecer el día, asegurándose de no exceder el último día de ese mes (ej: 31 de Enero -> 28/29 de Febrero)
       scheduledDate.setDate(Math.min(dayOfMonth, lastDayOfTargetMonth));
 
       eventsToSave.push({ 
@@ -909,16 +918,15 @@ window.saveEvent = async function() {
       });
     }
 
-    // Guardar todos los eventos programados en Firebase
     await Promise.all(eventsToSave.map(eventData => addDoc(eventsRef, eventData)));
     
     closeModal('modal');
-    selectedDateForSidebar = baseDate; // Actualizar el sidebar a la fecha inicial
+    selectedDateForSidebar = baseDate; 
     if(baseDate.getMonth() !== currentDate.getMonth() || baseDate.getFullYear() !== currentDate.getFullYear()) {
-      currentDate = new Date(baseDate); // Si la fecha guardada está en otro mes, cambiar la vista del calendario
+      currentDate = new Date(baseDate); 
     }
-    renderCalendar(); // Re-renderizar el calendario para mostrar los nuevos eventos
-    renderSidebar(selectedDateForSidebar); // Actualizar el sidebar
+    renderCalendar();
+    renderSidebar(selectedDateForSidebar);
     
   } catch(e){
     console.error(e);
@@ -1002,7 +1010,6 @@ window.printReport = () => {
   setTimeout(() => window.print(), 300);
 }
 
-// Inicializar la visibilidad del campo de repetición
 document.addEventListener('DOMContentLoaded', () => {
   const eventTypeSelect = document.getElementById("eventType");
   const repeatMonthsGroup = document.getElementById("repeatMonthsGroup");
@@ -1012,12 +1019,11 @@ document.addEventListener('DOMContentLoaded', () => {
       repeatMonthsGroup.style.display = 'block';
     } else {
       repeatMonthsGroup.style.display = 'none';
-      document.getElementById("repeatMonths").value = "1"; // Resetear al valor predeterminado
+      document.getElementById("repeatMonths").value = "1"; 
     }
   };
 });
 
-// Inicializar calendario y sidebar
 renderCalendar();
 renderSidebar(new Date());
 

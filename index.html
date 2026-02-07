@@ -3,146 +3,258 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendario Corporativo</title>
+<title>Panel de Actividades - Financiera</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --rojo:#ff6b6b;
-  --azul:#4dabf7;
-  --verde:#51cf66;
-  --amarillo:#ffd43b;
-  --gris:#f1f3f5;
-  --oscuro:#343a40;
+  --rojo: #e03131;
+  --naranja: #fd7e14;
+  --azul: #1971c2;
+  --verde: #2f9e44;
+  --amarillo: #fcc419;
+  --gris-claro: #f8f9fa;
+  --borde: #dee2e6;
+  --texto: #343a40;
 }
 
-body{
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:var(--gris);
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f1f3f5;
+  color: var(--texto);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-header{
-  background:white;
-  padding:15px 25px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.05);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+/* --- HEADER --- */
+header {
+  background: white;
+  padding: 15px 30px;
+  border-bottom: 1px solid var(--borde);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-h1{
-  margin:0;
-  font-size:20px;
-  color:var(--oscuro);
+h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-#calendar{
-  display:grid;
+#currentMonthDisplay {
+  font-size: 1.1rem;
+  font-weight: 600;
+  min-width: 150px;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.btn-nav {
+  background: white;
+  border: 1px solid var(--borde);
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-nav:hover { background: var(--gris-claro); }
+
+/* --- CALENDARIO --- */
+.calendar-wrapper {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.weekdays {
+  display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap:12px;
-  padding:20px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #868e96;
 }
 
-.day{
-  background:white;
-  border-radius:12px;
-  min-height:120px;
-  padding:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.06);
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  auto-rows: minmax(120px, auto);
 }
 
-.day-number{
-  font-weight:bold;
-  font-size:14px;
-  margin-bottom:5px;
+.day {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  transition: 0.2s;
+  cursor: pointer;
 }
 
-.event{
-  font-size:11px;
-  padding:4px 6px;
-  border-radius:6px;
-  margin-top:4px;
-  color:white;
+.day:hover { border-color: var(--azul); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.day.empty { background: transparent; border: none; cursor: default; }
+
+.day-number {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #495057;
 }
 
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
+.today {
+  background-color: #e7f5ff;
+  border-color: var(--azul);
 }
 
-.modal-content{
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  width:320px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+/* --- EVENTOS (Etiquetas) --- */
+.event {
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.event span { pointer-events: none; }
+
+/* --- MODAL --- */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-input,select{
-  width:100%;
-  padding:8px;
-  margin:6px 0;
-  border-radius:6px;
-  border:1px solid #ddd;
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-button{
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
-  background:#228be6;
-  color:white;
-  cursor:pointer;
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #adb5bd;
+  cursor: pointer;
+}
+.close-btn:hover { color: var(--rojo); }
+
+.form-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #868e96; }
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  font-family: inherit;
 }
 
-button:hover{
-  opacity:0.9;
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  background: var(--azul);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
 }
+.btn-save:hover { background: #1864ab; }
 
-@media(max-width:768px){
-  #calendar{
-    grid-template-columns: repeat(2, 1fr);
-  }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Responsive */
+@media(max-width: 768px){
+  .weekdays, #calendar { grid-template-columns: repeat(1, 1fr); }
+  .day { min-height: auto; }
+  .empty { display: none; } /* Ocultar días vacíos en móvil */
 }
 </style>
 </head>
 <body>
 
 <header>
-<h1>Calendario Corporativo</h1>
-<div>
-<button onclick="prevMonth()">◀</button>
-<button onclick="nextMonth()">▶</button>
-</div>
+  <h1>📅 Planificador Operativo</h1>
+  <div class="controls">
+    <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
+    <div id="currentMonthDisplay">Cargando...</div>
+    <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+  </div>
 </header>
 
-<div id="calendar"></div>
+<div class="calendar-wrapper">
+  <!-- Cabecera de días de la semana -->
+  <div class="weekdays">
+    <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+  </div>
+  <div id="calendar"></div>
+</div>
 
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h3>Nueva Actividad</h3>
-    <input type="text" id="title" placeholder="Descripción">
-    <select id="type">
-      <option value="Cobranza Banco Comunal">Cobranza Banco Comunal</option>
-      <option value="Visita a Clientes">Visita a Clientes</option>
-      <option value="Desembolsos">Desembolsos</option>
-      <option value="Reuniones">Reuniones</option>
-    </select>
-    <button onclick="saveEvent()">Guardar</button>
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <h3 style="margin-top:0;">Nueva Actividad</h3>
+    
+    <div class="form-group">
+      <label>Título / Detalle</label>
+      <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo La Esperanza">
+    </div>
+
+    <div class="form-group">
+      <label>Hora</label>
+      <input type="time" id="eventTime">
+    </div>
+
+    <div class="form-group">
+      <label>Tipo de Actividad</label>
+      <select id="eventType">
+        <option value="cobranza_comunal">Cobranza Banco Comunal (Rojo)</option>
+        <option value="cobranza_individual">Cobranza Crédito Individual (Naranja)</option>
+        <option value="visita">Visita a Clientes (Azul)</option>
+        <option value="desembolso">Desembolsos (Verde)</option>
+        <option value="reunion">Reuniones (Amarillo)</option>
+      </select>
+    </div>
+
+    <button class="btn-save" onclick="saveEvent()">Guardar Actividad</button>
   </div>
 </div>
 
+<!-- SCRIPTS -->
 <script type="module">
-
+// --- CONFIGURACIÓN DE FIREBASE ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query }
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -158,86 +270,164 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
 
+// --- VARIABLES GLOBALES ---
 let currentDate = new Date();
-const calendar = document.getElementById("calendar");
+let selectedDate = null;
+let eventsArray = []; // Almacén local de eventos para renderizar rápido
 
-function renderCalendar(){
-  calendar.innerHTML="";
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
+const calendarGrid = document.getElementById("calendar");
+const monthDisplay = document.getElementById("currentMonthDisplay");
+const modal = document.getElementById("modal");
 
-  for(let day=1; day<=daysInMonth; day++){
-    const dayDiv=document.createElement("div");
-    dayDiv.className="day";
-    dayDiv.innerHTML=`<div class="day-number">${day}</div>`;
-    dayDiv.onclick=()=>openModal(year,month,day);
-    calendar.appendChild(dayDiv);
-  }
-}
-
-renderCalendar();
-
-onSnapshot(query(eventsRef), (snapshot)=>{
-  renderCalendar();
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-    const date = new Date(data.date);
-    if(date.getMonth()===currentDate.getMonth() &&
-       date.getFullYear()===currentDate.getFullYear()){
-        const dayBox = calendar.children[date.getDate()-1];
-        const eventDiv=document.createElement("div");
-        eventDiv.className="event";
-        eventDiv.textContent=data.title;
-        eventDiv.style.background=getColor(data.type);
-        dayBox.appendChild(eventDiv);
-    }
+// --- INICIALIZACIÓN ---
+// Escuchar cambios en la base de datos en tiempo real
+onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
+  eventsArray = [];
+  snapshot.forEach(doc => {
+    eventsArray.push({ id: doc.id, ...doc.data() });
   });
+  renderCalendar(); // Redibujar cuando lleguen datos
 });
 
-function getColor(type){
-  switch(type){
-    case "Cobranza Banco Comunal": return "#ff6b6b";
-    case "Visita a Clientes": return "#4dabf7";
-    case "Desembolsos": return "#51cf66";
-    case "Reuniones": return "#ffd43b";
+// --- FUNCIONES DEL CALENDARIO ---
+function renderCalendar() {
+  calendarGrid.innerHTML = "";
+  
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  
+  // Actualizar texto del encabezado (Ej: Febrero 2026)
+  const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
+  monthDisplay.textContent = monthName;
+
+  const firstDayIndex = new Date(year, month, 1).getDay(); // Día de la semana del 1ro
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Días vacíos previos (Padding) para que el calendario cuadre con Lun/Mar...
+  for (let i = 0; i < firstDayIndex; i++) {
+    const emptyDiv = document.createElement("div");
+    emptyDiv.className = "day empty";
+    calendarGrid.appendChild(emptyDiv);
+  }
+
+  // Días del mes
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day";
+    
+    // Marcar el día de hoy
+    const today = new Date();
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()){
+      dayDiv.classList.add("today");
+    }
+
+    // HTML del número del día
+    dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
+    
+    // Buscar eventos para este día
+    const currentDayStr = new Date(year, month, day).toDateString();
+    
+    const dayEvents = eventsArray.filter(e => {
+      const eDate = new Date(e.date);
+      return eDate.toDateString() === currentDayStr;
+    });
+
+    // Renderizar eventos dentro del cuadro
+    dayEvents.forEach(evt => {
+      const evtDiv = document.createElement("div");
+      evtDiv.className = "event";
+      evtDiv.style.backgroundColor = getColor(evt.type);
+      evtDiv.innerHTML = `
+        <span>${evt.time || ''} ${evt.title}</span>
+      `;
+      evtDiv.title = evt.title; // Tooltip al pasar el mouse
+      dayDiv.appendChild(evtDiv);
+    });
+
+    // Evento Click en el día (Evita abrir modal si clickean un evento existente)
+    dayDiv.onclick = (e) => {
+      if(e.target === dayDiv || e.target.className === 'day-number') {
+        openModal(year, month, day);
+      }
+    };
+
+    calendarGrid.appendChild(dayDiv);
   }
 }
 
-let selectedDate=null;
-
-function openModal(year,month,day){
-  selectedDate=new Date(year,month,day);
-  document.getElementById("modal").style.display="flex";
+// --- UTILIDADES ---
+function getColor(type){
+  switch(type){
+    case "cobranza_comunal": return "var(--rojo)";
+    case "cobranza_individual": return "var(--naranja)";
+    case "visita": return "var(--azul)";
+    case "desembolso": return "var(--verde)";
+    case "reunion": return "var(--amarillo)";
+    default: return "#868e96";
+  }
 }
 
-window.saveEvent = async function(){
-  const title=document.getElementById("title").value;
-  const type=document.getElementById("type").value;
-  if(!title) return;
-
-  await addDoc(eventsRef,{
-    title,
-    type,
-    date:selectedDate.toISOString()
-  });
-
-  document.getElementById("modal").style.display="none";
-  document.getElementById("title").value="";
-}
-
-window.prevMonth=()=>{
-  currentDate.setMonth(currentDate.getMonth()-1);
+window.changeMonth = (step) => {
+  currentDate.setMonth(currentDate.getMonth() + step);
   renderCalendar();
 }
 
-window.nextMonth=()=>{
-  currentDate.setMonth(currentDate.getMonth()+1);
-  renderCalendar();
+// --- LÓGICA DEL MODAL ---
+function openModal(year, month, day) {
+  selectedDate = new Date(year, month, day);
+  document.getElementById("eventTitle").value = "";
+  document.getElementById("eventTime").value = "09:00"; // Hora default
+  modal.style.display = "flex";
+  document.getElementById("eventTitle").focus();
 }
+
+window.closeModal = () => {
+  modal.style.display = "none";
+}
+
+// Cerrar si clickean fuera del contenido blanco
+window.onclick = (event) => {
+  if (event.target == modal) {
+    closeModal();
+  }
+}
+
+// --- GUARDAR EN FIREBASE ---
+window.saveEvent = async function() {
+  const title = document.getElementById("eventTitle").value;
+  const time = document.getElementById("eventTime").value;
+  const type = document.getElementById("eventType").value;
+
+  if (!title) {
+    alert("Por favor escribe una descripción");
+    return;
+  }
+
+  const btn = document.querySelector(".btn-save");
+  btn.textContent = "Guardando...";
+  btn.disabled = true;
+
+  try {
+    await addDoc(eventsRef, {
+      title,
+      time,
+      type,
+      date: selectedDate.toISOString(),
+      createdAt: new Date().toISOString()
+    });
+    closeModal();
+  } catch (error) {
+    console.error("Error al guardar:", error);
+    alert("Error al guardar. Revisa tu conexión.");
+  } finally {
+    btn.textContent = "Guardar Actividad";
+    btn.disabled = false;
+  }
+}
+
+// Inicializar
+renderCalendar();
 
 </script>
-
 </body>
 </html>
-

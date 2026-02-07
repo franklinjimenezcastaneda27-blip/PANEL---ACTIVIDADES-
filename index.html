@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Corporativa CEPRODEMIC</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Icono pestaña -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
 <style>
@@ -29,54 +30,54 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url('https://i.imgur.com/fHtDYPl.jpeg');
+  
+  /* --- FONDO NUEVO (Imagen de oficina) --- */
+  background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+  background-color: #f0f2f5; /* Color de respaldo */
 }
 
 .overlay {
-  background-color: rgba(240, 242, 245, 0.85);
+  /* Capa blanca semi-transparente para leer bien las letras sobre la foto */
+  background-color: rgba(245, 247, 250, 0.85); 
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* --- NUEVO HEADER --- */
+/* --- HEADER --- */
 header {
   background: var(--blanco-transparente);
   padding: 15px 20px;
   border-bottom: 1px solid var(--borde);
   display: flex;
-  flex-direction: column; /* Elementos uno debajo del otro */
-  gap: 15px; /* Espacio entre el título y la barra de herramientas */
+  flex-direction: column; 
+  gap: 15px; 
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-/* Fila Superior: Títulos */
+/* Títulos Superiores */
 .header-top {
   text-align: left;
-  border-bottom: 1px solid #eee; /* Línea suave separadora */
+  border-bottom: 1px solid #eee;
   padding-bottom: 10px;
 }
 .header-top h1 { margin: 0; font-size: 1.4rem; font-weight: 800; color: #1c1e21; letter-spacing: -0.5px; }
-.header-top small { color: #555; font-size: 0.95rem; font-weight: 500; display: block; margin-top: 2px; }
+.header-top small { color: #444; font-size: 0.95rem; font-weight: 600; display: block; margin-top: 4px; }
 
-/* Fila Inferior: Barra de herramientas */
+/* Barra de Herramientas */
 .header-toolbar {
   display: flex;
-  justify-content: space-between; /* Mes a la izq, Herramientas a la der */
+  justify-content: space-between; 
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-/* Mes y navegación (Izquierda) */
-.month-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* Navegación Mes */
+.month-nav { display: flex; align-items: center; gap: 8px; }
 
 #currentMonthDisplay {
   font-size: 1.1rem;
@@ -86,12 +87,8 @@ header {
   min-width: 150px;
 }
 
-/* Botones y Filtros (Derecha) */
-.tools-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* Botones Derecha */
+.tools-right { display: flex; align-items: center; gap: 8px; }
 
 #filterCategory {
   padding: 8px 10px;
@@ -121,6 +118,7 @@ header {
 .loading-indicator {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     font-size: 1.2rem; font-weight: bold; color: var(--azul); display: none;
+    background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;
 }
 
 .weekdays {
@@ -141,12 +139,12 @@ header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  auto-rows: minmax(100px, auto); /* Celdas un poco más altas */
+  auto-rows: minmax(100px, auto); 
   padding-bottom: 20px;
 }
 
 .day {
-  background: var(--blanco-transparente);
+  background: rgba(255, 255, 255, 0.8); /* Un poco transparente para ver el fondo sutilmente */
   border: 1px solid #e9ecef;
   border-radius: 8px;
   padding: 6px;
@@ -155,7 +153,7 @@ header {
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
 }
-.day:hover { background: white; border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.day:hover { background: white; border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .day.empty { background: transparent; border: none; cursor: default; box-shadow: none; }
 .day-number { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: #495057; text-align: right; }
 .today { background-color: #e7f5ff; border: 2px solid var(--azul); }
@@ -224,7 +222,6 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
   .month-nav { justify-content: space-between; margin-bottom: 10px; }
   .tools-right { justify-content: space-between; }
   #filterCategory { flex-grow: 1; }
-  
   .day { min-height: 60px; padding: 2px; }
   .event { font-size: 9px; padding: 2px; }
 }
@@ -234,23 +231,20 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
 
 <div class="overlay">
   <header>
-    <!-- 1. Parte Superior: Título y Subtítulo -->
+    <!-- Título Principal -->
     <div class="header-top">
       <h1>Agenda Corporativa</h1>
       <small>Gestión Operativa - CEPRODEMIC</small>
     </div>
 
-    <!-- 2. Parte Inferior del Header: Controles -->
+    <!-- Controles -->
     <div class="header-toolbar">
-      
-      <!-- Lado Izquierdo: Mes y Año -->
       <div class="month-nav">
         <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
         <div id="currentMonthDisplay">Cargando...</div>
         <button class="btn-nav" onclick="changeMonth(1)">▶</button>
       </div>
 
-      <!-- Lado Derecho: Herramientas -->
       <div class="tools-right">
         <select id="filterCategory" onchange="applyFilter()">
           <option value="all">📂 Ver Todo</option>
@@ -264,11 +258,9 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
         <button class="btn-tool" onclick="showStats()" title="Métricas">📊 Stats</button>
         <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️ Imprimir</button>
       </div>
-
     </div>
   </header>
 
-  <!-- 3. Calendario (Parte inferior) -->
   <div class="calendar-wrapper">
     <div id="loading" class="loading-indicator">Cargando datos...</div>
     <div class="weekdays">
@@ -278,7 +270,7 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
   </div>
 </div>
 
-<!-- MODALES (Sin cambios en lógica, solo estructura interna) -->
+<!-- MODAL NUEVA TAREA -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
@@ -306,6 +298,7 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
   </div>
 </div>
 
+<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
@@ -316,21 +309,23 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
   </div>
 </div>
 
+<!-- MODAL ESTADÍSTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
     <h3>Métricas del Mes</h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
         <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
-            <span id="statTotal" style="font-size:24px; font-weight:bold; color:var(--azul)">0</span><br><small>Total</small>
+            <span id="statTotal" style="font-size:24px; font-weight:bold; color:var(--azul)">0</span><br><small>Total Actividades</small>
         </div>
         <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
-            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Listas</small>
+            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Finalizadas</small>
         </div>
     </div>
   </div>
 </div>
 
+<!-- IMPRESIÓN -->
 <div id="printableArea">
   <h2 id="printTitle">Reporte</h2>
   <table id="printTable">
@@ -446,7 +441,14 @@ function getColor(type){
   return colors[type] || "#868e96";
 }
 
-window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
+// --- AQUÍ ESTÁ LA CORRECCIÓN DE FEBRERO ---
+window.changeMonth = (step) => { 
+    // Truco: Ponemos el día en 1 para que al cambiar de mes no salte días que no existen (ej: 30 de feb)
+    currentDate.setDate(1); 
+    currentDate.setMonth(currentDate.getMonth() + step); 
+    renderCalendar(); 
+}
+
 window.applyFilter = () => renderCalendar();
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
 window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }

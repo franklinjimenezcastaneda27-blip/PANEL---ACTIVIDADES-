@@ -22,7 +22,7 @@
   --tag-blue-bg: #dbeafe; --tag-blue-text: #1e40af;
   --tag-green-bg: #dcfce7; --tag-green-text: #166534;
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
-  --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8; /* Nuevo para Morosos */
+  --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
   /* Efecto Glass */
   --glass-bg: rgba(255, 255, 255, 0.95);
@@ -44,7 +44,6 @@ body {
   overflow: hidden;
 }
 
-/* --- CONTENEDOR PRINCIPAL --- */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -103,12 +102,13 @@ header {
 select.filter-select {
   border: none;
   background: transparent;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-main);
   padding: 5px 10px;
   cursor: pointer;
   flex: 1;
+  text-transform: uppercase;
 }
 
 .month-nav {
@@ -177,11 +177,7 @@ select.filter-select {
   position: relative;
 }
 
-.day:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
-}
-
+.day:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
 .day.empty { background: transparent; border: none; cursor: default; }
 
 .day-header {
@@ -204,7 +200,7 @@ select.filter-select {
 
 /* EVENTOS */
 .event {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   padding: 4px 6px;
   border-radius: 4px;
   margin-bottom: 3px;
@@ -214,12 +210,13 @@ select.filter-select {
   text-overflow: ellipsis;
   border-left: 3px solid transparent;
   transition: opacity 0.2s;
+  text-transform: uppercase;
 }
 
 .event:hover { opacity: 0.8; }
 .event.completed { text-decoration: line-through; opacity: 0.5; filter: grayscale(1); }
 
-/* Colores de Eventos */
+/* Colores */
 .evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
 .evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); border-left-color: var(--tag-orange-text); }
 .evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); border-left-color: var(--tag-blue-text); }
@@ -292,13 +289,10 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   header { padding: 10px; }
   .header-row { margin-bottom: 8px; }
   .controls-bar { flex-direction: column; align-items: stretch; gap: 8px; }
-  
   .weekdays { display: none; } 
-  
   #calendar { gap: 4px; }
   .day { min-height: 70px; padding: 3px; }
   .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; align-self: flex-end; }
-  
   .event {
     font-size: 0.65rem; padding: 2px 4px; margin-bottom: 2px; line-height: 1.1;
     border-left-width: 2px;
@@ -310,7 +304,7 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   .app-container, .modal { display: none; }
   #printableArea { display: block; padding: 20px; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
-  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
   th { background: #f3f4f6; }
 }
 </style>
@@ -336,15 +330,15 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
         <div id="currentMonthDisplay">Cargando...</div>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
-      <!-- FILTRO ACTUALIZADO -->
+      <!-- FILTRO ACTUALIZADO (MAYUSCULAS) -->
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
-        <option value="all">📂 Ver Todo</option>
-        <option value="cobranza_comunal">🔴 Cobranza de banco comunal y grupos solidarios</option>
-        <option value="cobranza_individual">🟠 Cobranza crédito individual</option>
-        <option value="visita">🔵 Visita</option>
-        <option value="desembolso">🟢 Desembolso</option>
-        <option value="reunion">🟡 Reunión</option>
-        <option value="morosos">🟣 Cobranza de morosos</option>
+        <option value="all">📂 VER TODO</option>
+        <option value="cobranza_comunal">🔴 COBRANZA DE BC Y GS</option>
+        <option value="cobranza_individual">🟠 COBRANZA CREDITO INDIVIDUAL</option>
+        <option value="morosos">🟣 COBRANZA DE MOROSOS</option>
+        <option value="visita">🔵 VISITAS A CLIENTES</option>
+        <option value="desembolso">🟢 DESEMBOLSOS</option>
+        <option value="reunion">🟡 REUNIONES</option>
       </select>
     </div>
   </header>
@@ -365,14 +359,13 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
     
     <div class="form-group">
       <label>Título / Descripción</label>
-      <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo A">
+      <input type="text" id="eventTitle" placeholder="Ej: Grupo Los Pinos">
     </div>
     
-    <!-- RESPONSABLE AHORA ES SELECT -->
     <div class="form-group">
       <label>Responsable</label>
       <select id="eventResponsible">
-        <option value="">Seleccionar...</option>
+        <option value="">SELECCIONAR...</option>
         <option value="FRANKLIN">FRANKLIN</option>
         <option value="ELIZABETH">ELIZABETH</option>
         <option value="NOEMI">NOEMI</option>
@@ -388,16 +381,16 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
       <input type="time" id="eventTime">
     </div>
     
-    <!-- TIPOS DE ACTIVIDAD ACTUALIZADOS -->
+    <!-- LISTA DE ACTIVIDADES ACTUALIZADA -->
     <div class="form-group">
       <label>Tipo de Actividad</label>
       <select id="eventType">
-        <option value="cobranza_comunal">🔴 Cobranza de banco comunal y grupos solidarios</option>
-        <option value="cobranza_individual">🟠 Cobranza crédito individual</option>
-        <option value="visita">🔵 Visita</option>
-        <option value="desembolso">🟢 Desembolso</option>
-        <option value="reunion">🟡 Reunión</option>
-        <option value="morosos">🟣 Cobranza de morosos</option>
+        <option value="cobranza_comunal">🔴 COBRANZA DE BC Y GS</option>
+        <option value="cobranza_individual">🟠 COBRANZA CREDITO INDIVIDUAL</option>
+        <option value="morosos">🟣 COBRANZA DE MOROSOS</option>
+        <option value="visita">🔵 VISITAS A CLIENTES</option>
+        <option value="desembolso">🟢 DESEMBOLSOS</option>
+        <option value="reunion">🟡 REUNIONES</option>
       </select>
     </div>
     
@@ -428,7 +421,7 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   </div>
 </div>
 
-<!-- AREA IMPRESION -->
+<!-- IMPRESION -->
 <div id="printableArea">
   <h2 id="printTitle" style="text-align:center; margin-bottom:20px;">Reporte de Actividades</h2>
   <table id="printTable">
@@ -445,7 +438,6 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   </table>
 </div>
 
-<!-- LOGICA JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
@@ -478,14 +470,14 @@ onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   renderCalendar();
 });
 
-// FUNCIÓN PARA CONVERTIR HORA MILITAR A 12H (AM/PM)
+// FUNCION MAESTRA PARA CONVERTIR HORA 24h a 12h AM/PM
 function formatTime12h(time24) {
   if (!time24) return "";
   const [hours, minutes] = time24.split(':');
   let h = parseInt(hours);
   const ampm = h >= 12 ? 'PM' : 'AM';
   h = h % 12;
-  h = h ? h : 12; 
+  h = h ? h : 12; // Si es 0 se vuelve 12
   return `${h}:${minutes} ${ampm}`;
 }
 
@@ -532,7 +524,7 @@ function renderCalendar() {
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
       
-      // AQUI SE APLICA EL FORMATO 12H
+      // AQUI SE FUERZA EL FORMATO DE HORA PARA VISUALIZACION
       evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
@@ -555,7 +547,7 @@ function getClassByType(type) {
     case "visita": return "evt-visita";
     case "desembolso": return "evt-desem";
     case "reunion": return "evt-reunion";
-    case "morosos": return "evt-morosos"; // Nueva clase
+    case "morosos": return "evt-morosos";
     default: return "";
   }
 }
@@ -579,7 +571,7 @@ function openActionModal(evt) {
     ? '<span style="color:green; font-weight:bold">Completado</span>' 
     : '<span style="color:orange; font-weight:bold">Pendiente</span>';
     
-  // MOSTRAR HORA EN FORMATO 12H
+  // MOSTRAR HORA FORMATEADA
   document.getElementById("actionDetails").innerHTML = `
     <strong>Responsable:</strong> ${evt.responsible || "No asignado"}<br>
     <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
@@ -597,7 +589,7 @@ window.saveEvent = async function() {
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
   
-  if (!title) return alert("Por favor escribe un título");
+  if (!title) return alert("Escribe un título");
   
   const btn = document.querySelector("#modal .btn-main");
   const originalText = btn.textContent;
@@ -626,7 +618,7 @@ window.toggleComplete = async function() {
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Estás seguro de eliminar esta actividad?")) { 
+  if(confirm("¿Eliminar actividad?")) { 
     await deleteDoc(doc(db, "eventos", currentEventId)); 
     closeModal('modalActions'); 
   }
@@ -684,7 +676,7 @@ window.printReport = () => {
 
   currentMonthEvents.forEach(e => {
     const d = new Date(e.date);
-    // FORMATO 12H EN REPORTE
+    // HORA FORMATEADA EN REPORTE
     tbody.innerHTML += `
       <tr>
         <td>${d.getDate()}</td>

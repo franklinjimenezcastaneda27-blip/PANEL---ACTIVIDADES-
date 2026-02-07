@@ -22,7 +22,7 @@
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
   --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
-  --glass-bg: rgba(255, 255, 255, 0.4); /* Un poco más opaco para legibilidad */
+  --glass-bg: rgba(255, 255, 255, 0.4); 
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,12 +46,12 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 1400px;
+  max-width: 1600px; /* Un poco más ancho para el sidebar */
   margin: 0 auto;
   width: 100%;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(10px); /* Más blur para mejor efecto */
+  backdrop-filter: blur(10px);
 }
 
 /* --- HEADER --- */
@@ -67,10 +67,30 @@ header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  gap: 15px;
 }
 
 .brand h1 { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
 .brand small { font-size: 0.85rem; color: var(--text-light); font-weight: 500; }
+
+/* NUEVO: Buscador en Header */
+.search-box {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-box input {
+  padding-left: 35px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-light);
+}
 
 .actions { display: flex; gap: 8px; }
 
@@ -85,6 +105,7 @@ header {
   transition: all 0.2s;
 }
 .btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-add-global { background: var(--primary); color: white; width: auto; padding: 0 15px; font-weight: 600; }
 
 .controls-bar {
   display: flex;
@@ -94,7 +115,7 @@ header {
   padding: 6px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  flex-wrap: wrap; /* Para que se adapte en móviles */
+  flex-wrap: wrap; 
 }
 
 select.filter-select {
@@ -127,12 +148,57 @@ select.filter-select {
   min-width: 120px; text-align: center; font-weight: 700; font-size: 0.95rem; text-transform: capitalize;
 }
 
-/* --- CALENDARIO --- */
-.calendar-wrapper {
+/* --- LAYOUT PRINCIPAL (Split Screen) --- */
+.main-layout {
+  display: flex;
   flex: 1;
+  overflow: hidden;
+}
+
+/* --- CALENDARIO (Izquierda) --- */
+.calendar-wrapper {
+  flex: 3; /* Ocupa 75% */
   overflow-y: auto;
   padding: 10px;
+  border-right: 1px solid rgba(255,255,255,0.5);
 }
+
+/* --- SIDEBAR (Derecha) --- */
+.sidebar {
+  flex: 1; /* Ocupa 25% */
+  min-width: 300px;
+  background: rgba(255,255,255,0.6);
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+.sidebar-date { font-size: 0.8rem; color: var(--text-light); display: block; margin-top: 2px; }
+
+.sidebar-list { list-style: none; padding: 0; margin: 0; }
+.sidebar-item {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.sidebar-item:hover { transform: translateY(-2px); }
+.sidebar-item h4 { margin: 0 0 5px 0; font-size: 0.9rem; }
+.sidebar-item p { margin: 0; font-size: 0.75rem; color: #666; }
+.empty-msg { text-align: center; color: #888; font-size: 0.85rem; margin-top: 20px; font-style: italic; }
 
 .weekdays {
   display: grid;
@@ -162,8 +228,8 @@ select.filter-select {
 
 .day {
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #cbd5e1; /* Borde más sutil */
-  border-top: 3px solid #003366; /* Borde superior azul */
+  border: 1px solid #cbd5e1;
+  border-top: 3px solid #003366;
   border-radius: 8px;
   min-height: 100px;
   padding: 6px;
@@ -175,18 +241,16 @@ select.filter-select {
 
 .day:active { transform: scale(0.98); }
 .day.empty { background: transparent; border: none; cursor: default; border-top: none; }
-
 .day-header { display: flex; justify-content: flex-end; margin-bottom: 4px; }
-
 .day-number {
   font-size: 0.9rem; font-weight: 600; color: var(--text-light);
   width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
 }
-
 .day.today { border: 2px solid var(--primary); background: #fff; }
 .day.today .day-number { background: var(--primary); color: white; }
+.day.selected-day { background-color: #eff6ff; border-color: var(--primary); }
 
-/* EVENTOS */
+/* EVENTOS EN CALENDARIO */
 .event {
   font-size: 0.7rem;
   padding: 4px 6px;
@@ -200,7 +264,6 @@ select.filter-select {
   text-transform: uppercase;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-
 .event.completed { text-decoration: line-through; opacity: 0.6; filter: grayscale(1); }
 
 .evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
@@ -251,6 +314,19 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 .btn-success { background: #10b981; }
 .btn-row { display: flex; gap: 10px; margin-top: 15px; } .btn-row button { flex: 1; margin: 0; }
 
+/* MODAL BUSQUEDA */
+#searchResultsList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.search-result-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+.search-result-item:hover { background: #f9fafb; }
+
 /* IMPRESION Y ESTADISTICAS */
 #printableArea { display: none; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -258,17 +334,19 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 .stat-val { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
 .stat-lbl { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; }
 
-/* --- RESPONSIVE FIXES (MEJORADO) --- */
-@media(max-width: 768px) {
-  /* No ocultar los días, solo hacerlos pequeños */
+@media(max-width: 900px) {
+  .main-layout { flex-direction: column; }
+  .calendar-wrapper { border-right: none; flex: none; height: 60%; }
+  .sidebar { flex: none; height: 40%; border-top: 1px solid var(--border); }
   .weekdays div { font-size: 0.65rem; padding: 5px 0; overflow: hidden; }
-  
   .day { min-height: 80px; padding: 3px; }
   .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; }
-  
   .event { font-size: 0.6rem; padding: 2px 4px; border-left-width: 2px; }
   .controls-bar { flex-direction: column; align-items: stretch; }
-  .header-row { flex-direction: row; }
+  .header-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .search-box { max-width: 100%; order: 3; }
+  .actions { justify-content: space-between; order: 2; }
+  .brand { order: 1; display: flex; justify-content: space-between; align-items: center; }
 }
 
 @media print {
@@ -288,10 +366,21 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
   <header>
     <div class="header-row">
       <div class="brand">
-        <h1>Agenda Corporativa</h1>
-        <small>CEPRODEMIC Pro</small>
+        <div>
+          <h1>Agenda Corporativa</h1>
+          <small>CEPRODEMIC Pro</small>
+        </div>
       </div>
+      
+      <!-- BUSCADOR -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="globalSearch" placeholder="Buscar actividad..." onkeyup="handleSearch()">
+      </div>
+
       <div class="actions">
+        <!-- Botón AÑADIR GLOBAL -->
+        <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad Global">+ Nuevo</button>
         <button class="btn-icon" onclick="showStats()" title="Estadísticas">📊</button>
         <button class="btn-icon" onclick="printReport()" title="Imprimir">🖨️</button>
       </div>
@@ -315,12 +404,26 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     </div>
   </header>
 
-  <div class="calendar-wrapper">
-    <div class="weekdays">
-      <!-- Abreviaciones para que entren mejor en movil si fuera necesario -->
-      <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
+  <!-- LAYOUT DIVIDIDO -->
+  <div class="main-layout">
+    <!-- IZQUIERDA: Calendario -->
+    <div class="calendar-wrapper">
+      <div class="weekdays">
+        <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
+      </div>
+      <div id="calendar"></div>
     </div>
-    <div id="calendar"></div>
+
+    <!-- DERECHA: Sidebar Pendientes -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        Agenda del Día
+        <span id="sidebarDateLabel" class="sidebar-date">Selecciona un día</span>
+      </div>
+      <ul id="sidebarList" class="sidebar-list">
+        <li class="empty-msg">No hay actividades para este día.</li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -330,6 +433,12 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
     <div class="modal-header"><h3>Nueva Actividad</h3></div>
     
+    <!-- NUEVO: Input de FECHA editable -->
+    <div class="form-group">
+      <label>Fecha</label>
+      <input type="date" id="eventDateInput">
+    </div>
+
     <div class="form-group">
       <label>Título / Descripción</label>
       <input type="text" id="eventTitle" placeholder="Ej: Grupo Los Pinos" autocomplete="off">
@@ -404,6 +513,15 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
   </div>
 </div>
 
+<!-- MODAL RESULTADOS BUSQUEDA -->
+<div class="modal" id="modalSearch">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal('modalSearch')">&times;</button>
+    <div class="modal-header"><h3>Resultados de Búsqueda</h3></div>
+    <div id="searchResultsList"></div>
+  </div>
+</div>
+
 <!-- MODAL ESTADISTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
@@ -449,19 +567,22 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
 
-let currentDate = new Date();
-let selectedDate = null;
+let currentDate = new Date(); // Para la vista del calendario
+let selectedDateForSidebar = new Date(); // Para saber qué mostrar en el sidebar
 let eventsArray = []; 
 let currentEventId = null;
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
+const sidebarList = document.getElementById("sidebarList");
+const sidebarDateLabel = document.getElementById("sidebarDateLabel");
 
 // Listener en tiempo real
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
   renderCalendar();
+  renderSidebar(selectedDateForSidebar); // Actualizar sidebar también
 });
 
 function formatTime12h(time24) {
@@ -474,7 +595,6 @@ function formatTime12h(time24) {
   return `${h}:${minutes} ${ampm}`;
 }
 
-// Mapa de nombres de tipos para impresión
 const typeLabels = {
   "cobranza_comunal": "Cobranza BC/GS",
   "cobranza_individual": "Cobranza Indiv.",
@@ -495,7 +615,6 @@ function renderCalendar() {
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Días vacíos previos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -509,20 +628,21 @@ function renderCalendar() {
     dayDiv.className = "day";
     const today = new Date();
     
-    // Comparación simple de fecha actual
+    // Marcar Hoy
     if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
         dayDiv.classList.add("today");
     }
 
+    // Marcar Seleccionado (Sidebar)
+    if(day === selectedDateForSidebar.getDate() && month === selectedDateForSidebar.getMonth() && year === selectedDateForSidebar.getFullYear()) {
+        dayDiv.classList.add("selected-day");
+    }
+
     dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
     
-    // FILTRADO DE EVENTOS (MEJORADO PARA EVITAR ERRORES DE ZONA HORARIA)
+    // Filtrado
     const dayEvents = eventsArray.filter(e => {
-      // Convertir la fecha guardada (ISO) a objeto fecha
       const eventDate = new Date(e.date);
-      // Extraemos componentes locales de la fecha del evento guardado
-      // Nota: e.date se guardó como ISO desde selectedDate.
-      // Aquí comparamos día/mes/año locales del evento contra el día que estamos pintando
       return eventDate.getDate() === day && 
              eventDate.getMonth() === month && 
              eventDate.getFullYear() === year &&
@@ -533,22 +653,78 @@ function renderCalendar() {
       const evtDiv = document.createElement("div");
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
-      
-      // Contenido del evento
       evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
 
-    // Click en el día (evita disparar si se clickea header o numero directamente, aunque se propaga)
     dayDiv.onclick = (e) => {
-        // Si el click no fue en un evento (ya manejado arriba), abrimos modal
         if (!e.target.classList.contains('event')) {
-            openModal(year, month, day);
+            // Actualizar sidebar al hacer clic
+            selectedDateForSidebar = new Date(year, month, day);
+            renderCalendar(); // Re-render para mostrar selección azul
+            renderSidebar(selectedDateForSidebar);
+            
+            // Si es doble clic (opcional) o se quiere agregar directo:
+            // openModal(year, month, day); // <-- Descomentar si quieres que clic abra modal directamente
+            // Por ahora, el clic solo selecciona el día en el sidebar. 
+            // Para agregar evento en ese día, el usuario puede usar el botón + del sidebar (si hubiera) o doble clic.
+            // Vamos a dejarlo que un clic selecciona, y doble clic abre modal de nuevo evento.
         }
     };
+    
+    dayDiv.ondblclick = () => openModal(year, month, day);
+
     calendarGrid.appendChild(dayDiv);
   }
+}
+
+// FUNCION NUEVA: Renderizar Sidebar
+function renderSidebar(dateObj) {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  sidebarDateLabel.textContent = dateObj.toLocaleDateString('es-ES', options);
+  
+  sidebarList.innerHTML = "";
+  
+  const eventsForDay = eventsArray.filter(e => {
+    const d = new Date(e.date);
+    return d.getDate() === dateObj.getDate() &&
+           d.getMonth() === dateObj.getMonth() &&
+           d.getFullYear() === dateObj.getFullYear();
+  });
+  
+  // Ordenar por hora
+  eventsForDay.sort((a,b) => a.time.localeCompare(b.time));
+
+  if (eventsForDay.length === 0) {
+    sidebarList.innerHTML = '<li class="empty-msg">No hay actividades programadas.</li>';
+    return;
+  }
+
+  eventsForDay.forEach(evt => {
+    const li = document.createElement("li");
+    li.className = "sidebar-item";
+    li.style.borderLeftColor = getComputedStyle(document.documentElement).getPropertyValue(`--tag-${getColorTag(evt.type)}-text`);
+    
+    // Obtener color manual si no funciona la variable css directa en JS
+    let borderColor = "#ccc";
+    if(evt.type.includes("comunal")) borderColor = "#991b1b";
+    if(evt.type.includes("individual")) borderColor = "#9a3412";
+    if(evt.type.includes("visita")) borderColor = "#1e40af";
+    if(evt.type.includes("desembolso")) borderColor = "#166534";
+    if(evt.type.includes("reunion")) borderColor = "#854d0e";
+    if(evt.type.includes("morosos")) borderColor = "#6b21a8";
+    li.style.borderLeftColor = borderColor;
+
+    const statusIcon = evt.completed ? "✅" : "⏳";
+    
+    li.innerHTML = `
+      <h4>${statusIcon} ${evt.title}</h4>
+      <p>⏰ ${formatTime12h(evt.time)} | 👤 ${evt.responsible || '?'}</p>
+    `;
+    li.onclick = () => openActionModal(evt);
+    sidebarList.appendChild(li);
+  });
 }
 
 function getClassByType(type) {
@@ -563,16 +739,41 @@ function getClassByType(type) {
   }
 }
 
-// FUNCIONES GLOBALES (Window)
+function getColorTag(type) {
+  switch(type){
+    case "cobranza_comunal": return "red";
+    case "cobranza_individual": return "orange";
+    case "visita": return "blue";
+    case "desembolso": return "green";
+    case "reunion": return "yellow";
+    case "morosos": return "purple";
+    default: return "gray";
+  }
+}
+
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
 
+// ABRIR MODAL DESDE CALENDARIO
 function openModal(year, month, day) {
-  selectedDate = new Date(year, month, day); // Fecha Local 00:00:00
-  document.getElementById("eventTitle").value = "";
-  // No limpiamos responsable para facilitar ingresos seguidos, o puedes descomentar:
-  // document.getElementById("eventResponsible").value = ""; 
+  const d = new Date(year, month, day);
+  openModalWithDate(d);
+}
+
+// ABRIR MODAL BOTON GLOBAL (Usa fecha seleccionada o actual)
+window.openModalForNew = () => {
+  openModalWithDate(selectedDateForSidebar || new Date());
+}
+
+function openModalWithDate(dateObj) {
+  // Formatear fecha para el input type="date" (YYYY-MM-DD)
+  // Ajuste de zona horaria local
+  const offset = dateObj.getTimezoneOffset() * 60000;
+  const localISOTime = (new Date(dateObj - offset)).toISOString().slice(0, 10);
   
+  document.getElementById("eventDateInput").value = localISOTime;
+  
+  document.getElementById("eventTitle").value = "";
   document.getElementById("selHour").value = "9";
   document.getElementById("selMin").value = "00";
   document.getElementById("selAmpm").value = "AM";
@@ -587,14 +788,58 @@ function openActionModal(evt) {
   const statusHtml = evt.completed 
     ? '<span style="color:#10b981; font-weight:bold">✅ Completado</span>' 
     : '<span style="color:#f59e0b; font-weight:bold">⏳ Pendiente</span>';
-    
+  
+  const d = new Date(evt.date);
+  const dateStr = d.toLocaleDateString();
+
   document.getElementById("actionDetails").innerHTML = `
+    <strong>Fecha:</strong> ${dateStr}<br>
     <strong>Responsable:</strong> ${evt.responsible || "---"}<br>
     <strong>Tipo:</strong> ${typeLabels[evt.type] || evt.type}<br>
     <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
     <strong>Estado:</strong> ${statusHtml}
   `;
   document.getElementById("modalActions").style.display = "flex";
+}
+
+// FUNCION BUSQUEDA
+let searchTimeout;
+window.handleSearch = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const q = document.getElementById("globalSearch").value.toLowerCase();
+    if(q.length < 2) return;
+    
+    const results = eventsArray.filter(e => 
+      e.title.toLowerCase().includes(q) || 
+      (e.responsible && e.responsible.toLowerCase().includes(q))
+    );
+    
+    const list = document.getElementById("searchResultsList");
+    list.innerHTML = "";
+    
+    if(results.length === 0) {
+      list.innerHTML = "<div style='padding:10px; color:#888'>No se encontraron resultados.</div>";
+    } else {
+      results.forEach(e => {
+        const d = new Date(e.date);
+        const div = document.createElement("div");
+        div.className = "search-result-item";
+        div.innerHTML = `<strong>${d.toLocaleDateString()}</strong> - ${e.title} <br><small>${e.responsible || ''}</small>`;
+        div.onclick = () => {
+          closeModal('modalSearch');
+          // Ir al mes del evento y seleccionarlo
+          currentDate = new Date(e.date); 
+          selectedDateForSidebar = new Date(e.date);
+          renderCalendar();
+          renderSidebar(selectedDateForSidebar);
+          openActionModal(e);
+        };
+        list.appendChild(div);
+      });
+    }
+    document.getElementById("modalSearch").style.display = "flex";
+  }, 500);
 }
 
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
@@ -604,34 +849,45 @@ window.saveEvent = async function() {
   const title = document.getElementById("eventTitle").value.trim();
   const responsible = document.getElementById("eventResponsible").value;
   const type = document.getElementById("eventType").value;
+  const dateInputVal = document.getElementById("eventDateInput").value; // YYYY-MM-DD
   
   let h = parseInt(document.getElementById("selHour").value);
   const m = document.getElementById("selMin").value;
   const ampm = document.getElementById("selAmpm").value;
   
-  // Conversión correcta 12h a 24h
   if(ampm === "PM" && h !== 12) h += 12;
   if(ampm === "AM" && h === 12) h = 0;
   
   const time = `${h.toString().padStart(2, '0')}:${m}`;
   
   if (!title) return alert("Por favor escribe el título de la actividad");
+  if (!dateInputVal) return alert("Fecha inválida");
+
+  // Crear fecha desde el input asegurando hora 00:00 local
+  // Agregamos la hora T00:00:00 para que el constructor Date lo tome como local
+  const finalDate = new Date(dateInputVal + "T00:00:00");
   
   const btn = document.querySelector("#modal .btn-main");
   const originalText = btn.textContent;
   btn.textContent = "Guardando..."; btn.disabled = true;
 
   try {
-    // Guardamos la fecha tal cual se generó (Local).
-    // Al recuperar, usaremos new Date(date) que respeta la conversión.
     await addDoc(eventsRef, { 
       title, responsible, time, type, 
-      date: selectedDate.toString(), // Guardamos como string completo para mantener contexto si es necesario, o ISO.
-      // Nota: toString() guarda "Fri Feb 07 2026 00:00:00 GMT-0500..." 
-      // Es más seguro para apps locales simples que ISO si no hay manejo de TZ complejo.
+      date: finalDate.toString(), // Guardamos string completo
       completed: false 
     });
     closeModal('modal');
+    // Actualizar sidebar a la fecha donde guardamos
+    selectedDateForSidebar = finalDate;
+    // Si la fecha guardada no es el mes actual visible, cambiar mes
+    if(finalDate.getMonth() !== currentDate.getMonth()) {
+      currentDate = new Date(finalDate);
+      renderCalendar();
+    } else {
+      renderSidebar(selectedDateForSidebar);
+      renderCalendar();
+    }
   } catch(e){
     console.error(e);
     alert("Error al guardar: " + e.message);
@@ -681,13 +937,11 @@ window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
   
-  // Filtrar eventos del mes actual visualizado
   const monthEvents = eventsArray.filter(e => {
      const d = new Date(e.date);
      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
   });
 
-  // Ordenar por día y hora
   monthEvents.sort((a,b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
@@ -713,11 +967,13 @@ window.printReport = () => {
       </tr>`;
   });
 
-  // Pequeño timeout para dar tiempo al DOM de actualizarse antes de abrir el diálogo
   setTimeout(() => window.print(), 300);
 }
 
+// Inicializar
 renderCalendar();
+renderSidebar(new Date());
+
 </script>
 </body>
 </html>

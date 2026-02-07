@@ -1,83 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel de Actividades</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Corporativo</title>
+
 <style>
-body { font-family: Arial; text-align: center; background:#f4f6f9; }
-h2 { margin-top:20px; }
-#calendar { 
-  display: grid; 
-  grid-template-columns: repeat(7, 1fr); 
-  gap: 5px; 
-  max-width: 900px; 
-  margin: 20px auto; 
+:root{
+  --rojo:#ff6b6b;
+  --azul:#4dabf7;
+  --verde:#51cf66;
+  --amarillo:#ffd43b;
+  --gris:#f1f3f5;
+  --oscuro:#343a40;
 }
-.day { 
+
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:var(--gris);
+}
+
+header{
   background:white;
-  border-radius:8px;
-  padding:10px; 
-  min-height:100px; 
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+  padding:15px 25px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
-.activity { 
-  font-size:12px; 
-  margin-top:5px; 
-  padding:4px;
-  background:#e3f2fd;
-  border-radius:4px;
+
+h1{
+  margin:0;
+  font-size:20px;
+  color:var(--oscuro);
 }
-button { 
-  margin: 10px; 
-  padding: 10px 20px; 
+
+#calendar{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:12px;
+  padding:20px;
+}
+
+.day{
+  background:white;
+  border-radius:12px;
+  min-height:120px;
+  padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+}
+
+.day-number{
+  font-weight:bold;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.event{
+  font-size:11px;
+  padding:4px 6px;
+  border-radius:6px;
+  margin-top:4px;
+  color:white;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:320px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+input,select{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+button{
+  padding:8px 12px;
   border:none;
   border-radius:6px;
-  background:#1976d2;
+  background:#228be6;
   color:white;
   cursor:pointer;
 }
-button:hover { background:#125aa0; }
+
+button:hover{
+  opacity:0.9;
+}
+
+@media(max-width:768px){
+  #calendar{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>
 </head>
 <body>
 
-<h2>Calendario de Actividades</h2>
-<button onclick="addActivity()">Agregar Actividad</button>
+<header>
+<h1>Calendario Corporativo</h1>
+<div>
+<button onclick="prevMonth()">◀</button>
+<button onclick="nextMonth()">▶</button>
+</div>
+</header>
 
 <div id="calendar"></div>
 
-<script>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Nueva Actividad</h3>
+    <input type="text" id="title" placeholder="Descripción">
+    <select id="type">
+      <option value="Cobranza Banco Comunal">Cobranza Banco Comunal</option>
+      <option value="Visita a Clientes">Visita a Clientes</option>
+      <option value="Desembolsos">Desembolsos</option>
+      <option value="Reuniones">Reuniones</option>
+    </select>
+    <button onclick="saveEvent()">Guardar</button>
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
+  authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
+  projectId: "calendario-de-actividade-3b553",
+  storageBucket: "calendario-de-actividade-3b553.firebasestorage.app",
+  messagingSenderId: "330806785515",
+  appId: "1:330806785515:web:3448d1f0ffc83422c795ae"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const eventsRef = collection(db, "eventos");
+
+let currentDate = new Date();
 const calendar = document.getElementById("calendar");
-const daysInMonth = 30;
 
-function loadCalendar() {
-  calendar.innerHTML = "";
-  for (let i = 1; i <= daysInMonth; i++) {
-    const day = document.createElement("div");
-    day.className = "day";
-    day.innerHTML = "<strong>Día " + i + "</strong>";
-    const saved = localStorage.getItem("day-" + i);
-    if (saved) {
-      const act = document.createElement("div");
-      act.className = "activity";
-      act.innerText = saved;
-      day.appendChild(act);
+function renderCalendar(){
+  calendar.innerHTML="";
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  for(let day=1; day<=daysInMonth; day++){
+    const dayDiv=document.createElement("div");
+    dayDiv.className="day";
+    dayDiv.innerHTML=`<div class="day-number">${day}</div>`;
+    dayDiv.onclick=()=>openModal(year,month,day);
+    calendar.appendChild(dayDiv);
+  }
+}
+
+renderCalendar();
+
+onSnapshot(query(eventsRef), (snapshot)=>{
+  renderCalendar();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    const date = new Date(data.date);
+    if(date.getMonth()===currentDate.getMonth() &&
+       date.getFullYear()===currentDate.getFullYear()){
+        const dayBox = calendar.children[date.getDate()-1];
+        const eventDiv=document.createElement("div");
+        eventDiv.className="event";
+        eventDiv.textContent=data.title;
+        eventDiv.style.background=getColor(data.type);
+        dayBox.appendChild(eventDiv);
     }
-    calendar.appendChild(day);
+  });
+});
+
+function getColor(type){
+  switch(type){
+    case "Cobranza Banco Comunal": return "#ff6b6b";
+    case "Visita a Clientes": return "#4dabf7";
+    case "Desembolsos": return "#51cf66";
+    case "Reuniones": return "#ffd43b";
   }
 }
 
-function addActivity() {
-  let day = prompt("¿Para qué día del mes?");
-  let text = prompt("Describe la actividad (Ej: Cobranza Cliente Pérez S/850):");
-  if (day && text) {
-    localStorage.setItem("day-" + day, text);
-    loadCalendar();
-  }
+let selectedDate=null;
+
+function openModal(year,month,day){
+  selectedDate=new Date(year,month,day);
+  document.getElementById("modal").style.display="flex";
 }
 
-loadCalendar();
+window.saveEvent = async function(){
+  const title=document.getElementById("title").value;
+  const type=document.getElementById("type").value;
+  if(!title) return;
+
+  await addDoc(eventsRef,{
+    title,
+    type,
+    date:selectedDate.toISOString()
+  });
+
+  document.getElementById("modal").style.display="none";
+  document.getElementById("title").value="";
+}
+
+window.prevMonth=()=>{
+  currentDate.setMonth(currentDate.getMonth()-1);
+  renderCalendar();
+}
+
+window.nextMonth=()=>{
+  currentDate.setMonth(currentDate.getMonth()+1);
+  renderCalendar();
+}
+
 </script>
 
 </body>
 </html>
+

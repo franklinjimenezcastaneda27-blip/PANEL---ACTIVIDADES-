@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Corporativa CEPRODEMIC</title>
+<title>Agenda Móvil & Web</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Icono pestaña -->
+<!-- Icono para la pestaña -->
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
 <style>
@@ -30,16 +30,14 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  
-  /* --- FONDO DE PANTALLA --- */
-  background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop');
+  background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .overlay {
-  background-color: rgba(245, 247, 250, 0.88); /* Un poco más opaco para lectura */
+  background-color: rgba(240, 242, 245, 0.85);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -48,72 +46,64 @@ body {
 /* --- HEADER --- */
 header {
   background: var(--blanco-transparente);
-  padding: 15px 20px;
+  padding: 10px;
   border-bottom: 1px solid var(--borde);
   display: flex;
-  flex-direction: column; 
-  gap: 15px; 
+  flex-direction: column;
+  gap: 10px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .header-top {
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-.header-top h1 { margin: 0; font-size: 1.4rem; font-weight: 800; color: #1c1e21; letter-spacing: -0.5px; }
-.header-top small { color: #444; font-size: 0.95rem; font-weight: 600; display: block; margin-top: 4px; }
-
-.header-toolbar {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
-.month-nav { display: flex; align-items: center; gap: 8px; }
+h1 { margin: 0; font-size: 1.1rem; font-weight: 700; color: #1c1e21; }
+small { color: #666; font-size: 0.8rem; }
+
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+}
 
 #currentMonthDisplay {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--azul);
-  text-transform: capitalize;
-  min-width: 160px;
+  min-width: 100px;
   text-align: center;
-}
-
-.tools-right { display: flex; align-items: center; gap: 8px; }
-
-#filterCategory {
-  padding: 8px 10px;
+  text-transform: capitalize;
+  background: white;
+  padding: 6px;
   border-radius: 6px;
   border: 1px solid var(--borde);
-  background: white;
-  font-size: 13px;
-  cursor: pointer;
-  min-width: 120px;
 }
 
 .btn-nav, .btn-tool {
   background: white;
   border: 1px solid var(--borde);
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
-  color: #495057;
-  font-weight: 600;
 }
-.btn-nav:hover, .btn-tool:hover { background: #e9ecef; border-color: #adb5bd; }
+
+select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: white;
+  font-size: 14px;
+  width: 100%;
+}
 
 /* --- CALENDARIO --- */
-.calendar-wrapper { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
-
-.loading-indicator {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 1.2rem; font-weight: bold; color: var(--azul); display: none;
-    background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+.calendar-wrapper {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
 }
 
 .weekdays {
@@ -121,54 +111,61 @@ header {
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color: #495057;
-  font-size: 0.85rem;
-  background: white;
-  padding: 10px 0;
-  border-radius: 8px;
-  border: 1px solid var(--borde);
+  font-size: 0.8rem;
 }
 
 #calendar {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  /* Asegura que las celdas tengan altura mínima */
-  auto-rows: minmax(100px, auto); 
-  padding-bottom: 20px;
+  grid-template-columns: repeat(7, 1fr); /* SIEMPRE 7 COLUMNAS */
+  gap: 4px;
+  auto-rows: minmax(80px, auto); /* Altura mínima */
 }
 
 .day {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--blanco-transparente);
   border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 6px;
+  border-radius: 6px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  overflow: hidden; /* Evita que se salga el texto */
 }
-.day:hover { background: white; border-color: var(--azul); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; }
-.day-number { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: #495057; text-align: right; }
-.today { background-color: #e7f5ff; border: 2px solid var(--azul); }
+
+.day.empty { background: transparent; border: none; cursor: default; }
+
+.day-number {
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #868e96;
+  text-align: right;
+}
+
+.today {
+  background-color: #e7f5ff;
+  border: 1px solid var(--azul);
+}
 
 /* --- EVENTOS --- */
 .event {
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  margin-bottom: 3px;
+  font-size: 10px; /* Letra pequeña para eventos */
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-bottom: 2px;
   color: white;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  text-overflow: ellipsis; /* Pone ... si es muy largo */
 }
-.event:hover { filter: brightness(90%); }
-.event.completed { opacity: 0.6; text-decoration: line-through; background-color: #adb5bd !important; }
+
+.event.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+  background-color: #adb5bd !important;
+}
 
 /* --- MODALES --- */
 .modal {
@@ -179,47 +176,89 @@ header {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(2px);
 }
+
 .modal-content {
   background: white;
-  padding: 25px;
+  padding: 20px;
   border-radius: 12px;
   width: 90%;
-  max-width: 380px;
+  max-width: 350px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  animation: slideIn 0.2s ease-out;
 }
-@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; color: #adb5bd; cursor: pointer; }
 
-label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
-input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid var(--borde); background: #f8f9fa; }
-.btn-save { width: 100%; padding: 12px; border-radius: 6px; border: none; background: var(--azul); color: white; font-weight: 600; cursor: pointer; }
-.btn-action { width: 100%; padding: 12px; border-radius: 6px; border: none; color: white; font-weight: 600; margin-top: 5px; cursor: pointer; }
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #adb5bd;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: #f8f9fa;
+}
+
+.btn-save, .btn-action {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  margin-top: 5px;
+}
+.btn-save { background: var(--azul); }
 .btn-complete { background: var(--verde); margin-bottom: 10px; }
 .btn-delete { background: var(--rojo); }
 
-/* --- IMPRESIÓN --- */
+/* Stats y Print ocultos por defecto */
 #printableArea { display: none; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+.stat-box { background: #f1f3f5; padding: 10px; border-radius: 8px; }
+.stat-number { font-size: 20px; font-weight: bold; display: block; }
+
+/* --- OPTIMIZACIÓN MÓVIL (CRÍTICO) --- */
+@media(max-width: 768px){
+  /* Forzamos que se vean 7 columnas pero más apretadas */
+  #calendar { gap: 2px; }
+  
+  .day { 
+    min-height: 60px; /* Cuadros más bajitos */
+    padding: 2px; 
+  }
+  
+  .day-number { font-size: 10px; margin-bottom: 2px; }
+  
+  /* El texto del evento muy pequeño para que quepa */
+  .event { 
+    font-size: 8px; 
+    padding: 1px 2px; 
+    line-height: 1.2;
+  }
+  
+  .weekdays { font-size: 10px; } /* Texto LUN, MAR pequeño */
+  
+  h1 { font-size: 1rem; }
+  .controls-row { gap: 2px; }
+  .btn-nav, .btn-tool { padding: 6px 8px; }
+}
+
 @media print {
   body * { visibility: hidden; }
   #printableArea, #printableArea * { visibility: visible; }
   #printableArea { display: block; position: absolute; top: 0; left: 0; width: 100%; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; }
-  th, td { border: 1px solid #ddd; padding: 5px; text-align: left; }
-  th { background: #f1f3f5; }
-}
-
-/* --- RESPONSIVE --- */
-@media(max-width: 768px){
-  .header-toolbar { flex-direction: column; align-items: stretch; }
-  .month-nav { justify-content: space-between; margin-bottom: 10px; }
-  .tools-right { justify-content: space-between; }
-  #filterCategory { flex-grow: 1; }
-  .day { min-height: 60px; padding: 2px; }
-  .event { font-size: 9px; padding: 2px; }
+  th, td { border: 1px solid #ddd; padding: 5px; }
 }
 </style>
 </head>
@@ -227,97 +266,78 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
 
 <div class="overlay">
   <header>
-    <!-- Título Principal -->
     <div class="header-top">
-      <h1>Agenda Corporativa</h1>
-      <small>Gestión Operativa - CEPRODEMIC</small>
+      <div>
+        <h1>Agenda Corporativa</h1>
+        <small>Gestión Operativa</small>
+      </div>
+      <div>
+        <button class="btn-tool" onclick="showStats()">📊</button>
+        <button class="btn-tool" onclick="printReport()">🖨️</button>
+      </div>
     </div>
+    
+    <!-- Filtro -->
+    <select id="filterCategory" onchange="applyFilter()">
+      <option value="all">📂 Ver Todo</option>
+      <option value="cobranza_comunal">🔴 Banco Comunal</option>
+      <option value="cobranza_individual">🟠 Crédito Individual</option>
+      <option value="visita">🔵 Visitas</option>
+      <option value="desembolso">🟢 Desembolsos</option>
+      <option value="reunion">🟡 Reuniones</option>
+    </select>
 
-    <!-- Controles -->
-    <div class="header-toolbar">
-      <div class="month-nav">
-        <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-        <div id="currentMonthDisplay">Cargando...</div>
-        <button class="btn-nav" onclick="changeMonth(1)">▶</button>
-      </div>
-
-      <div class="tools-right">
-        <select id="filterCategory" onchange="applyFilter()">
-          <option value="all">📂 Ver Todo</option>
-          <option value="cobranza_comunal">🔴 B. Comunal</option>
-          <option value="cobranza_individual">🟠 C. Indiv.</option>
-          <option value="visita">🔵 Visitas</option>
-          <option value="desembolso">🟢 Desemb.</option>
-          <option value="reunion">🟡 Reunión</option>
-        </select>
-        
-        <button class="btn-tool" onclick="showStats()" title="Métricas">📊 Stats</button>
-        <button class="btn-tool" onclick="printReport()" title="Imprimir">🖨️ Imprimir</button>
-      </div>
+    <!-- Controles Mes -->
+    <div class="controls-row">
+      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
+      <div id="currentMonthDisplay">...</div>
+      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
     </div>
   </header>
 
   <div class="calendar-wrapper">
-    <div id="loading" class="loading-indicator">Cargando datos...</div>
+    <!-- Nombres cortos para celular -->
     <div class="weekdays">
-      <div>DOMINGO</div><div>LUNES</div><div>MARTES</div><div>MIÉRCOLES</div><div>JUEVES</div><div>VIERNES</div><div>SÁBADO</div>
+      <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
     <div id="calendar"></div>
   </div>
 </div>
 
-<!-- MODAL NUEVA TAREA -->
+<!-- MODALES (Igual que antes pero ajustados) -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
-    <h3 style="margin-top:0">Nueva Actividad</h3>
-    
-    <label>Actividad:</label>
-    <input type="text" id="eventTitle" placeholder="Ej. Visita a Cliente">
-    
-    <label>Responsable:</label>
-    <input type="text" id="eventResponsible" placeholder="Nombre del asesor">
-    
-    <label>Hora:</label>
+    <h3>Nueva Actividad</h3>
+    <input type="text" id="eventTitle" placeholder="Descripción">
+    <input type="text" id="eventResponsible" placeholder="Responsable">
     <input type="time" id="eventTime">
-    
-    <label>Tipo:</label>
-    <select id="eventType">
+    <select id="eventType" style="margin-bottom:0">
       <option value="cobranza_comunal">🔴 Banco Comunal</option>
       <option value="cobranza_individual">🟠 Crédito Individual</option>
       <option value="visita">🔵 Visita</option>
       <option value="desembolso">🟢 Desembolso</option>
       <option value="reunion">🟡 Reunión</option>
     </select>
-    
     <button class="btn-save" onclick="saveEvent()">Guardar</button>
   </div>
 </div>
 
-<!-- MODAL ACCIONES -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <h3 id="actionTitle" style="color:var(--azul); margin-top:0;">Detalle</h3>
-    <div id="actionDetails" style="font-size:14px; color:#555; margin-bottom:15px; background:#f8f9fa; padding:10px; border-radius:6px;"></div>
-    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Completado / Pendiente</button>
+    <h3 id="actionTitle" style="color:var(--azul);">Detalle</h3>
+    <p id="actionDetails" style="font-size:13px; color:#555;"></p>
+    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Cambiar Estado</button>
     <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar</button>
   </div>
 </div>
 
-<!-- MODAL ESTADÍSTICAS -->
 <div class="modal" id="modalStats">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
-    <h3>Métricas del Mes</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
-        <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
-            <span id="statTotal" style="font-size:24px; font-weight:bold; color:var(--azul)">0</span><br><small>Total Actividades</small>
-        </div>
-        <div style="background:#f1f3f5; padding:15px; border-radius:8px;">
-            <span id="statCompleted" style="font-size:24px; font-weight:bold; color:var(--verde)">0</span><br><small>Finalizadas</small>
-        </div>
-    </div>
+    <h3>Métricas</h3>
+    <div class="stats-grid" id="statsContainer"></div>
   </div>
 </div>
 
@@ -325,14 +345,15 @@ input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 
 <div id="printableArea">
   <h2 id="printTitle">Reporte</h2>
   <table id="printTable">
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Actividad</th><th>Responsable</th><th>Estado</th></tr></thead>
+    <thead><tr><th>Fec</th><th>Hr</th><th>Actividad</th><th>Resp</th><th>Est</th></tr></thead>
     <tbody></tbody>
   </table>
 </div>
 
+<!-- LOGICA JS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query } 
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -348,47 +369,31 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
 
-// --- CORRECCIÓN DEFINITIVA DE FECHA ---
-// No usamos un objeto "Date" para navegar, usamos números enteros.
-// Esto evita problemas de "overflow" cuando hoy es 31 y pasamos a un mes de 30 días.
-let currentYear = new Date().getFullYear();
-let currentMonth = new Date().getMonth(); // 0 = Enero, 1 = Febrero...
-
+let currentDate = new Date();
 let selectedDate = null;
 let eventsArray = []; 
 let currentEventId = null;
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
-const loadingIndicator = document.getElementById("loading");
 
-loadingIndicator.style.display = "block";
-
-onSnapshot(query(eventsRef), (snapshot) => {
+onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
-  loadingIndicator.style.display = "none";
   renderCalendar();
-}, (error) => {
-    console.error(error);
-    loadingIndicator.innerText = "Error de conexión";
 });
 
 function renderCalendar() {
   calendarGrid.innerHTML = "";
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
   
-  // Creamos la fecha para visualizar el nombre del mes
-  const displayDate = new Date(currentYear, currentMonth, 1);
-  monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(displayDate);
+  monthDisplay.textContent = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
 
-  // 1. Encontrar en qué día de la semana cae el día 1 (0=Domingo, 1=Lunes...)
-  const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-  
-  // 2. Encontrar cuántos días tiene el mes actual
-  // El día "0" del mes siguiente nos da el último día del mes actual.
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Celdas vacías antes del día 1
+  // Dias vacíos (Padding) - IMPORTANTE: Se deben mostrar para alinear el día 1
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -397,43 +402,33 @@ function renderCalendar() {
 
   const filterVal = document.getElementById("filterCategory").value;
 
-  // Renderizar días reales
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
-    
-    // Verificar si es HOY
     const today = new Date();
-    if(day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-        dayDiv.classList.add("today");
-    }
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
 
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    // Fecha para comparar eventos
-    const checkDate = new Date(currentYear, currentMonth, day).toDateString();
-
-    let dayEvents = eventsArray.filter(e => {
-      const eventDate = new Date(e.date).toDateString(); 
-      const isDate = eventDate === checkDate;
+    const currentDayStr = new Date(year, month, day).toDateString();
+    const dayEvents = eventsArray.filter(e => {
+      const isDate = new Date(e.date).toDateString() === currentDayStr;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
     });
-
-    dayEvents.sort((a, b) => a.time.localeCompare(b.time));
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
       if(evt.completed) evtDiv.classList.add("completed");
       evtDiv.style.backgroundColor = evt.completed ? "#adb5bd" : getColor(evt.type);
-      evtDiv.innerHTML = `<b>${evt.time}</b> ${evt.title}`;
+      evtDiv.innerHTML = `${evt.time} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
 
     dayDiv.onclick = (e) => {
-      if(e.target === dayDiv || e.target.className === 'day-number') openModal(currentYear, currentMonth, day);
+      if(e.target === dayDiv || e.target.className === 'day-number') openModal(year, month, day);
     };
 
     calendarGrid.appendChild(dayDiv);
@@ -441,111 +436,78 @@ function renderCalendar() {
 }
 
 function getColor(type){
-  const colors = {
-      "cobranza_comunal": "var(--rojo)",
-      "cobranza_individual": "var(--naranja)",
-      "visita": "var(--azul)",
-      "desembolso": "var(--verde)",
-      "reunion": "var(--amarillo)"
-  };
-  return colors[type] || "#868e96";
+  switch(type){
+    case "cobranza_comunal": return "var(--rojo)";
+    case "cobranza_individual": return "var(--naranja)";
+    case "visita": return "var(--azul)";
+    case "desembolso": return "var(--verde)";
+    case "reunion": return "var(--amarillo)";
+    default: return "#868e96";
+  }
 }
 
-// --- NUEVA LÓGICA DE CAMBIO DE MES ---
-// Matemáticas puras, sin objetos Date que fallen.
-window.changeMonth = (step) => { 
-    currentMonth += step;
-    if(currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    } else if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-    }
-    renderCalendar(); 
-}
-
+window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
-window.closeModal = (id) => document.getElementById(id).style.display = "none";
-window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
-  selectedDate.setHours(12, 0, 0, 0); 
   document.getElementById("eventTitle").value = "";
   document.getElementById("eventResponsible").value = "";
   document.getElementById("eventTime").value = "09:00";
   document.getElementById("modal").style.display = "flex";
-  document.getElementById("eventTitle").focus();
 }
 
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
-  const typeLabels = { "cobranza_comunal": "Banco Comunal", "cobranza_individual": "Crédito Individual", "visita": "Visita", "desembolso": "Desembolso", "reunion": "Reunión" };
-  document.getElementById("actionDetails").innerHTML = `
-    <p style="margin:5px 0"><b>📅 Fecha:</b> ${new Date(evt.date).toLocaleDateString()}</p>
-    <p style="margin:5px 0"><b>⏰ Hora:</b> ${evt.time}</p>
-    <p style="margin:5px 0"><b>👤 Resp:</b> ${evt.responsible || "Sin asignar"}</p>
-    <p style="margin:5px 0"><b>🏷️ Tipo:</b> ${typeLabels[evt.type] || evt.type}</p>
-  `;
+  document.getElementById("actionDetails").innerHTML = `<b>Resp:</b> ${evt.responsible || "-"}<br><b>Hora:</b> ${evt.time}`;
   document.getElementById("modalActions").style.display = "flex";
 }
 
+window.closeModal = (id) => document.getElementById(id).style.display = "none";
+window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
+
 window.saveEvent = async function() {
-  const title = document.getElementById("eventTitle").value.trim();
-  const responsible = document.getElementById("eventResponsible").value.trim();
+  const title = document.getElementById("eventTitle").value;
+  const responsible = document.getElementById("eventResponsible").value;
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
-  if (!title) { alert("Describe la actividad"); return; }
-  
-  const btn = document.querySelector(".btn-save"); 
-  const txt = btn.textContent; btn.textContent="Guardando..."; btn.disabled=true;
+  if (!title) return;
+  const btn = document.querySelector(".btn-save"); btn.textContent="..."; btn.disabled=true;
   try {
     await addDoc(eventsRef, { title, responsible, time, type, date: selectedDate.toISOString(), completed: false });
     closeModal('modal');
-  } catch(e) { alert("Error"); } finally { btn.textContent=txt; btn.disabled=false; }
+  } catch(e){} finally { btn.textContent="Guardar"; btn.disabled=false; }
 }
 
 window.toggleComplete = async function() {
   if(!currentEventId) return;
   const evt = eventsArray.find(e => e.id === currentEventId);
-  try { await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed }); closeModal('modalActions'); } catch(e){}
+  await updateDoc(doc(db, "eventos", currentEventId), { completed: !evt.completed });
+  closeModal('modalActions');
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Eliminar?")) { try { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); } catch(e){} }
+  if(confirm("¿Eliminar?")) { await deleteDoc(doc(db, "eventos", currentEventId)); closeModal('modalActions'); }
 }
 
 window.showStats = () => {
   const total = eventsArray.length;
-  // Filtrar eventos solo del mes actual para las estadísticas
-  const currentMonthEvents = eventsArray.filter(e => {
-      const d = new Date(e.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  });
-  const completed = currentMonthEvents.filter(e => e.completed).length;
-  
-  document.getElementById("statTotal").textContent = currentMonthEvents.length;
-  document.getElementById("statCompleted").textContent = completed;
+  const completed = eventsArray.filter(e => e.completed).length;
+  const container = document.getElementById("statsContainer");
+  container.innerHTML = `
+    <div class="stat-box"><span class="stat-number">${total}</span><small>Total</small></div>
+    <div class="stat-box"><span class="stat-number">${completed}</span><small>Listas</small></div>
+  `;
   document.getElementById("modalStats").style.display = "flex";
 }
 
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  document.getElementById("printTitle").textContent = "Reporte CEPRODEMIC - " + monthDisplay.textContent;
-  const sorted = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date) || a.time.localeCompare(b.time));
-  
-  // Solo imprimir eventos del mes actual
-  const monthEvents = sorted.filter(e => {
-      const d = new Date(e.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  });
-
-  monthEvents.forEach(e => {
-    const d = new Date(e.date);
-    tbody.innerHTML += `<tr><td>${d.getDate()}/${d.getMonth()+1}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
+  document.getElementById("printTitle").textContent = "Reporte " + monthDisplay.textContent;
+  eventsArray.forEach(e => {
+    tbody.innerHTML += `<tr><td>${new Date(e.date).getDate()}</td><td>${e.time}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed?"OK":"Pend"}</td></tr>`;
   });
   window.print();
 }

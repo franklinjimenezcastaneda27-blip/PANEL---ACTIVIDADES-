@@ -82,7 +82,16 @@ header {
 .controls-bar {
   display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.5); padding: 6px; border-radius: 10px; border: 1px solid var(--border); flex-wrap: wrap; 
 }
-select.filter-select { border: none; background: transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-main); padding: 5px 10px; cursor: pointer; flex: 1; min-width: 150px; }
+
+/* ESTILOS PARA LOS SELECTORES DE FILTRO */
+select.filter-select { 
+  border: none; background: transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-main); 
+  padding: 5px 10px; cursor: pointer; flex: 1; min-width: 150px; 
+  border-right: 1px solid #ddd; /* Separador visual */
+}
+select.filter-select:last-child { border-right: none; }
+select.filter-select:focus { background: rgba(255,255,255,0.5); box-shadow: none; }
+
 .month-nav { display: flex; align-items: center; background: white; border-radius: 6px; padding: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 .month-nav button { border: none; background: transparent; padding: 6px 12px; cursor: pointer; font-weight: 700; color: var(--primary); font-size: 1.2rem; }
 .month-nav button:hover { background: #f3f4f6; border-radius: 4px; }
@@ -137,7 +146,6 @@ select.filter-select { border: none; background: transparent; font-size: 0.85rem
 input, select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #f9fafb; font-family: inherit; font-size: 0.95rem; color: var(--text-main); transition: border 0.2s; }
 input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); background: white; }
 
-/* ESTILOS ESPECIFICOS SELECTOR HORA */
 .time-selector-row { display: flex; gap: 8px; align-items: center; }
 .time-select { flex: 1; text-align: center; font-weight: 600; }
 .time-separator { font-weight: bold; padding: 0 2px; color: var(--text-main); }
@@ -151,10 +159,31 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 .btn-success { background: #10b981; color: white; } .btn-success:hover { background: #059669; }
 .btn-edit { background: #f59e0b; color: white; } .btn-edit:hover { background: #d97706; }
 
+/* TOAST (Alertas Cortas de Acciones) */
 #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+/* NOTIFICATION CARD (Alertas Largas de 30s) */
+#notification-card {
+  display: none; 
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  width: 320px; 
+  background: white; 
+  border-left: 5px solid var(--primary);
+  border-radius: 8px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+  z-index: 9999;
+  padding: 15px;
+  animation: slideInRight 0.5s ease-out;
+}
+@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.notif-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.notif-title { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+.notif-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #999; }
+.notif-body { font-size: 0.85rem; color: #444; line-height: 1.4; }
 
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .stat-card { background: #f3f4f6; padding: 15px; border-radius: 10px; text-align: center; }
@@ -175,7 +204,7 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 }
 @media print {
   body { background: white; height: auto; overflow: visible; }
-  .app-container, .modal, .btn-icon, header { display: none !important; }
+  .app-container, .modal, .btn-icon, header, #notification-card { display: none !important; }
   #printableArea { display: block !important; padding: 0; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
   th { background: #1e3a8a; color: white; padding: 10px; }
@@ -216,6 +245,8 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
         <div id="currentMonthDisplay">Cargando...</div>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
+      
+      <!-- FILTRO CATEGORIA -->
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
         <option value="all">📂 VER TODO</option>
         <option value="cobranza_comunal">👥 COBRANZA BC/GS</option>
@@ -224,6 +255,18 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
         <option value="visita">🏠 VISITAS</option>
         <option value="desembolso">💵 DESEMBOLSOS</option>
         <option value="reunion">📅 REUNIONES</option>
+      </select>
+
+      <!-- NUEVO FILTRO PERSONAS -->
+      <select id="filterResponsible" class="filter-select" onchange="applyFilter()">
+        <option value="all">👥 TODO EL PERSONAL</option>
+        <option value="FRANKLIN">👨 FRANKLIN</option>
+        <option value="GIMER">👨 GIMER</option>
+        <option value="ALEJANDRO">👨 ALEJANDRO</option>
+        <option value="OSWALDO">👨 OSWALDO</option>
+        <option value="ELIZABETH">👩 ELIZABETH</option>
+        <option value="NOEMI">👩 NOEMI</option>
+        <option value="LUZ">👩 LUZ</option>
       </select>
     </div>
   </header>
@@ -260,7 +303,6 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 
     <div class="form-group">
       <label>Hora</label>
-      <!-- REGRESO A LOS 3 SELECTORES (Hora, Minuto, AM/PM) -->
       <div class="time-selector-row">
         <select id="selHour" class="time-select">
           <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -324,14 +366,13 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
         <option value="6">Por 6 meses</option>
         <option value="12">Por 1 año</option>
       </select>
-      <small style="display:block; margin-top:5px; color:#666; font-size:0.75rem">Se creará el evento el mismo día de cada mes.</small>
     </div>
     
     <button class="btn-main" onclick="saveEvent()">Guardar</button>
   </div>
 </div>
 
-<!-- MODAL ACCIONES -->
+<!-- MODALES SECUNDARIOS -->
 <div class="modal" id="modalActions">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
@@ -361,7 +402,17 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
   </div>
 </div>
 
+<!-- TOAST (Acciones Rápidas) -->
 <div id="toast">Notificación</div>
+
+<!-- TARJETA DE NOTIFICACIÓN DE 30 SEGUNDOS -->
+<div id="notification-card">
+  <div class="notif-header">
+    <span class="notif-title">🔔 Recordatorio Agenda</span>
+    <button class="notif-close" onclick="closeNotification()">×</button>
+  </div>
+  <div id="notif-content" class="notif-body"></div>
+</div>
 
 <div id="printableArea">
   <h2 id="printTitle" style="text-align:center; color:#003366; margin-bottom: 20px;">Reporte</h2>
@@ -390,11 +441,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const eventsRef = collection(db, "eventos");
-
-// Permiso de notificaciones al cargar (solo pide si no se ha concedido/denegado antes)
-if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-  Notification.requestPermission();
-}
 
 let currentDate = new Date(); 
 let selectedDateForSidebar = new Date(); 
@@ -433,7 +479,8 @@ function renderCalendar() {
 
   for (let i = 0; i < firstDayIndex; i++) { calendarGrid.appendChild(document.createElement("div")).className = "day empty"; }
 
-  const filterVal = document.getElementById("filterCategory").value;
+  const filterCat = document.getElementById("filterCategory").value;
+  const filterResp = document.getElementById("filterResponsible").value;
   const today = new Date();
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -445,9 +492,14 @@ function renderCalendar() {
     dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
     
     const dayString = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
+    
+    // FILTRO DOBLE (CATEGORIA + RESPONSABLE)
     const dayEvents = eventsArray.filter(e => {
       const eDate = e.date.split('T')[0]; 
-      return eDate === dayString && (filterVal === "all" || e.type === filterVal);
+      const matchesDate = eDate === dayString;
+      const matchesCat = (filterCat === "all" || e.type === filterCat);
+      const matchesResp = (filterResp === "all" || e.responsible === filterResp);
+      return matchesDate && matchesCat && matchesResp;
     });
 
     dayEvents.forEach(evt => {
@@ -475,8 +527,15 @@ function renderSidebar(dateObj) {
   document.getElementById("sidebarDateLabel").textContent = dateObj.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   sidebarList.innerHTML = "";
   
+  const filterResp = document.getElementById("filterResponsible").value; // Obtener filtro actual
+  
   const dateString = dateObj.toISOString().split('T')[0];
-  const eventsForDay = eventsArray.filter(e => e.date.startsWith(dateString));
+  
+  // Filtro también en Sidebar
+  const eventsForDay = eventsArray.filter(e => {
+    return e.date.startsWith(dateString) && (filterResp === "all" || e.responsible === filterResp);
+  });
+  
   eventsForDay.sort((a,b) => a.time.localeCompare(b.time));
 
   if (eventsForDay.length === 0) { sidebarList.innerHTML = '<li class="empty-msg">No hay actividades programadas.</li>'; return; }
@@ -515,7 +574,6 @@ window.openModalForNew = () => {
   document.getElementById("eventDateInput").value = selectedDateForSidebar.toISOString().split('T')[0];
   document.getElementById("eventTitle").value = "";
   
-  // RESETEAR SELECTORES DE HORA
   document.getElementById("selHour").value = "9";
   document.getElementById("selMin").value = "00";
   document.getElementById("selAmpm").value = "AM";
@@ -543,7 +601,6 @@ window.editEventFromModal = () => {
   document.getElementById("eventId").value = evt.id;
   document.getElementById("eventDateInput").value = evt.date.split('T')[0];
   
-  // CONVERTIR HORA 24H A LOS SELECTORES 12H
   const [hh, mm] = evt.time.split(':');
   let h = parseInt(hh);
   const ampm = h >= 12 ? 'PM' : 'AM';
@@ -567,7 +624,6 @@ window.saveEvent = async function() {
   const type = document.getElementById("eventType").value;
   const dateVal = document.getElementById("eventDateInput").value; 
   
-  // OBTENER HORA DE LOS 3 SELECTORES Y CONVERTIR A 24H
   let h = parseInt(document.getElementById("selHour").value);
   const m = document.getElementById("selMin").value;
   const ampm = document.getElementById("selAmpm").value;
@@ -665,7 +721,18 @@ window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
   const currentMonthPrefix = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2,'0')}`;
-  const monthEvents = eventsArray.filter(e => e.date.startsWith(currentMonthPrefix));
+  
+  // Aplicar los filtros actuales al reporte impreso
+  const filterCat = document.getElementById("filterCategory").value;
+  const filterResp = document.getElementById("filterResponsible").value;
+  
+  const monthEvents = eventsArray.filter(e => {
+      const matchDate = e.date.startsWith(currentMonthPrefix);
+      const matchesCat = (filterCat === "all" || e.type === filterCat);
+      const matchesResp = (filterResp === "all" || e.responsible === filterResp);
+      return matchDate && matchesCat && matchesResp;
+  });
+  
   monthEvents.sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
   document.getElementById("printTitle").textContent = "Reporte - " + document.getElementById("currentMonthDisplay").textContent;
   if(monthEvents.length === 0) tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:20px'>Sin datos.</td></tr>";
@@ -682,7 +749,29 @@ document.getElementById("eventType").addEventListener('change', function() {
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
 window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
-// --- SISTEMA DE NOTIFICACIONES SILENCIOSAS ---
+// --- FUNCIONES NUEVAS PARA NOTIFICACION LARGA ---
+let notificationTimer;
+
+window.showNotificationCard = (title, body) => {
+  const card = document.getElementById("notification-card");
+  document.getElementById("notif-content").textContent = `${body} - ${title}`;
+  card.style.display = "block";
+  
+  // Limpiar timer anterior si existe para reiniciar los 30s
+  clearTimeout(notificationTimer);
+  
+  // Ocultar despues de 30 segundos
+  notificationTimer = setTimeout(() => {
+    card.style.display = "none";
+  }, 30000); 
+}
+
+window.closeNotification = () => {
+  document.getElementById("notification-card").style.display = "none";
+  clearTimeout(notificationTimer);
+}
+
+// CHECK CADA 60s
 setInterval(() => {
   const now = new Date();
   const currentHour = now.getHours().toString().padStart(2, '0');
@@ -691,22 +780,12 @@ setInterval(() => {
   const todayStr = now.toISOString().split('T')[0];
 
   eventsArray.forEach(evt => {
-    // Si es hoy, a esta hora y no está completado
     if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
-      // Intentar notificación del navegador (Silenciosa)
-      if (Notification.permission === "granted") {
-        new Notification("CEPRODEMIC - Actividad Ahora", {
-            body: `${evt.title} (${evt.responsible || 'Sin resp.'})`,
-            icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-            silent: true // Parametro para evitar sonido en móviles/algunos navegadores
-        });
-      } else {
-        // Fallback visual si no hay permiso (Toast naranja)
-        showToast(`🔔 AHORA: ${evt.title}`, "warning");
-      }
+       // Llamar a la notificación visual de 30s
+       showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
     }
   });
-}, 60000); // Revisar cada 60 segundos
+}, 60000);
 
 renderCalendar(); renderSidebar(new Date());
 </script>

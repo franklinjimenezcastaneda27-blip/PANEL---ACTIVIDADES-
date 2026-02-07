@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Actividades - Financiera</title>
+<title>Agenda de Gestión</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -23,9 +23,22 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: #f1f3f5;
   color: var(--texto);
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  /* --- AQUÍ CAMBIAS LA IMAGEN DE FONDO --- */
+  background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Capa oscura suave sobre la imagen para que se lean las letras */
+.overlay {
+  background-color: rgba(255, 255, 255, 0.85); /* 0.85 es la transparencia */
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -38,9 +51,10 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #1c1e21; }
 
 .controls {
   display: flex;
@@ -79,7 +93,8 @@ h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
   text-align: center;
   font-weight: 600;
   margin-bottom: 10px;
-  color: #868e96;
+  color: #495057;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
 
 #calendar {
@@ -90,7 +105,7 @@ h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
 }
 
 .day {
-  background: white;
+  background: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente en los días */
   border: 1px solid var(--borde);
   border-radius: 8px;
   padding: 8px;
@@ -98,10 +113,11 @@ h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
   flex-direction: column;
   transition: 0.2s;
   cursor: pointer;
+  backdrop-filter: blur(4px);
 }
 
-.day:hover { border-color: var(--azul); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.day.empty { background: transparent; border: none; cursor: default; }
+.day:hover { border-color: var(--azul); box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; backdrop-filter: none;}
 
 .day-number {
   font-weight: 600;
@@ -128,11 +144,17 @@ h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  cursor: pointer; /* Cambiado para indicar que es clicable */
 }
-.event span { pointer-events: none; }
 
-/* --- MODAL --- */
+/* Estilo para eventos completados */
+.event.completed {
+  opacity: 0.5;
+  text-decoration: line-through;
+  background-color: #868e96 !important; /* Gris */
+}
+
+/* --- MODALES --- */
 .modal {
   display: none;
   position: fixed;
@@ -190,39 +212,54 @@ input, select {
 }
 .btn-save:hover { background: #1864ab; }
 
+/* Botones del menú de gestión */
+.btn-action {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+}
+.btn-complete { background: var(--verde); }
+.btn-delete { background: var(--rojo); }
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* Responsive */
 @media(max-width: 768px){
   .weekdays, #calendar { grid-template-columns: repeat(1, 1fr); }
   .day { min-height: auto; }
-  .empty { display: none; } /* Ocultar días vacíos en móvil */
+  .empty { display: none; }
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>📅 Planificador Operativo</h1>
-  <div class="controls">
-    <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
-    <div id="currentMonthDisplay">Cargando...</div>
-    <button class="btn-nav" onclick="changeMonth(1)">▶</button>
-  </div>
-</header>
+<div class="overlay">
+  <header>
+    <h1>Agenda de Gestión de Clientes y Operaciones</h1>
+    <div class="controls">
+      <button class="btn-nav" onclick="changeMonth(-1)">◀</button>
+      <div id="currentMonthDisplay">Cargando...</div>
+      <button class="btn-nav" onclick="changeMonth(1)">▶</button>
+    </div>
+  </header>
 
-<div class="calendar-wrapper">
-  <!-- Cabecera de días de la semana -->
-  <div class="weekdays">
-    <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+  <div class="calendar-wrapper">
+    <div class="weekdays">
+      <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+    </div>
+    <div id="calendar"></div>
   </div>
-  <div id="calendar"></div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL CREAR NUEVA -->
 <div class="modal" id="modal">
   <div class="modal-content">
-    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <button class="close-btn" onclick="closeModal('modal')">&times;</button>
     <h3 style="margin-top:0;">Nueva Actividad</h3>
     
     <div class="form-group">
@@ -250,11 +287,23 @@ input, select {
   </div>
 </div>
 
+<!-- MODAL GESTIONAR EXISTENTE -->
+<div class="modal" id="modalActions">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
+    <h3 id="actionTitle" style="margin-top:0; color:var(--azul);">Gestión</h3>
+    <p id="actionDesc" style="color:#666; margin-bottom:20px;"></p>
+    
+    <button class="btn-action btn-complete" onclick="toggleComplete()">✅ Marcar como Realizada/Pendiente</button>
+    <button class="btn-action btn-delete" onclick="deleteEvent()">🗑️ Eliminar Actividad</button>
+  </div>
+</div>
+
 <!-- SCRIPTS -->
 <script type="module">
-// --- CONFIGURACIÓN DE FIREBASE ---
+// --- FIREBASE SETUP ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -273,37 +322,36 @@ const eventsRef = collection(db, "eventos");
 // --- VARIABLES GLOBALES ---
 let currentDate = new Date();
 let selectedDate = null;
-let eventsArray = []; // Almacén local de eventos para renderizar rápido
+let eventsArray = []; 
+let currentEventId = null; // Para saber qué evento estamos editando
 
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 const modal = document.getElementById("modal");
+const modalActions = document.getElementById("modalActions");
 
 // --- INICIALIZACIÓN ---
-// Escuchar cambios en la base de datos en tiempo real
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
-  snapshot.forEach(doc => {
-    eventsArray.push({ id: doc.id, ...doc.data() });
+  snapshot.forEach(docSnap => {
+    eventsArray.push({ id: docSnap.id, ...docSnap.data() });
   });
-  renderCalendar(); // Redibujar cuando lleguen datos
+  renderCalendar();
 });
 
 // --- FUNCIONES DEL CALENDARIO ---
 function renderCalendar() {
   calendarGrid.innerHTML = "";
-  
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   
-  // Actualizar texto del encabezado (Ej: Febrero 2026)
   const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
   monthDisplay.textContent = monthName;
 
-  const firstDayIndex = new Date(year, month, 1).getDay(); // Día de la semana del 1ro
+  const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Días vacíos previos (Padding) para que el calendario cuadre con Lun/Mar...
+  // Días vacíos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -315,36 +363,42 @@ function renderCalendar() {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
     
-    // Marcar el día de hoy
+    // Hoy
     const today = new Date();
     if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()){
       dayDiv.classList.add("today");
     }
 
-    // HTML del número del día
     dayDiv.innerHTML = `<div class="day-number">${day}</div>`;
     
-    // Buscar eventos para este día
+    // Filtrar eventos del día
     const currentDayStr = new Date(year, month, day).toDateString();
-    
     const dayEvents = eventsArray.filter(e => {
       const eDate = new Date(e.date);
       return eDate.toDateString() === currentDayStr;
     });
 
-    // Renderizar eventos dentro del cuadro
+    // Pintar eventos
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = "event";
-      evtDiv.style.backgroundColor = getColor(evt.type);
-      evtDiv.innerHTML = `
-        <span>${evt.time || ''} ${evt.title}</span>
-      `;
-      evtDiv.title = evt.title; // Tooltip al pasar el mouse
+      if(evt.completed) evtDiv.classList.add("completed"); // Clase tachado
+      
+      evtDiv.style.backgroundColor = evt.completed ? "#868e96" : getColor(evt.type);
+      
+      evtDiv.innerHTML = `<span>${evt.time || ''} ${evt.title}</span>`;
+      evtDiv.title = evt.title;
+      
+      // AL HACER CLIC EN EL EVENTO (Abrir gestión)
+      evtDiv.onclick = (e) => {
+        e.stopPropagation(); // Evita que se abra el modal de "Crear nuevo"
+        openActionModal(evt);
+      };
+      
       dayDiv.appendChild(evtDiv);
     });
 
-    // Evento Click en el día (Evita abrir modal si clickean un evento existente)
+    // AL HACER CLIC EN EL CUADRO (Crear nuevo)
     dayDiv.onclick = (e) => {
       if(e.target === dayDiv || e.target.className === 'day-number') {
         openModal(year, month, day);
@@ -355,7 +409,6 @@ function renderCalendar() {
   }
 }
 
-// --- UTILIDADES ---
 function getColor(type){
   switch(type){
     case "cobranza_comunal": return "var(--rojo)";
@@ -372,36 +425,40 @@ window.changeMonth = (step) => {
   renderCalendar();
 }
 
-// --- LÓGICA DEL MODAL ---
+// --- MODALES ---
 function openModal(year, month, day) {
   selectedDate = new Date(year, month, day);
   document.getElementById("eventTitle").value = "";
-  document.getElementById("eventTime").value = "09:00"; // Hora default
+  document.getElementById("eventTime").value = "09:00";
   modal.style.display = "flex";
   document.getElementById("eventTitle").focus();
 }
 
-window.closeModal = () => {
-  modal.style.display = "none";
+function openActionModal(eventData) {
+  currentEventId = eventData.id;
+  document.getElementById("actionTitle").textContent = eventData.title;
+  document.getElementById("actionDesc").textContent = `Hora: ${eventData.time} - Estado: ${eventData.completed ? "Realizada" : "Pendiente"}`;
+  modalActions.style.display = "flex";
 }
 
-// Cerrar si clickean fuera del contenido blanco
+window.closeModal = (modalId) => {
+  document.getElementById(modalId).style.display = "none";
+}
+
 window.onclick = (event) => {
-  if (event.target == modal) {
-    closeModal();
-  }
+  if (event.target == modal) closeModal('modal');
+  if (event.target == modalActions) closeModal('modalActions');
 }
 
-// --- GUARDAR EN FIREBASE ---
+// --- ACCIONES FIREBASE ---
+
+// Guardar Nuevo
 window.saveEvent = async function() {
   const title = document.getElementById("eventTitle").value;
   const time = document.getElementById("eventTime").value;
   const type = document.getElementById("eventType").value;
 
-  if (!title) {
-    alert("Por favor escribe una descripción");
-    return;
-  }
+  if (!title) { alert("Escribe una descripción"); return; }
 
   const btn = document.querySelector(".btn-save");
   btn.textContent = "Guardando...";
@@ -409,25 +466,54 @@ window.saveEvent = async function() {
 
   try {
     await addDoc(eventsRef, {
-      title,
-      time,
-      type,
+      title, time, type,
       date: selectedDate.toISOString(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      completed: false // Por defecto pendiente
     });
-    closeModal();
+    closeModal('modal');
   } catch (error) {
-    console.error("Error al guardar:", error);
-    alert("Error al guardar. Revisa tu conexión.");
+    console.error(error);
+    alert("Error al guardar");
   } finally {
     btn.textContent = "Guardar Actividad";
     btn.disabled = false;
   }
 }
 
-// Inicializar
-renderCalendar();
+// Marcar Realizada / Pendiente
+window.toggleComplete = async function() {
+  if(!currentEventId) return;
+  
+  // Buscar estado actual
+  const event = eventsArray.find(e => e.id === currentEventId);
+  const newStatus = !event.completed;
 
+  try {
+    const eventDoc = doc(db, "eventos", currentEventId);
+    await updateDoc(eventDoc, { completed: newStatus });
+    closeModal('modalActions');
+  } catch (error) {
+    console.error(error);
+    alert("Error al actualizar");
+  }
+}
+
+// Eliminar
+window.deleteEvent = async function() {
+  if(!currentEventId) return;
+  if(!confirm("¿Seguro que quieres eliminar esta actividad?")) return;
+
+  try {
+    await deleteDoc(doc(db, "eventos", currentEventId));
+    closeModal('modalActions');
+  } catch (error) {
+    console.error(error);
+    alert("Error al eliminar");
+  }
+}
+
+renderCalendar();
 </script>
 </body>
 </html>

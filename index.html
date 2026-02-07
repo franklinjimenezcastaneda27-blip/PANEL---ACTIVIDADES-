@@ -130,14 +130,15 @@ select.filter-select {
   padding: 10px;
 }
 
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: right;
-  padding: 0 10px 10px;
-  color: #4b5563; /* Color sólido para mejor lectura sobre fondo */
+..weekdays div {
+  background: #003366; /* Azul Marino de fondo */
+  color: white;        /* Letras blancas */
+  padding: 8px 0;      /* Relleno arriba y abajo */
+  text-align: center;  /* Centrado perfecto */
+  border-radius: 6px;  /* Bordes redondeados */
   font-size: 0.75rem;
   font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra suave */
 }
 
 #calendar {

@@ -10,18 +10,19 @@
 <style>
 :root {
   /* Paleta de Colores Moderna */
-  --primary: #4f46e5; /* Indigo vibrante */
+  --primary: #4f46e5;
   --bg-body: #f3f4f6;
   --text-main: #1f2937;
   --text-light: #6b7280;
   --border: #e5e7eb;
   
-  /* Colores de Eventos (Pastel + Intenso) */
+  /* Colores de Eventos */
   --tag-red-bg: #fee2e2; --tag-red-text: #991b1b;
   --tag-orange-bg: #ffedd5; --tag-orange-text: #9a3412;
   --tag-blue-bg: #dbeafe; --tag-blue-text: #1e40af;
   --tag-green-bg: #dcfce7; --tag-green-text: #166534;
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
+  --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8; /* Nuevo para Morosos */
 
   /* Efecto Glass */
   --glass-bg: rgba(255, 255, 255, 0.95);
@@ -224,6 +225,7 @@ select.filter-select {
 .evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); border-left-color: var(--tag-blue-text); }
 .evt-desem { background: var(--tag-green-bg); color: var(--tag-green-text); border-left-color: var(--tag-green-text); }
 .evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); border-left-color: var(--tag-yellow-text); }
+.evt-morosos { background: var(--tag-purple-bg); color: var(--tag-purple-text); border-left-color: var(--tag-purple-text); }
 
 /* --- MODALES --- */
 .modal {
@@ -291,7 +293,7 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
   .header-row { margin-bottom: 8px; }
   .controls-bar { flex-direction: column; align-items: stretch; gap: 8px; }
   
-  .weekdays { display: none; } /* Ocultar días texto en móvil para ganar espacio */
+  .weekdays { display: none; } 
   
   #calendar { gap: 4px; }
   .day { min-height: 70px; padding: 3px; }
@@ -334,23 +336,23 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
         <div id="currentMonthDisplay">Cargando...</div>
         <button onclick="changeMonth(1)">&#8250;</button>
       </div>
+      <!-- FILTRO ACTUALIZADO -->
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
-        <option value="all">📂 Todas las actividades</option>
-        <option value="cobranza_comunal">🔴 Banco Comunal</option>
-        <option value="cobranza_individual">🟠 Crédito Individual</option>
-        <option value="visita">🔵 Visitas de Campo</option>
-        <option value="desembolso">🟢 Desembolsos</option>
-        <option value="reunion">🟡 Reuniones</option>
+        <option value="all">📂 Ver Todo</option>
+        <option value="cobranza_comunal">🔴 Cobranza de banco comunal y grupos solidarios</option>
+        <option value="cobranza_individual">🟠 Cobranza crédito individual</option>
+        <option value="visita">🔵 Visita</option>
+        <option value="desembolso">🟢 Desembolso</option>
+        <option value="reunion">🟡 Reunión</option>
+        <option value="morosos">🟣 Cobranza de morosos</option>
       </select>
     </div>
   </header>
 
   <div class="calendar-wrapper">
-    <!-- Encabezado Días -->
     <div class="weekdays">
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
-    <!-- Grid Calendario -->
     <div id="calendar"></div>
   </div>
 </div>
@@ -362,13 +364,23 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
     <div class="modal-header"><h3>Nueva Actividad</h3></div>
     
     <div class="form-group">
-      <label>Título / Cliente</label>
+      <label>Título / Descripción</label>
       <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo A">
     </div>
     
+    <!-- RESPONSABLE AHORA ES SELECT -->
     <div class="form-group">
       <label>Responsable</label>
-      <input type="text" id="eventResponsible" placeholder="Ej: Juan Pérez">
+      <select id="eventResponsible">
+        <option value="">Seleccionar...</option>
+        <option value="FRANKLIN">FRANKLIN</option>
+        <option value="ELIZABETH">ELIZABETH</option>
+        <option value="NOEMI">NOEMI</option>
+        <option value="GIMER">GIMER</option>
+        <option value="ALEJANDRO">ALEJANDRO</option>
+        <option value="OSWALDO">OSWALDO</option>
+        <option value="LUZ">LUZ</option>
+      </select>
     </div>
     
     <div class="form-group">
@@ -376,14 +388,16 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
       <input type="time" id="eventTime">
     </div>
     
+    <!-- TIPOS DE ACTIVIDAD ACTUALIZADOS -->
     <div class="form-group">
       <label>Tipo de Actividad</label>
       <select id="eventType">
-        <option value="cobranza_comunal">🔴 Banco Comunal</option>
-        <option value="cobranza_individual">🟠 Crédito Individual</option>
+        <option value="cobranza_comunal">🔴 Cobranza de banco comunal y grupos solidarios</option>
+        <option value="cobranza_individual">🟠 Cobranza crédito individual</option>
         <option value="visita">🔵 Visita</option>
         <option value="desembolso">🟢 Desembolso</option>
         <option value="reunion">🟡 Reunión</option>
+        <option value="morosos">🟣 Cobranza de morosos</option>
       </select>
     </div>
     
@@ -421,7 +435,7 @@ input:focus, select:focus { border-color: var(--primary); background: white; }
     <thead>
       <tr>
         <th style="width:50px">Día</th>
-        <th style="width:60px">Hora</th>
+        <th style="width:80px">Hora</th>
         <th>Actividad</th>
         <th>Responsable</th>
         <th style="width:60px">Estado</th>
@@ -437,7 +451,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebas
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-// TU CONFIGURACIÓN DE FIREBASE (INTACTA)
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
@@ -459,26 +472,34 @@ let currentEventId = null;
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 
-// Carga en tiempo real
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
   renderCalendar();
 });
 
+// FUNCIÓN PARA CONVERTIR HORA MILITAR A 12H (AM/PM)
+function formatTime12h(time24) {
+  if (!time24) return "";
+  const [hours, minutes] = time24.split(':');
+  let h = parseInt(hours);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  h = h ? h : 12; 
+  return `${h}:${minutes} ${ampm}`;
+}
+
 function renderCalendar() {
   calendarGrid.innerHTML = "";
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   
-  // Capitalizar mes
   const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(currentDate);
   monthDisplay.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Padding de días vacíos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -496,17 +517,11 @@ function renderCalendar() {
       dayDiv.classList.add("today");
     }
 
-    dayDiv.innerHTML = `
-      <div class="day-header">
-        <span class="day-number">${day}</span>
-      </div>
-    `;
+    dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
     
-    // Filtrar eventos del día
     const currentDayStr = new Date(year, month, day).toDateString();
     const dayEvents = eventsArray.filter(e => {
       const eDate = new Date(e.date);
-      // Ajuste de zona horaria simple para asegurar coincidencia de fecha
       const isDate = eDate.toDateString() === currentDayStr;
       const isType = filterVal === "all" || e.type === filterVal;
       return isDate && isType;
@@ -517,13 +532,12 @@ function renderCalendar() {
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
       
-      // Contenido del evento
-      evtDiv.innerHTML = `${evt.time} ${evt.title}`;
+      // AQUI SE APLICA EL FORMATO 12H
+      evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
 
-    // Click en celda vacía para crear
     dayDiv.onclick = (e) => {
       if(e.target === dayDiv || e.target.classList.contains('day-header') || e.target.classList.contains('day-number')) {
         openModal(year, month, day);
@@ -541,11 +555,11 @@ function getClassByType(type) {
     case "visita": return "evt-visita";
     case "desembolso": return "evt-desem";
     case "reunion": return "evt-reunion";
+    case "morosos": return "evt-morosos"; // Nueva clase
     default: return "";
   }
 }
 
-// Funciones globales para HTML
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
 
@@ -565,9 +579,10 @@ function openActionModal(evt) {
     ? '<span style="color:green; font-weight:bold">Completado</span>' 
     : '<span style="color:orange; font-weight:bold">Pendiente</span>';
     
+  // MOSTRAR HORA EN FORMATO 12H
   document.getElementById("actionDetails").innerHTML = `
     <strong>Responsable:</strong> ${evt.responsible || "No asignado"}<br>
-    <strong>Hora:</strong> ${evt.time}<br>
+    <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
     <strong>Estado:</strong> ${statusHtml}
   `;
   document.getElementById("modalActions").style.display = "flex";
@@ -618,9 +633,7 @@ window.deleteEvent = async function() {
 }
 
 window.showStats = () => {
-  // Filtramos eventos solo del mes actual visible
   const currentMonthStr = currentDate.getMonth() + "-" + currentDate.getFullYear();
-  
   const monthEvents = eventsArray.filter(e => {
     const d = new Date(e.date);
     return (d.getMonth() + "-" + d.getFullYear()) === currentMonthStr;
@@ -657,36 +670,33 @@ window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
   
-  // Ordenar por fecha y hora para el reporte
   const sortedEvents = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date));
-  
-  // Filtrar solo mes actual
   const currentMonthEvents = sortedEvents.filter(e => {
      const d = new Date(e.date);
      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
   });
 
-  document.getElementById("printTitle").textContent = "Reporte de Actividades - " + monthDisplay.textContent;
+  document.getElementById("printTitle").textContent = "Reporte - " + monthDisplay.textContent;
   
   if(currentMonthEvents.length === 0){
-    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos para este mes</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos</td></tr>";
   }
 
   currentMonthEvents.forEach(e => {
     const d = new Date(e.date);
+    // FORMATO 12H EN REPORTE
     tbody.innerHTML += `
       <tr>
         <td>${d.getDate()}</td>
-        <td>${e.time}</td>
+        <td>${formatTime12h(e.time)}</td>
         <td>${e.title}</td>
         <td>${e.responsible||""}</td>
-        <td>${e.completed ? "OK" : "Pendiente"}</td>
+        <td>${e.completed ? "OK" : "Pend"}</td>
       </tr>`;
   });
   window.print();
 }
 
-// Inicializar
 renderCalendar();
 </script>
 </body>

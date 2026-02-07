@@ -22,8 +22,7 @@
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
   --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
-  /* Transparencia ajustada para ver mejor el fondo */
-  --glass-bg: rgba(255, 255, 255, 0.2); 
+  --glass-bg: rgba(255, 255, 255, 0.4); /* Un poco más opaco para legibilidad */
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -32,7 +31,6 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  /* IMAGEN DE FONDO */
   background-image: url('https://i.imghippo.com/files/jdb9603WY.png');
   background-size: cover;
   background-position: center;
@@ -53,14 +51,14 @@ body {
   width: 100%;
   background: var(--glass-bg);
   box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px); /* Más blur para mejor efecto */
 }
 
 /* --- HEADER --- */
 header {
   padding: 15px 20px;
   border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.85);
   z-index: 10;
 }
 
@@ -84,7 +82,9 @@ header {
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   color: var(--text-light);
+  transition: all 0.2s;
 }
+.btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
 .controls-bar {
   display: flex;
@@ -94,6 +94,7 @@ header {
   padding: 6px;
   border-radius: 10px;
   border: 1px solid var(--border);
+  flex-wrap: wrap; /* Para que se adapte en móviles */
 }
 
 select.filter-select {
@@ -106,6 +107,7 @@ select.filter-select {
   cursor: pointer;
   flex: 1;
   text-transform: uppercase;
+  min-width: 150px;
 }
 
 .month-nav {
@@ -118,6 +120,8 @@ select.filter-select {
 
 .month-nav button {
   border: none; background: transparent; padding: 6px 12px; cursor: pointer; font-weight: 700;
+  color: var(--primary);
+  font-size: 1.2rem;
 }
 #currentMonthDisplay {
   min-width: 120px; text-align: center; font-weight: 700; font-size: 0.95rem; text-transform: capitalize;
@@ -130,25 +134,23 @@ select.filter-select {
   padding: 10px;
 }
 
-/* --- ARREGLO DE LOS DÍAS (DOM, LUN, ETC) --- */
 .weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 Columnas obligatorias */
+  grid-template-columns: repeat(7, 1fr);
   gap: 6px;
   margin-bottom: 10px;
   padding: 0;
 }
 
-/* Estilo de los cuadritos azules de la cabecera */
 .weekdays div {
-  background-color: #003366; /* Azul Marino */
+  background-color: #003366;
   color: white;
   text-align: center;
   padding: 10px 0;
   border-radius: 8px;
   font-weight: bold;
   font-size: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #calendar {
@@ -159,17 +161,20 @@ select.filter-select {
 }
 
 .day {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid #003366; /* Borde Azul Marino en los días */
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #cbd5e1; /* Borde más sutil */
+  border-top: 3px solid #003366; /* Borde superior azul */
+  border-radius: 8px;
   min-height: 100px;
   padding: 6px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  transition: transform 0.1s;
 }
 
-.day.empty { background: transparent; border: none; cursor: default; }
+.day:active { transform: scale(0.98); }
+.day.empty { background: transparent; border: none; cursor: default; border-top: none; }
 
 .day-header { display: flex; justify-content: flex-end; margin-bottom: 4px; }
 
@@ -178,7 +183,7 @@ select.filter-select {
   width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
 }
 
-.day.today { border: 2px solid var(--primary); }
+.day.today { border: 2px solid var(--primary); background: #fff; }
 .day.today .day-number { background: var(--primary); color: white; }
 
 /* EVENTOS */
@@ -193,6 +198,7 @@ select.filter-select {
   text-overflow: ellipsis;
   border-left: 3px solid transparent;
   text-transform: uppercase;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .event.completed { text-decoration: line-through; opacity: 0.6; filter: grayscale(1); }
@@ -207,17 +213,20 @@ select.filter-select {
 /* --- MODALES --- */
 .modal {
   display: none;
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000;
   justify-content: center; align-items: center;
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
   background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 400px;
-  box-shadow: 0 20px 30px rgba(0,0,0,0.2); position: relative;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.3); position: relative;
+  animation: slideIn 0.3s ease-out;
 }
+@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-.close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-.modal-header h3 { margin: 0 0 15px 0; font-size: 1.2rem; }
+.close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+.modal-header h3 { margin: 0 0 15px 0; font-size: 1.2rem; color: var(--primary); }
 
 .form-group { margin-bottom: 12px; }
 .form-group label { display: block; font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; font-weight: 600; }
@@ -226,8 +235,8 @@ input, select {
   width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
   background: #f9fafb; font-family: inherit; font-size: 0.9rem;
 }
+input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 
-/* SELECTOR DE HORA AM/PM */
 .time-selector-row { display: flex; gap: 5px; align-items: center; }
 .time-select { flex: 1; text-align: center; }
 .time-separator { font-weight: bold; padding: 0 2px; }
@@ -235,8 +244,11 @@ input, select {
 .btn-main {
   width: 100%; padding: 12px; border-radius: 8px; border: none;
   background: var(--primary); color: white; font-weight: 600; cursor: pointer; margin-top: 10px;
+  transition: background 0.2s;
 }
-.btn-danger { background: #ef4444; } .btn-success { background: #10b981; }
+.btn-main:active { transform: scale(0.98); }
+.btn-danger { background: #ef4444; } 
+.btn-success { background: #10b981; }
 .btn-row { display: flex; gap: 10px; margin-top: 15px; } .btn-row button { flex: 1; margin: 0; }
 
 /* IMPRESION Y ESTADISTICAS */
@@ -246,19 +258,27 @@ input, select {
 .stat-val { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
 .stat-lbl { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; }
 
+/* --- RESPONSIVE FIXES (MEJORADO) --- */
 @media(max-width: 768px) {
-  .weekdays { display: none; }
-  .day { min-height: 70px; padding: 3px; }
-  .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; align-self: flex-end; }
-  .event { font-size: 0.65rem; padding: 2px 4px; border-left-width: 2px; }
+  /* No ocultar los días, solo hacerlos pequeños */
+  .weekdays div { font-size: 0.65rem; padding: 5px 0; overflow: hidden; }
+  
+  .day { min-height: 80px; padding: 3px; }
+  .day-number { font-size: 0.75rem; width: 22px; height: 22px; margin-bottom: 2px; }
+  
+  .event { font-size: 0.6rem; padding: 2px 4px; border-left-width: 2px; }
+  .controls-bar { flex-direction: column; align-items: stretch; }
+  .header-row { flex-direction: row; }
 }
 
 @media print {
   body { background: white; height: auto; overflow: visible; }
-  .app-container, .modal { display: none; }
-  #printableArea { display: block; padding: 20px; }
+  .app-container, .modal { display: none !important; }
+  #printableArea { display: block !important; padding: 20px; }
   table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
+  th { background: #003366; color: white; }
   th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+  tr:nth-child(even) { background-color: #f2f2f2; }
 }
 </style>
 </head>
@@ -269,7 +289,7 @@ input, select {
     <div class="header-row">
       <div class="brand">
         <h1>Agenda Corporativa</h1>
-        <small>Panel de Gestión</small>
+        <small>CEPRODEMIC Pro</small>
       </div>
       <div class="actions">
         <button class="btn-icon" onclick="showStats()" title="Estadísticas">📊</button>
@@ -296,8 +316,8 @@ input, select {
   </header>
 
   <div class="calendar-wrapper">
-    <!-- Aquí están los días que se verán en cuadritos azules -->
     <div class="weekdays">
+      <!-- Abreviaciones para que entren mejor en movil si fuera necesario -->
       <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
     </div>
     <div id="calendar"></div>
@@ -312,7 +332,7 @@ input, select {
     
     <div class="form-group">
       <label>Título / Descripción</label>
-      <input type="text" id="eventTitle" placeholder="Ej: Grupo Los Pinos">
+      <input type="text" id="eventTitle" placeholder="Ej: Grupo Los Pinos" autocomplete="off">
     </div>
     
     <div class="form-group">
@@ -329,11 +349,9 @@ input, select {
       </select>
     </div>
     
-    <!-- SELECTOR DE HORA AM/PM -->
     <div class="form-group">
       <label>Hora</label>
       <div class="time-selector-row">
-        <!-- Hora 1-12 -->
         <select id="selHour" class="time-select">
           <option value="1">1</option><option value="2">2</option><option value="3">3</option>
           <option value="4">4</option><option value="5">5</option><option value="6">6</option>
@@ -341,7 +359,6 @@ input, select {
           <option value="10">10</option><option value="11">11</option><option value="12">12</option>
         </select>
         <span class="time-separator">:</span>
-        <!-- Minutos 00-59 -->
         <select id="selMin" class="time-select">
           <option value="00">00</option><option value="05">05</option>
           <option value="10">10</option><option value="15">15</option>
@@ -350,7 +367,6 @@ input, select {
           <option value="40">40</option><option value="45">45</option>
           <option value="50">50</option><option value="55">55</option>
         </select>
-        <!-- AM/PM -->
         <select id="selAmpm" class="time-select">
           <option value="AM" selected>AM</option>
           <option value="PM">PM</option>
@@ -398,15 +414,16 @@ input, select {
 </div>
 
 <div id="printableArea">
-  <h2 id="printTitle" style="text-align:center;">Reporte de Actividades</h2>
+  <h2 id="printTitle" style="text-align:center; color:#003366; margin-bottom: 20px;">Reporte de Actividades</h2>
   <table id="printTable">
     <thead>
       <tr>
-        <th style="width:50px">Día</th>
+        <th style="width:60px">Día</th>
         <th style="width:80px">Hora</th>
         <th>Actividad</th>
+        <th>Tipo</th>
         <th>Responsable</th>
-        <th style="width:60px">Estado</th>
+        <th style="width:70px">Estado</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -414,10 +431,11 @@ input, select {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// CONFIGURACIÓN FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
@@ -439,6 +457,7 @@ let currentEventId = null;
 const calendarGrid = document.getElementById("calendar");
 const monthDisplay = document.getElementById("currentMonthDisplay");
 
+// Listener en tiempo real
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
   eventsArray = [];
   snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
@@ -455,6 +474,16 @@ function formatTime12h(time24) {
   return `${h}:${minutes} ${ampm}`;
 }
 
+// Mapa de nombres de tipos para impresión
+const typeLabels = {
+  "cobranza_comunal": "Cobranza BC/GS",
+  "cobranza_individual": "Cobranza Indiv.",
+  "morosos": "Morosos",
+  "visita": "Visita",
+  "desembolso": "Desembolso",
+  "reunion": "Reunión"
+};
+
 function renderCalendar() {
   calendarGrid.innerHTML = "";
   const year = currentDate.getFullYear();
@@ -466,6 +495,7 @@ function renderCalendar() {
   const firstDayIndex = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  // Días vacíos previos
   for (let i = 0; i < firstDayIndex; i++) {
     const emptyDiv = document.createElement("div");
     emptyDiv.className = "day empty";
@@ -478,28 +508,44 @@ function renderCalendar() {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day";
     const today = new Date();
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
+    
+    // Comparación simple de fecha actual
+    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+        dayDiv.classList.add("today");
+    }
+
     dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
     
-    const currentDayStr = new Date(year, month, day).toDateString();
+    // FILTRADO DE EVENTOS (MEJORADO PARA EVITAR ERRORES DE ZONA HORARIA)
     const dayEvents = eventsArray.filter(e => {
-      const eDate = new Date(e.date);
-      return eDate.toDateString() === currentDayStr && (filterVal === "all" || e.type === filterVal);
+      // Convertir la fecha guardada (ISO) a objeto fecha
+      const eventDate = new Date(e.date);
+      // Extraemos componentes locales de la fecha del evento guardado
+      // Nota: e.date se guardó como ISO desde selectedDate.
+      // Aquí comparamos día/mes/año locales del evento contra el día que estamos pintando
+      return eventDate.getDate() === day && 
+             eventDate.getMonth() === month && 
+             eventDate.getFullYear() === year &&
+             (filterVal === "all" || e.type === filterVal);
     });
 
     dayEvents.forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
+      
+      // Contenido del evento
       evtDiv.innerHTML = `${formatTime12h(evt.time)} ${evt.title}`;
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
 
+    // Click en el día (evita disparar si se clickea header o numero directamente, aunque se propaga)
     dayDiv.onclick = (e) => {
-      if(e.target === dayDiv || e.target.classList.contains('day-header') || e.target.classList.contains('day-number')) {
-        openModal(year, month, day);
-      }
+        // Si el click no fue en un evento (ya manejado arriba), abrimos modal
+        if (!e.target.classList.contains('event')) {
+            openModal(year, month, day);
+        }
     };
     calendarGrid.appendChild(dayDiv);
   }
@@ -517,30 +563,34 @@ function getClassByType(type) {
   }
 }
 
+// FUNCIONES GLOBALES (Window)
 window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); renderCalendar(); }
 window.applyFilter = () => renderCalendar();
 
 function openModal(year, month, day) {
-  selectedDate = new Date(year, month, day);
+  selectedDate = new Date(year, month, day); // Fecha Local 00:00:00
   document.getElementById("eventTitle").value = "";
-  document.getElementById("eventResponsible").value = "";
+  // No limpiamos responsable para facilitar ingresos seguidos, o puedes descomentar:
+  // document.getElementById("eventResponsible").value = ""; 
   
   document.getElementById("selHour").value = "9";
   document.getElementById("selMin").value = "00";
   document.getElementById("selAmpm").value = "AM";
   
   document.getElementById("modal").style.display = "flex";
-  document.getElementById("eventTitle").focus();
+  setTimeout(() => document.getElementById("eventTitle").focus(), 100);
 }
 
 function openActionModal(evt) {
   currentEventId = evt.id;
   document.getElementById("actionTitle").textContent = evt.title;
   const statusHtml = evt.completed 
-    ? '<span style="color:green; font-weight:bold">Completado</span>' 
-    : '<span style="color:orange; font-weight:bold">Pendiente</span>';
+    ? '<span style="color:#10b981; font-weight:bold">✅ Completado</span>' 
+    : '<span style="color:#f59e0b; font-weight:bold">⏳ Pendiente</span>';
+    
   document.getElementById("actionDetails").innerHTML = `
-    <strong>Responsable:</strong> ${evt.responsible || "No asignado"}<br>
+    <strong>Responsable:</strong> ${evt.responsible || "---"}<br>
+    <strong>Tipo:</strong> ${typeLabels[evt.type] || evt.type}<br>
     <strong>Hora:</strong> ${formatTime12h(evt.time)}<br>
     <strong>Estado:</strong> ${statusHtml}
   `;
@@ -551,7 +601,7 @@ window.closeModal = (id) => document.getElementById(id).style.display = "none";
 window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
 window.saveEvent = async function() {
-  const title = document.getElementById("eventTitle").value;
+  const title = document.getElementById("eventTitle").value.trim();
   const responsible = document.getElementById("eventResponsible").value;
   const type = document.getElementById("eventType").value;
   
@@ -559,27 +609,32 @@ window.saveEvent = async function() {
   const m = document.getElementById("selMin").value;
   const ampm = document.getElementById("selAmpm").value;
   
+  // Conversión correcta 12h a 24h
   if(ampm === "PM" && h !== 12) h += 12;
   if(ampm === "AM" && h === 12) h = 0;
   
   const time = `${h.toString().padStart(2, '0')}:${m}`;
   
-  if (!title) return alert("Escribe un título");
+  if (!title) return alert("Por favor escribe el título de la actividad");
   
   const btn = document.querySelector("#modal .btn-main");
   const originalText = btn.textContent;
   btn.textContent = "Guardando..."; btn.disabled = true;
 
   try {
+    // Guardamos la fecha tal cual se generó (Local).
+    // Al recuperar, usaremos new Date(date) que respeta la conversión.
     await addDoc(eventsRef, { 
       title, responsible, time, type, 
-      date: selectedDate.toISOString(), 
+      date: selectedDate.toString(), // Guardamos como string completo para mantener contexto si es necesario, o ISO.
+      // Nota: toString() guarda "Fri Feb 07 2026 00:00:00 GMT-0500..." 
+      // Es más seguro para apps locales simples que ISO si no hay manejo de TZ complejo.
       completed: false 
     });
     closeModal('modal');
   } catch(e){
     console.error(e);
-    alert("Error al guardar");
+    alert("Error al guardar: " + e.message);
   } finally { 
     btn.textContent = originalText; btn.disabled = false; 
   }
@@ -593,7 +648,7 @@ window.toggleComplete = async function() {
 }
 
 window.deleteEvent = async function() {
-  if(confirm("¿Eliminar actividad?")) { 
+  if(confirm("¿Estás seguro de eliminar esta actividad?")) { 
     await deleteDoc(doc(db, "eventos", currentEventId)); 
     closeModal('modalActions'); 
   }
@@ -601,14 +656,17 @@ window.deleteEvent = async function() {
 
 window.showStats = () => {
   const currentMonthStr = currentDate.getMonth() + "-" + currentDate.getFullYear();
+  
   const monthEvents = eventsArray.filter(e => {
     const d = new Date(e.date);
     return (d.getMonth() + "-" + d.getFullYear()) === currentMonthStr;
   });
+  
   const total = monthEvents.length;
   const completed = monthEvents.filter(e => e.completed).length;
   const pending = total - completed;
   const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+  
   const container = document.getElementById("statsContainer");
   container.innerHTML = `
     <div class="stat-card"><span class="stat-val">${total}</span><span class="stat-lbl">Actividades</span></div>
@@ -622,18 +680,41 @@ window.showStats = () => {
 window.printReport = () => {
   const tbody = document.querySelector("#printTable tbody");
   tbody.innerHTML = "";
-  const sortedEvents = [...eventsArray].sort((a,b) => new Date(a.date) - new Date(b.date));
-  const currentMonthEvents = sortedEvents.filter(e => {
+  
+  // Filtrar eventos del mes actual visualizado
+  const monthEvents = eventsArray.filter(e => {
      const d = new Date(e.date);
      return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
   });
-  document.getElementById("printTitle").textContent = "Reporte - " + monthDisplay.textContent;
-  if(currentMonthEvents.length === 0) tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>No hay datos</td></tr>";
-  currentMonthEvents.forEach(e => {
-    const d = new Date(e.date);
-    tbody.innerHTML += `<tr><td>${d.getDate()}</td><td>${formatTime12h(e.time)}</td><td>${e.title}</td><td>${e.responsible||""}</td><td>${e.completed ? "OK" : "Pend"}</td></tr>`;
+
+  // Ordenar por día y hora
+  monthEvents.sort((a,b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA - dateB !== 0) return dateA - dateB;
+      return a.time.localeCompare(b.time);
   });
-  window.print();
+  
+  document.getElementById("printTitle").textContent = "Reporte - " + monthDisplay.textContent;
+  
+  if(monthEvents.length === 0) tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>No hay actividades registradas este mes.</td></tr>";
+  
+  monthEvents.forEach(e => {
+    const d = new Date(e.date);
+    const typeName = typeLabels[e.type] || e.type;
+    tbody.innerHTML += `
+      <tr>
+        <td>${d.getDate()}</td>
+        <td>${formatTime12h(e.time)}</td>
+        <td>${e.title}</td>
+        <td style="font-size:11px">${typeName}</td>
+        <td>${e.responsible||""}</td>
+        <td>${e.completed ? "OK" : "Pend"}</td>
+      </tr>`;
+  });
+
+  // Pequeño timeout para dar tiempo al DOM de actualizarse antes de abrir el diálogo
+  setTimeout(() => window.print(), 300);
 }
 
 renderCalendar();

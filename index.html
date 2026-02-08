@@ -21,7 +21,7 @@
   --text-light: #64748b;
   --border: #cbd5e1;
   
-  /* Colores de las etiquetas (Pasteles para contraste con el azul) */
+  /* Colores de las etiquetas */
   --tag-red-bg: #fee2e2; --tag-red-text: #991b1b;
   --tag-orange-bg: #ffedd5; --tag-orange-text: #9a3412;
   --tag-blue-bg: #dbeafe; --tag-blue-text: #1e40af;
@@ -29,8 +29,8 @@
   --tag-yellow-bg: #fef9c3; --tag-yellow-text: #854d0e;
   --tag-purple-bg: #f3e8ff; --tag-purple-text: #6b21a8;
 
-  --glass-bg: rgba(255, 255, 255, 0.85); 
-  --shadow-lg: 0 10px 25px rgba(0, 51, 102, 0.15); /* Sombra azulada sutil */
+  --glass-bg: rgba(255, 255, 255, 0.95); 
+  --shadow-lg: 0 10px 25px rgba(0, 51, 102, 0.25);
 }
 
 * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -38,8 +38,7 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  /* Fondo neutro o imagen */
-  background-color: #f1f5f9; 
+  background-color: #cbd5e1; /* Fondo general más oscuro detrás de la app */
   background-image: url('https://i.imghippo.com/files/jdb9603WY.png');
   background-size: cover;
   background-position: center;
@@ -65,57 +64,75 @@ body {
   border-right: 1px solid rgba(255,255,255,0.5);
 }
 
+/* --- HEADER MODIFICADO: FONDO AZUL OSCURO --- */
 header {
   padding: 15px 20px;
-  border-bottom: 2px solid #e2e8f0;
-  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: var(--navy-brand); /* AHORA ES AZUL MARINO */
   z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 15px; }
+.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
 
+/* Textos del header ahora en blanco */
 .brand h1 { 
   margin: 0; font-size: 1.4rem; font-weight: 800; 
-  color: var(--navy-brand); /* AZUL MARINO */
+  color: white; 
   letter-spacing: -0.5px; 
   text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-.brand small { font-size: 0.85rem; color: var(--text-light); font-weight: 600; letter-spacing: 1px; }
+.brand small { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; letter-spacing: 1px; }
 
+/* Buscador oscuro/translúcido */
 .search-box { flex: 1; max-width: 400px; position: relative; display: flex; align-items: center; }
 .search-box input { 
-  padding-left: 38px; border-radius: 8px; border: 1px solid var(--border); 
-  background: #f8fafc; transition: all 0.2s; color: var(--navy-brand); font-weight: 500;
+  padding-left: 38px; border-radius: 8px; 
+  border: 1px solid rgba(255,255,255,0.2); 
+  background: rgba(255,255,255,0.15); /* Glass effect sobre azul */
+  transition: all 0.2s; 
+  color: white; 
+  font-weight: 500;
 }
+.search-box input::placeholder { color: rgba(255,255,255,0.7); }
 .search-box input:focus { 
-  border-color: var(--navy-brand); background: white; 
-  box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1); 
+  border-color: white; background: rgba(255,255,255,0.25); 
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1); 
 }
-.search-icon { position: absolute; left: 12px; color: var(--navy-brand); opacity: 0.6; }
+.search-icon { position: absolute; left: 12px; color: rgba(255,255,255,0.7); }
 
 .actions { display: flex; gap: 8px; }
+
+/* Botones secundarios (Hoy, Stats, Print) - Estilo Glass */
 .btn-icon {
-  background: white; border: 1px solid var(--border); border-radius: 8px; height: 38px; padding: 0 14px;
+  background: rgba(255,255,255,0.1); 
+  border: 1px solid rgba(255,255,255,0.2); 
+  border-radius: 8px; height: 38px; padding: 0 14px;
   display: flex; align-items: center; justify-content: center; cursor: pointer; 
-  color: var(--navy-brand); font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+  color: white; /* Texto blanco */
+  font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
 }
-.btn-icon:hover { background: var(--navy-light); border-color: var(--navy-brand); }
+.btn-icon:hover { background: rgba(255,255,255,0.2); }
 
-/* Botón Nuevo destacado en Azul */
+/* Botón Nuevo: BLANCO SÓLIDO para resaltar sobre el fondo azul */
 .btn-add-global { 
-  background: var(--navy-brand); color: white; border: 1px solid var(--navy-brand); 
-  box-shadow: 0 2px 5px rgba(0, 51, 102, 0.2);
+  background: white; 
+  color: var(--navy-brand); 
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
-.btn-add-global:hover { background: var(--navy-dark); color: white; transform: translateY(-1px); }
+.btn-add-global:hover { background: #f1f5f9; color: var(--navy-dark); transform: translateY(-1px); }
 
-/* --- FRANJA DE CONTROLES AZUL MARINO --- */
+
+/* --- FRANJA DE CONTROLES (YA ERA AZUL, LA MANTENEMOS PERO CON BORDE SUTIL) --- */
 .controls-bar {
   display: flex; gap: 10px; align-items: center; 
-  background: var(--navy-brand); /* FONDO AZUL MARINO */
+  background: rgba(0,0,0,0.25); /* Un poco más oscuro que el header para diferenciar capas */
   padding: 10px 15px; 
   border-radius: 8px; 
   color: white; 
-  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.2);
+  border: 1px solid rgba(255,255,255,0.1);
   flex-wrap: wrap; 
 }
 
@@ -149,28 +166,34 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.calendar-wrapper { flex: 3; overflow-y: auto; padding: 20px; border-right: 1px solid var(--border); background: rgba(255,255,255,0.4); }
+/* Fonde del calendario cambiado a gris azulado claro para no verse vacío */
+.calendar-wrapper { 
+  flex: 3; overflow-y: auto; padding: 20px; 
+  border-right: 1px solid var(--border); 
+  background: #eef2f6; /* Color de relleno */
+}
 
-/* Encabezados de días en Azul */
 .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 10px; }
 .weekdays div { 
   background-color: var(--navy-brand); color: white; 
   text-align: center; padding: 10px 0; border-radius: 6px; 
   font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 #calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding-bottom: 20px; }
 
+/* Las celdas de días siguen blancas para resaltar sobre el fondo grisáceo */
 .day { 
   background: white; border: 1px solid var(--border); 
-  border-top: 5px solid var(--navy-brand); /* Borde superior azul */
+  border-top: 5px solid var(--navy-brand); 
   border-radius: 8px; min-height: 120px; padding: 8px; 
   display: flex; flex-direction: column; cursor: pointer; 
   transition: all 0.2s ease; position: relative; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
-.day:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 51, 102, 0.1); border-color: #94a3b8; }
-.day.empty { background: transparent; border: none; cursor: default; border-top: none; }
+.day:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 51, 102, 0.15); border-color: #94a3b8; }
+.day.empty { background: transparent; border: none; cursor: default; border-top: none; box-shadow: none; }
 
 .day-header { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
 .day-number { 
@@ -178,16 +201,14 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
   width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; 
 }
 
-/* Día Actual */
 .day.today { 
   border-color: var(--navy-brand); background: #fff; 
   box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.2); 
 }
 .day.today .day-number { background: var(--navy-brand); color: white; }
 
-/* Día Seleccionado */
 .day.selected-day { 
-  background-color: var(--navy-light); /* Azul muy claro */
+  background-color: var(--navy-light); 
   border-color: var(--navy-brand); 
 }
 .day.selected-day .day-number { color: var(--navy-brand); }
@@ -201,7 +222,6 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .event:hover { opacity: 0.9; transform: scale(1.02); }
 .event.completed { text-decoration: line-through; opacity: 0.6; filter: grayscale(1); }
 
-/* Colores de eventos se mantienen para contraste, pero ajustados */
 .evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
 .evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); border-left-color: var(--tag-orange-text); }
 .evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); border-left-color: var(--tag-blue-text); }
@@ -209,9 +229,10 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); border-left-color: var(--tag-yellow-text); }
 .evt-morosos { background: var(--tag-purple-bg); color: var(--tag-purple-text); border-left-color: var(--tag-purple-text); }
 
-/* SIDEBAR */
+/* SIDEBAR - Fondo sutilmente oscuro */
 .sidebar { 
-  flex: 1; min-width: 340px; background: rgba(255,255,255,0.85); 
+  flex: 1; min-width: 340px; 
+  background: #f8fafc; /* Gris muy claro, no blanco */
   padding: 25px; overflow-y: auto; display: flex; flex-direction: column; 
   border-left: 1px solid rgba(0,0,0,0.05);
 }
@@ -226,12 +247,12 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .sidebar-item { 
   background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; 
   box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-left: 4px solid #ccc; 
-  cursor: pointer; transition: all 0.2s; border: 1px solid #f1f5f9; border-left-width: 4px;
+  cursor: pointer; transition: all 0.2s; border: 1px solid #e2e8f0; border-left-width: 4px;
 }
 .sidebar-item:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-color: var(--navy-brand); }
 .sidebar-item h4 { margin: 0 0 8px 0; font-size: 1rem; font-weight: 700; color: var(--navy-brand); display: flex; justify-content: space-between; }
 .sidebar-item p { margin: 0; font-size: 0.85rem; color: #555; display: flex; gap: 10px; align-items: center; }
-.empty-msg { text-align: center; color: var(--text-light); font-size: 0.95rem; margin-top: 40px; font-style: italic; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; }
+.empty-msg { text-align: center; color: var(--text-light); font-size: 0.95rem; margin-top: 40px; font-style: italic; background: rgba(0,0,0,0.03); padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; }
 
 /* MODALES */
 .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); padding: 15px; }

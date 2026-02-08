@@ -38,7 +38,7 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: #cbd5e1; 
+  background-color: #cbd5e1; /* Fondo general más oscuro detrás de la app */
   background-image: url('https://i.imghippo.com/files/jdb9603WY.png');
   background-size: cover;
   background-position: center;
@@ -64,17 +64,18 @@ body {
   border-right: 1px solid rgba(255,255,255,0.5);
 }
 
-/* --- HEADER --- */
+/* --- HEADER MODIFICADO: FONDO AZUL OSCURO --- */
 header {
   padding: 15px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  background: var(--navy-brand); 
+  background: var(--navy-brand); /* AHORA ES AZUL MARINO */
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
 
+/* Textos del header ahora en blanco */
 .brand h1 { 
   margin: 0; font-size: 1.4rem; font-weight: 800; 
   color: white; 
@@ -84,11 +85,12 @@ header {
 }
 .brand small { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; letter-spacing: 1px; }
 
+/* Buscador oscuro/translúcido */
 .search-box { flex: 1; max-width: 400px; position: relative; display: flex; align-items: center; }
 .search-box input { 
   padding-left: 38px; border-radius: 8px; 
   border: 1px solid rgba(255,255,255,0.2); 
-  background: rgba(255,255,255,0.15); 
+  background: rgba(255,255,255,0.15); /* Glass effect sobre azul */
   transition: all 0.2s; 
   color: white; 
   font-weight: 500;
@@ -102,16 +104,18 @@ header {
 
 .actions { display: flex; gap: 8px; }
 
+/* Botones secundarios (Hoy, Stats, Print) - Estilo Glass */
 .btn-icon {
   background: rgba(255,255,255,0.1); 
   border: 1px solid rgba(255,255,255,0.2); 
   border-radius: 8px; height: 38px; padding: 0 14px;
   display: flex; align-items: center; justify-content: center; cursor: pointer; 
-  color: white; 
+  color: white; /* Texto blanco */
   font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
 }
 .btn-icon:hover { background: rgba(255,255,255,0.2); }
 
+/* Botón Nuevo: BLANCO SÓLIDO para resaltar sobre el fondo azul */
 .btn-add-global { 
   background: white; 
   color: var(--navy-brand); 
@@ -120,9 +124,11 @@ header {
 }
 .btn-add-global:hover { background: #f1f5f9; color: var(--navy-dark); transform: translateY(-1px); }
 
+
+/* --- FRANJA DE CONTROLES (YA ERA AZUL, LA MANTENEMOS PERO CON BORDE SUTIL) --- */
 .controls-bar {
   display: flex; gap: 10px; align-items: center; 
-  background: rgba(0,0,0,0.25); 
+  background: rgba(0,0,0,0.25); /* Un poco más oscuro que el header para diferenciar capas */
   padding: 10px 15px; 
   border-radius: 8px; 
   color: white; 
@@ -160,10 +166,11 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Fonde del calendario cambiado a gris azulado claro para no verse vacío */
 .calendar-wrapper { 
   flex: 3; overflow-y: auto; padding: 20px; 
   border-right: 1px solid var(--border); 
-  background: #eef2f6; 
+  background: #eef2f6; /* Color de relleno */
 }
 
 .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -176,6 +183,7 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 
 #calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding-bottom: 20px; }
 
+/* Las celdas de días siguen blancas para resaltar sobre el fondo grisáceo */
 .day { 
   background: white; border: 1px solid var(--border); 
   border-top: 5px solid var(--navy-brand); 
@@ -221,9 +229,10 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); border-left-color: var(--tag-yellow-text); }
 .evt-morosos { background: var(--tag-purple-bg); color: var(--tag-purple-text); border-left-color: var(--tag-purple-text); }
 
+/* SIDEBAR - Fondo sutilmente oscuro */
 .sidebar { 
   flex: 1; min-width: 340px; 
-  background: #f8fafc; 
+  background: #f8fafc; /* Gris muy claro, no blanco */
   padding: 25px; overflow-y: auto; display: flex; flex-direction: column; 
   border-left: 1px solid rgba(0,0,0,0.05);
 }
@@ -245,35 +254,20 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .sidebar-item p { margin: 0; font-size: 0.85rem; color: #555; display: flex; gap: 10px; align-items: center; }
 .empty-msg { text-align: center; color: var(--text-light); font-size: 0.95rem; margin-top: 40px; font-style: italic; background: rgba(0,0,0,0.03); padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; }
 
-/* --- MODAL CORREGIDO PARA PC --- */
-.modal { 
-  display: none; 
-  position: fixed; 
-  inset: 0; 
-  background: rgba(15, 23, 42, 0.6); 
-  z-index: 1000; 
-  justify-content: center; 
-  align-items: center; 
-  backdrop-filter: blur(4px); 
-  padding: 15px; 
-}
+/* MODALES */
+.modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); padding: 15px; }
 .modal-content { 
-  background: white; 
-  padding: 30px; 
-  border-radius: 16px; 
-  width: 100%; 
-  max-width: 450px; 
-  box-shadow: 0 25px 50px rgba(0,0,0,0.3); 
-  position: relative; 
+  background: white; padding: 30px; border-radius: 16px; width: 100%; max-width: 450px; 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3); position: relative; 
   animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
   
-  /* ESTO ARREGLA QUE NO SE VEA COMPLETO EN PC: */
-  max-height: 90vh; /* Máximo 90% del alto de la pantalla */
-  overflow-y: auto; /* Barra de desplazamiento si es necesario */
+  /* CORRECCIÓN: Para que se vea completo si es muy alto en PC */
+  max-height: 90vh; 
+  overflow-y: auto;
 }
 @keyframes slideIn { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
-.close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #cbd5e1; transition: color 0.2s; line-height: 1; z-index: 10; }
+.close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #cbd5e1; transition: color 0.2s; line-height: 1; }
 .close-btn:hover { color: var(--navy-brand); }
 
 .modal-header h3 { margin: 0 0 25px 0; font-size: 1.4rem; color: var(--navy-brand); font-weight: 800; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
@@ -726,7 +720,7 @@ window.openModalForNew = () => {
   document.getElementById("repeatMonthsGroup").style.display = "block";
   document.getElementById("modal").style.display = "flex";
   
-  // SE ELIMINÓ EL setTimeout QUE ROBABA EL FOCO
+  // SE HA ELIMINADO LA LÍNEA QUE ROBABA EL FOCO AQUÍ
 }
 
 function openActionModal(evt) {

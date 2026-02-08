@@ -360,7 +360,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
       </div>
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="globalSearch" placeholder="Buscar actividad..." onkeyup="handleSearch()">
+        <input type="text" id="globalSearch" placeholder="Buscar actividad o Encargado..." onkeyup="handleSearch()">
       </div>
       <div class="actions">
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
@@ -586,7 +586,7 @@ let selectedDateForSidebar = new Date();
 let eventsArray = []; 
 let currentEventObj = null;
 
-const typeIcons = { "cobranza_comunal": "👥", "cobranza_individual": "👤", "morosos": "🛑", "visita": "🏠", "desembolso": "💵", "reunion": "📅" };
+const typeIcons = { "cobranza_comunal": "👨🏽‍🤝‍👨🏻", "cobranza_individual": "👤", "morosos": "🛑", "visita": "🏠", "desembolso": "💵", "reunion": "📅" };
 const typeLabels = { "cobranza_comunal": "Cobranza BC/GS", "cobranza_individual": "Cobranza Indiv.", "morosos": "Morosos", "visita": "Visita", "desembolso": "Desembolso", "reunion": "Reunión" };
 
 onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {

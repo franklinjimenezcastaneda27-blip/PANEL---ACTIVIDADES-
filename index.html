@@ -427,11 +427,6 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
           🔔 Activar Avisos
         </button>
 
-        <!-- BOTÓN DE PRUEBA RÁPIDA -->
-        <button class="btn-icon" style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe" onclick="testDesktopNotification()" title="Verificar si Windows las bloquea">
-          ⚡ Probar
-        </button>
-
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
           <span style="margin-right:5px; font-size:1.1rem;">+</span> Nuevo
         </button>
@@ -971,7 +966,7 @@ window.closeNotification = () => { document.getElementById("notification-card").
 
 renderCalendar(); renderSidebar(new Date());
 
-/* --- LÓGICA DE NOTIFICACIONES CORREGIDA Y PROBADA --- */
+/* --- LÓGICA DE NOTIFICACIONES FINAL --- */
 
 const btnNotif = document.getElementById("btnNotif");
 let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
@@ -994,7 +989,7 @@ function updateButtonState() {
     }
   } else if (Notification.permission === "denied") {
     btnNotif.innerHTML = "🚫 Bloqueado";
-    btnNotif.title = "Has bloqueado las notificaciones. Dale al candado 🔒 en la barra de dirección.";
+    btnNotif.title = "Notificaciones bloqueadas en navegador.";
   } else {
     btnNotif.innerHTML = "🔔 Activar";
   }
@@ -1012,46 +1007,18 @@ window.toggleNotifications = () => {
         isNotifEnabled = true;
         localStorage.setItem('notificationsEnabled', 'true');
         updateButtonState();
-        alert("¡Permiso Concedido! Ahora presiona el botón '⚡ Probar' para verificar.");
+        showToast("¡Avisos Activados!");
       } else {
-        alert("Permiso DENEGADO. No podremos enviarte alertas.");
+        showToast("Permiso denegado", "error");
       }
     });
   } else {
     isNotifEnabled = !isNotifEnabled;
     localStorage.setItem('notificationsEnabled', isNotifEnabled.toString());
     updateButtonState();
+    showToast(isNotifEnabled ? "Avisos Activados" : "Avisos Pausados");
   }
 };
-
-window.testDesktopNotification = () => {
-  // 1. Verificación de archivo local
-  if (window.location.protocol === 'file:') {
-    alert("❌ ERROR CRÍTICO: \n\nEstás abriendo el archivo con doble clic (file://).\n\nChrome/Edge BLOQUEAN las notificaciones en archivos locales por seguridad.\n\nSOLUCIÓN: Debes usar un servidor local (como 'Live Server' en VSCode) o subir este archivo a un hosting.");
-    return;
-  }
-  // 2. Verificación de permiso
-  if (Notification.permission === "denied") {
-    alert("❌ ERROR: Permiso Bloqueado.\n\nMira la barra de dirección (arriba) y busca un ícono de candado 🔒. Haz clic y selecciona 'Permitir'.");
-    return;
-  }
-  if (Notification.permission === "default") {
-    alert("⚠️ AVISO: Aún no has activado las notificaciones.\n\nPresiona primero el botón '🔔 Activar'.");
-    return;
-  }
-
-  try {
-    const notif = new Notification("✅ Prueba Exitosa", {
-      body: "El sistema funciona. Esta alerta aparecerá aunque estés en Excel o Word.",
-      icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-      requireInteraction: true, 
-      silent: true 
-    });
-    alert("✅ Enviado. Revisa tus notificaciones.");
-  } catch (e) {
-    alert("❌ ERROR TÉCNICO: " + e.message);
-  }
-}
 
 // Timer de chequeo (Cada 5 seg)
 setInterval(() => {
@@ -1067,10 +1034,10 @@ setInterval(() => {
     if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
       if (!evt.desktopNotified) {
         
-        // Tarjeta visual
+        // Tarjeta visual (Web)
         showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
 
-        // Notificación Sistema
+        // Notificación Sistema (Windows/Mac)
         const notif = new Notification(`⏰ ${evt.time} - ${evt.title}`, {
           body: `Responsable: ${evt.responsible || 'Sin asignar'}`,
           icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",

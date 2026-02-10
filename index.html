@@ -181,17 +181,27 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-#calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding-bottom: 20px; }
+/* --- MODIFICACIÓN: Grid con minmax para evitar estiramiento horizontal --- */
+#calendar { 
+  display: grid; 
+  grid-template-columns: repeat(7, minmax(0, 1fr)); /* CAMBIO AQUI */
+  gap: 10px; 
+  padding-bottom: 20px; 
+}
 
-/* Las celdas de días siguen blancas para resaltar sobre el fondo grisáceo */
+/* --- MODIFICACIÓN: Altura fija y overflow hidden para evitar estiramiento vertical --- */
 .day { 
   background: white; border: 1px solid var(--border); 
   border-top: 5px solid var(--navy-brand); 
-  border-radius: 8px; min-height: 120px; padding: 8px; 
+  border-radius: 8px; 
+  height: 140px; /* CAMBIO: Altura fija en vez de min-height */
+  padding: 8px; 
   display: flex; flex-direction: column; cursor: pointer; 
   transition: all 0.2s ease; position: relative; 
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  overflow: hidden; /* CAMBIO: Ocultar lo que sobra */
 }
+
 .day:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 51, 102, 0.15); border-color: #94a3b8; }
 .day.empty { background: transparent; border: none; cursor: default; border-top: none; box-shadow: none; }
 
@@ -213,14 +223,30 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 }
 .day.selected-day .day-number { color: var(--navy-brand); }
 
+/* --- MODIFICACIÓN: Estilos para texto largo y puntos suspensivos --- */
 .event { 
   font-size: 0.75rem; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; 
-  font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+  font-weight: 600; 
+  white-space: nowrap; /* CAMBIO: No saltar línea */
+  overflow: hidden;    /* CAMBIO: Ocultar sobrante */
+  text-overflow: ellipsis; /* CAMBIO: Poner ... */
   border-left: 3px solid transparent; cursor: pointer; transition: all 0.2s; 
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .event:hover { opacity: 0.9; transform: scale(1.02); }
 .event.completed { text-decoration: line-through; opacity: 0.6; filter: grayscale(1); }
+
+/* --- NUEVO ESTILO: Para el texto "+ X más" --- */
+.event-more {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 700;
+  padding: 2px 4px;
+  cursor: pointer;
+  text-align: right;
+  margin-top: auto; /* Empuja hacia abajo si hay espacio */
+}
+.event-more:hover { color: var(--navy-brand); text-decoration: underline; }
 
 .evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); border-left-color: var(--tag-red-text); }
 .evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); border-left-color: var(--tag-orange-text); }
@@ -640,7 +666,10 @@ function renderCalendar() {
       return matchesDate && matchesCat && matchesResp;
     });
 
-    dayEvents.forEach(evt => {
+    // --- MODIFICACIÓN: Lógica para limitar eventos visibles ---
+    const MAX_VISIBLE = 3; // Cuántos eventos caben bien en 140px
+
+    dayEvents.slice(0, MAX_VISIBLE).forEach(evt => {
       const evtDiv = document.createElement("div");
       evtDiv.className = `event ${getClassByType(evt.type)}`;
       if(evt.completed) evtDiv.classList.add("completed");
@@ -648,6 +677,15 @@ function renderCalendar() {
       evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
       dayDiv.appendChild(evtDiv);
     });
+
+    if (dayEvents.length > MAX_VISIBLE) {
+      const moreDiv = document.createElement("div");
+      moreDiv.className = "event-more";
+      moreDiv.innerText = `+ ${dayEvents.length - MAX_VISIBLE} más...`;
+      // Al hacer clic en "+ más", es como hacer clic en el día (abre el sidebar)
+      dayDiv.appendChild(moreDiv);
+    }
+    // ----------------------------------------------------------
 
     dayDiv.onclick = (e) => {
         if (!e.target.classList.contains('event')) {
@@ -719,8 +757,6 @@ window.openModalForNew = () => {
   document.getElementById("eventType").value = "cobranza_comunal";
   document.getElementById("repeatMonthsGroup").style.display = "block";
   document.getElementById("modal").style.display = "flex";
-  
-  // SE HA ELIMINADO LA LÍNEA QUE ROBABA EL FOCO AQUÍ
 }
 
 function openActionModal(evt) {

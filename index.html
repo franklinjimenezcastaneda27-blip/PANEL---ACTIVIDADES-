@@ -422,8 +422,8 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
       </div>
       <div class="actions">
         
-        <!-- BOTÓN NUEVO: NOTIFICACIONES DE ESCRITORIO -->
-        <button id="btnNotif" class="btn-icon" onclick="requestDesktopPermission()" title="Activar notificaciones en PC">
+        <!-- BOTÓN INTELIGENTE: ACTIVA / PAUSA NOTIFICACIONES -->
+        <button id="btnNotif" class="btn-icon" onclick="toggleNotifications()" title="Gestionar alertas">
           🔔 Activar Avisos
         </button>
 
@@ -966,53 +966,78 @@ window.closeNotification = () => { document.getElementById("notification-card").
 
 renderCalendar(); renderSidebar(new Date());
 
-/* --- LÓGICA DE NOTIFICACIONES MEJORADA (SILENCIOSA + SEGUNDO PLANO) --- */
+/* --- LÓGICA DE NOTIFICACIONES MEJORADA (ACTIVAR/PAUSAR) --- */
 
 const btnNotif = document.getElementById("btnNotif");
 
+// Comprobar estado guardado al iniciar
+let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
+
 function updateButtonState() {
   if (Notification.permission === "granted") {
-    // Si ya diste permiso antes, el botón se marca como activo automáticamente
-    btnNotif.innerHTML = "✅ Avisos Activos";
-    btnNotif.style.background = "#dcfce7"; 
-    btnNotif.style.color = "#15803d";      
-    btnNotif.style.borderColor = "#86efac";
-    btnNotif.title = "Las notificaciones ya están funcionando";
+    if (isNotifEnabled) {
+      // Activo
+      btnNotif.innerHTML = "✅ Avisos Activos";
+      btnNotif.style.background = "#dcfce7"; 
+      btnNotif.style.color = "#15803d";      
+      btnNotif.style.borderColor = "#86efac";
+      btnNotif.title = "Click para PAUSAR avisos";
+    } else {
+      // Pausado (pero con permiso)
+      btnNotif.innerHTML = "🔕 Avisos Pausados";
+      btnNotif.style.background = "#ffedd5"; 
+      btnNotif.style.color = "#c2410c";      
+      btnNotif.style.borderColor = "#fdba74";
+      btnNotif.title = "Click para ACTIVAR avisos";
+    }
   } else if (Notification.permission === "denied") {
     btnNotif.innerHTML = "🚫 Bloqueado";
-    btnNotif.title = "Habilita las notificaciones en el navegador";
+    btnNotif.title = "Permiso denegado en el navegador";
+  } else {
+    btnNotif.innerHTML = "🔔 Activar Avisos";
   }
 }
 
-// Revisar permiso al cargar la página
+// Inicializar botón
 if ("Notification" in window) {
   updateButtonState();
 }
 
-window.requestDesktopPermission = () => {
+window.toggleNotifications = () => {
   if (!("Notification" in window)) {
     alert("Navegador no soporta notificaciones.");
     return;
   }
-  if (Notification.permission === "granted") {
-    showToast("Las notificaciones ya están activas.");
-    return;
-  }
-  Notification.requestPermission().then(permission => {
+
+  if (Notification.permission !== "granted") {
+    // Si no tenemos permiso, lo pedimos
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        isNotifEnabled = true;
+        localStorage.setItem('notificationsEnabled', 'true');
+        updateButtonState();
+        showToast("¡Avisos Activados!");
+        // Notificación de prueba
+        new Notification("Agenda CEPRODEMIC", {
+          body: "Avisos activados correctamente (Silencioso).",
+          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+          silent: true
+        });
+      }
+    });
+  } else {
+    // Si ya tenemos permiso, alternamos el estado lógico
+    isNotifEnabled = !isNotifEnabled;
+    localStorage.setItem('notificationsEnabled', isNotifEnabled.toString());
     updateButtonState();
-    if (permission === "granted") {
-      new Notification("Agenda CEPRODEMIC", {
-        body: "Notificaciones activadas (Silencioso).",
-        icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-        silent: true
-      });
-    }
-  });
+    showToast(isNotifEnabled ? "Avisos Activados" : "Avisos Pausados");
+  }
 };
 
 // Timer de chequeo cada 10 segundos
 setInterval(() => {
-  if (Notification.permission !== "granted") return; 
+  // Solo continuar si hay permiso Y el usuario las tiene habilitadas
+  if (Notification.permission !== "granted" || !isNotifEnabled) return; 
 
   const now = new Date();
   const currentHour = now.getHours().toString().padStart(2, '0');

@@ -424,7 +424,12 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
         
         <!-- BOTÓN INTELIGENTE: ACTIVA / PAUSA NOTIFICACIONES -->
         <button id="btnNotif" class="btn-icon" onclick="toggleNotifications()" title="Gestionar alertas">
-          🔔 Activar Avisos
+          🔔 Activar
+        </button>
+
+        <!-- BOTÓN DE PRUEBA RÁPIDA -->
+        <button class="btn-icon" style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe" onclick="testDesktopNotification()" title="Verificar si Windows las bloquea">
+          ⚡ Probar
         </button>
 
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
@@ -966,67 +971,52 @@ window.closeNotification = () => { document.getElementById("notification-card").
 
 renderCalendar(); renderSidebar(new Date());
 
-/* --- LÓGICA DE NOTIFICACIONES MEJORADA (ACTIVAR/PAUSAR) --- */
+/* --- LÓGICA DE NOTIFICACIONES MEJORADA (ACTIVAR/PAUSAR/PROBAR) --- */
 
 const btnNotif = document.getElementById("btnNotif");
-
-// Comprobar estado guardado al iniciar
 let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
+
+// AUDIO SILENCIOSO (HACK PARA QUE CHROME NO DUERMA LA PESTAÑA EN SEGUNDO PLANO)
+const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
+silentAudio.loop = true; 
+silentAudio.volume = 0.01; // Volumen casi cero, imperceptible
 
 function updateButtonState() {
   if (Notification.permission === "granted") {
     if (isNotifEnabled) {
-      // Activo
-      btnNotif.innerHTML = "✅ Avisos Activos";
-      btnNotif.style.background = "#dcfce7"; 
-      btnNotif.style.color = "#15803d";      
-      btnNotif.style.borderColor = "#86efac";
-      btnNotif.title = "Click para PAUSAR avisos";
+      btnNotif.innerHTML = "✅ Activo";
+      btnNotif.style.background = "#dcfce7"; btnNotif.style.color = "#15803d";      
+      // Activar el hack de audio cuando está activo
+      silentAudio.play().catch(e => console.log("Audio waiting interaction"));
     } else {
-      // Pausado (pero con permiso)
-      btnNotif.innerHTML = "🔕 Avisos Pausados";
-      btnNotif.style.background = "#ffedd5"; 
-      btnNotif.style.color = "#c2410c";      
-      btnNotif.style.borderColor = "#fdba74";
-      btnNotif.title = "Click para ACTIVAR avisos";
+      btnNotif.innerHTML = "🔕 Pausado";
+      btnNotif.style.background = "#ffedd5"; btnNotif.style.color = "#c2410c";      
+      silentAudio.pause();
     }
   } else if (Notification.permission === "denied") {
     btnNotif.innerHTML = "🚫 Bloqueado";
-    btnNotif.title = "Permiso denegado en el navegador";
   } else {
-    btnNotif.innerHTML = "🔔 Activar Avisos";
+    btnNotif.innerHTML = "🔔 Activar";
   }
 }
 
-// Inicializar botón
-if ("Notification" in window) {
-  updateButtonState();
-}
+if ("Notification" in window) updateButtonState();
 
 window.toggleNotifications = () => {
-  if (!("Notification" in window)) {
-    alert("Navegador no soporta notificaciones.");
-    return;
-  }
-
+  if (!("Notification" in window)) { alert("Tu navegador no soporta notificaciones."); return; }
+  
   if (Notification.permission !== "granted") {
-    // Si no tenemos permiso, lo pedimos
     Notification.requestPermission().then(permission => {
       if (permission === "granted") {
         isNotifEnabled = true;
         localStorage.setItem('notificationsEnabled', 'true');
         updateButtonState();
         showToast("¡Avisos Activados!");
-        // Notificación de prueba
-        new Notification("Agenda CEPRODEMIC", {
-          body: "Avisos activados correctamente (Silencioso).",
-          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-          silent: true
-        });
+        // Enviar una de prueba
+        sendDesktopNotification("Sistema Activo", "Las notificaciones funcionarán en segundo plano.");
       }
     });
   } else {
-    // Si ya tenemos permiso, alternamos el estado lógico
     isNotifEnabled = !isNotifEnabled;
     localStorage.setItem('notificationsEnabled', isNotifEnabled.toString());
     updateButtonState();
@@ -1034,9 +1024,28 @@ window.toggleNotifications = () => {
   }
 };
 
-// Timer de chequeo cada 10 segundos
+window.testDesktopNotification = () => {
+  if (Notification.permission === "granted") {
+    sendDesktopNotification("Prueba Exitosa ⚡", "Si ves esto, las alertas funcionarán aunque minimices.");
+  } else {
+    alert("Primero debes activar las notificaciones con el botón 'Activar'.");
+  }
+}
+
+function sendDesktopNotification(title, body) {
+  // Silent: true (sin sonido), requireInteraction: true (no desaparece sola)
+  const notif = new Notification(title, {
+    body: body,
+    icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+    silent: true, 
+    requireInteraction: true,
+    tag: 'agenda-alert' // Evita que se acumulen muchas
+  });
+  notif.onclick = function() { window.focus(); this.close(); };
+}
+
+// Timer de chequeo
 setInterval(() => {
-  // Solo continuar si hay permiso Y el usuario las tiene habilitadas
   if (Notification.permission !== "granted" || !isNotifEnabled) return; 
 
   const now = new Date();
@@ -1047,33 +1056,15 @@ setInterval(() => {
 
   eventsArray.forEach(evt => {
     if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
-      
-      // Evitar spam: chequear si ya notificamos este evento en este minuto
       if (!evt.desktopNotified) {
-        
-        // 1. Notificación Visual (Dentro de la web)
         showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
-
-        // 2. Notificación Escritorio (Fuera de la web - Silenciosa)
-        const notif = new Notification(`⏰ ${evt.time} - ${evt.title}`, {
-          body: `Responsable: ${evt.responsible || 'Sin asignar'}`,
-          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-          silent: true, 
-          requireInteraction: true 
-        });
-
-        notif.onclick = function() {
-          window.focus();
-          this.close();
-        };
-
+        sendDesktopNotification(`⏰ ${evt.time} - ${evt.title}`, `Responsable: ${evt.responsible || 'Sin asignar'}`);
         evt.desktopNotified = true;
-        // Limpiar marca después de 65s
         setTimeout(() => { evt.desktopNotified = false; }, 65000);
       }
     }
   });
-}, 10000);
+}, 5000); // Check cada 5s para mayor precisión si el navegador se duerme
 
 </script>
 </body>

@@ -421,6 +421,12 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
         <input type="text" id="globalSearch" placeholder="Buscar actividad o Encargado..." onkeyup="handleSearch()">
       </div>
       <div class="actions">
+        
+        <!-- BOTÓN NUEVO: NOTIFICACIONES DE ESCRITORIO -->
+        <button id="btnNotif" class="btn-icon" onclick="requestDesktopPermission()" title="Activar notificaciones en PC">
+          🔔 Activar Avisos
+        </button>
+
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
           <span style="margin-right:5px; font-size:1.1rem;">+</span> Nuevo
         </button>
@@ -950,30 +956,100 @@ document.getElementById("eventType").addEventListener('change', function() {
 window.closeModal = (id) => document.getElementById(id).style.display = "none";
 window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
-let notificationTimer;
 window.showNotificationCard = (title, body) => {
   const card = document.getElementById("notification-card");
   document.getElementById("notif-content").textContent = `${body} - ${title}`;
   card.style.display = "block";
-  clearTimeout(notificationTimer);
-  notificationTimer = setTimeout(() => { card.style.display = "none"; }, 30000); 
+  setTimeout(() => { card.style.display = "none"; }, 30000); 
 }
-window.closeNotification = () => { document.getElementById("notification-card").style.display = "none"; clearTimeout(notificationTimer); }
+window.closeNotification = () => { document.getElementById("notification-card").style.display = "none"; }
 
+renderCalendar(); renderSidebar(new Date());
+
+/* --- LÓGICA DE NOTIFICACIONES MEJORADA (SILENCIOSA + SEGUNDO PLANO) --- */
+
+const btnNotif = document.getElementById("btnNotif");
+
+function updateButtonState() {
+  if (Notification.permission === "granted") {
+    // Si ya diste permiso antes, el botón se marca como activo automáticamente
+    btnNotif.innerHTML = "✅ Avisos Activos";
+    btnNotif.style.background = "#dcfce7"; 
+    btnNotif.style.color = "#15803d";      
+    btnNotif.style.borderColor = "#86efac";
+    btnNotif.title = "Las notificaciones ya están funcionando";
+  } else if (Notification.permission === "denied") {
+    btnNotif.innerHTML = "🚫 Bloqueado";
+    btnNotif.title = "Habilita las notificaciones en el navegador";
+  }
+}
+
+// Revisar permiso al cargar la página
+if ("Notification" in window) {
+  updateButtonState();
+}
+
+window.requestDesktopPermission = () => {
+  if (!("Notification" in window)) {
+    alert("Navegador no soporta notificaciones.");
+    return;
+  }
+  if (Notification.permission === "granted") {
+    showToast("Las notificaciones ya están activas.");
+    return;
+  }
+  Notification.requestPermission().then(permission => {
+    updateButtonState();
+    if (permission === "granted") {
+      new Notification("Agenda CEPRODEMIC", {
+        body: "Notificaciones activadas (Silencioso).",
+        icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+        silent: true
+      });
+    }
+  });
+};
+
+// Timer de chequeo cada 10 segundos
 setInterval(() => {
+  if (Notification.permission !== "granted") return; 
+
   const now = new Date();
   const currentHour = now.getHours().toString().padStart(2, '0');
   const currentMin = now.getMinutes().toString().padStart(2, '0');
   const currentTimeString = `${currentHour}:${currentMin}`;
   const todayStr = now.toISOString().split('T')[0];
+
   eventsArray.forEach(evt => {
     if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
-       showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
+      
+      // Evitar spam: chequear si ya notificamos este evento en este minuto
+      if (!evt.desktopNotified) {
+        
+        // 1. Notificación Visual (Dentro de la web)
+        showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
+
+        // 2. Notificación Escritorio (Fuera de la web - Silenciosa)
+        const notif = new Notification(`⏰ ${evt.time} - ${evt.title}`, {
+          body: `Responsable: ${evt.responsible || 'Sin asignar'}`,
+          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+          silent: true, 
+          requireInteraction: true 
+        });
+
+        notif.onclick = function() {
+          window.focus();
+          this.close();
+        };
+
+        evt.desktopNotified = true;
+        // Limpiar marca después de 65s
+        setTimeout(() => { evt.desktopNotified = false; }, 65000);
+      }
     }
   });
-}, 60000);
+}, 10000);
 
-renderCalendar(); renderSidebar(new Date());
 </script>
 </body>
 </html>

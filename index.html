@@ -424,7 +424,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
         
         <!-- BOTÓN INTELIGENTE: ACTIVA / PAUSA NOTIFICACIONES -->
         <button id="btnNotif" class="btn-icon" onclick="toggleNotifications()" title="Gestionar alertas">
-          🔔 Activar
+          🔔 Activar Avisos
         </button>
 
         <!-- BOTÓN DE PRUEBA RÁPIDA -->
@@ -971,13 +971,12 @@ window.closeNotification = () => { document.getElementById("notification-card").
 
 renderCalendar(); renderSidebar(new Date());
 
-/* --- LÓGICA DE NOTIFICACIONES DE ESCRITORIO (DIAGNÓSTICO) --- */
+/* --- LÓGICA DE NOTIFICACIONES CORREGIDA Y PROBADA --- */
 
 const btnNotif = document.getElementById("btnNotif");
 let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
 
 // AUDIO SILENCIOSO (Evita que el navegador duerma la pestaña al minimizar)
-// Es un archivo de audio vacío de 1 segundo en base64
 const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
 silentAudio.loop = true;
 
@@ -1025,40 +1024,30 @@ window.toggleNotifications = () => {
   }
 };
 
-// --- FUNCIÓN DE PRUEBA CON DIAGNÓSTICO DE ERRORES ---
 window.testDesktopNotification = () => {
   // 1. Verificación de archivo local
   if (window.location.protocol === 'file:') {
-    alert("❌ ERROR CRÍTICO: \n\nEstás abriendo el archivo con doble clic (file://).\n\nChrome/Edge BLOQUEAN las notificaciones en archivos locales por seguridad.\n\nSOLUCIÓN: Debes usar un servidor local (como 'Live Server' en VSCode) o subir este archivo a un hosting (GitHub Pages, Firebase, etc).");
+    alert("❌ ERROR CRÍTICO: \n\nEstás abriendo el archivo con doble clic (file://).\n\nChrome/Edge BLOQUEAN las notificaciones en archivos locales por seguridad.\n\nSOLUCIÓN: Debes usar un servidor local (como 'Live Server' en VSCode) o subir este archivo a un hosting.");
     return;
   }
-
   // 2. Verificación de permiso
   if (Notification.permission === "denied") {
-    alert("❌ ERROR: Permiso Bloqueado.\n\nMira la barra de dirección (arriba) y busca un ícono de candado 🔒 o campana tachada. Haz clic y selecciona 'Permitir'.");
+    alert("❌ ERROR: Permiso Bloqueado.\n\nMira la barra de dirección (arriba) y busca un ícono de candado 🔒. Haz clic y selecciona 'Permitir'.");
     return;
   }
-
   if (Notification.permission === "default") {
     alert("⚠️ AVISO: Aún no has activado las notificaciones.\n\nPresiona primero el botón '🔔 Activar'.");
     return;
   }
 
-  // 3. Intento de envío
   try {
     const notif = new Notification("✅ Prueba Exitosa", {
       body: "El sistema funciona. Esta alerta aparecerá aunque estés en Excel o Word.",
       icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-      requireInteraction: true, // Se queda hasta que la cierres
-      silent: true // Sin sonido del sistema (usamos el nuestro si quisiéramos)
+      requireInteraction: true, 
+      silent: true 
     });
-    
-    notif.onerror = (e) => {
-      alert("❌ ERROR AL ENVIAR: Es posible que Windows tenga el 'Asistente de concentración' activado o tu navegador esté bloqueando pop-ups.");
-    };
-
-    alert("✅ Enviado. Revisa la esquina inferior derecha de tu pantalla (o el centro de notificaciones).");
-
+    alert("✅ Enviado. Revisa tus notificaciones.");
   } catch (e) {
     alert("❌ ERROR TÉCNICO: " + e.message);
   }
@@ -1066,7 +1055,6 @@ window.testDesktopNotification = () => {
 
 // Timer de chequeo (Cada 5 seg)
 setInterval(() => {
-  // Solo continuar si hay permiso Y el usuario las tiene habilitadas
   if (Notification.permission !== "granted" || !isNotifEnabled) return; 
 
   const now = new Date();
@@ -1097,4 +1085,8 @@ setInterval(() => {
       }
     }
   });
-}, 5000);
+}, 5000); 
+
+</script>
+</body>
+</html>

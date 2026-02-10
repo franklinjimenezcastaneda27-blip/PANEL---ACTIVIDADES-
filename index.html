@@ -971,30 +971,31 @@ window.closeNotification = () => { document.getElementById("notification-card").
 
 renderCalendar(); renderSidebar(new Date());
 
-/* --- LÓGICA DE NOTIFICACIONES MEJORADA (ACTIVAR/PAUSAR/PROBAR) --- */
+/* --- LÓGICA DE NOTIFICACIONES DE ESCRITORIO (DIAGNÓSTICO) --- */
 
 const btnNotif = document.getElementById("btnNotif");
 let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
 
-// AUDIO SILENCIOSO (HACK PARA QUE CHROME NO DUERMA LA PESTAÑA EN SEGUNDO PLANO)
+// AUDIO SILENCIOSO (Evita que el navegador duerma la pestaña al minimizar)
+// Es un archivo de audio vacío de 1 segundo en base64
 const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
-silentAudio.loop = true; 
-silentAudio.volume = 0.01; // Volumen casi cero, imperceptible
+silentAudio.loop = true;
 
 function updateButtonState() {
   if (Notification.permission === "granted") {
     if (isNotifEnabled) {
-      btnNotif.innerHTML = "✅ Activo";
-      btnNotif.style.background = "#dcfce7"; btnNotif.style.color = "#15803d";      
-      // Activar el hack de audio cuando está activo
-      silentAudio.play().catch(e => console.log("Audio waiting interaction"));
+      btnNotif.innerHTML = "✅ Avisos Activos";
+      btnNotif.style.background = "#dcfce7"; btnNotif.style.color = "#15803d";
+      // Reproducir silencio para mantener vivo el proceso
+      silentAudio.play().catch(() => {}); 
     } else {
       btnNotif.innerHTML = "🔕 Pausado";
-      btnNotif.style.background = "#ffedd5"; btnNotif.style.color = "#c2410c";      
+      btnNotif.style.background = "#ffedd5"; btnNotif.style.color = "#c2410c";
       silentAudio.pause();
     }
   } else if (Notification.permission === "denied") {
     btnNotif.innerHTML = "🚫 Bloqueado";
+    btnNotif.title = "Has bloqueado las notificaciones. Dale al candado 🔒 en la barra de dirección.";
   } else {
     btnNotif.innerHTML = "🔔 Activar";
   }
@@ -1007,45 +1008,65 @@ window.toggleNotifications = () => {
   
   if (Notification.permission !== "granted") {
     Notification.requestPermission().then(permission => {
+      updateButtonState();
       if (permission === "granted") {
         isNotifEnabled = true;
         localStorage.setItem('notificationsEnabled', 'true');
         updateButtonState();
-        showToast("¡Avisos Activados!");
-        // Enviar una de prueba
-        sendDesktopNotification("Sistema Activo", "Las notificaciones funcionarán en segundo plano.");
+        alert("¡Permiso Concedido! Ahora presiona el botón '⚡ Probar' para verificar.");
+      } else {
+        alert("Permiso DENEGADO. No podremos enviarte alertas.");
       }
     });
   } else {
     isNotifEnabled = !isNotifEnabled;
     localStorage.setItem('notificationsEnabled', isNotifEnabled.toString());
     updateButtonState();
-    showToast(isNotifEnabled ? "Avisos Activados" : "Avisos Pausados");
   }
 };
 
+// --- FUNCIÓN DE PRUEBA CON DIAGNÓSTICO DE ERRORES ---
 window.testDesktopNotification = () => {
-  if (Notification.permission === "granted") {
-    sendDesktopNotification("Prueba Exitosa ⚡", "Si ves esto, las alertas funcionarán aunque minimices.");
-  } else {
-    alert("Primero debes activar las notificaciones con el botón 'Activar'.");
+  // 1. Verificación de archivo local
+  if (window.location.protocol === 'file:') {
+    alert("❌ ERROR CRÍTICO: \n\nEstás abriendo el archivo con doble clic (file://).\n\nChrome/Edge BLOQUEAN las notificaciones en archivos locales por seguridad.\n\nSOLUCIÓN: Debes usar un servidor local (como 'Live Server' en VSCode) o subir este archivo a un hosting (GitHub Pages, Firebase, etc).");
+    return;
+  }
+
+  // 2. Verificación de permiso
+  if (Notification.permission === "denied") {
+    alert("❌ ERROR: Permiso Bloqueado.\n\nMira la barra de dirección (arriba) y busca un ícono de candado 🔒 o campana tachada. Haz clic y selecciona 'Permitir'.");
+    return;
+  }
+
+  if (Notification.permission === "default") {
+    alert("⚠️ AVISO: Aún no has activado las notificaciones.\n\nPresiona primero el botón '🔔 Activar'.");
+    return;
+  }
+
+  // 3. Intento de envío
+  try {
+    const notif = new Notification("✅ Prueba Exitosa", {
+      body: "El sistema funciona. Esta alerta aparecerá aunque estés en Excel o Word.",
+      icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+      requireInteraction: true, // Se queda hasta que la cierres
+      silent: true // Sin sonido del sistema (usamos el nuestro si quisiéramos)
+    });
+    
+    notif.onerror = (e) => {
+      alert("❌ ERROR AL ENVIAR: Es posible que Windows tenga el 'Asistente de concentración' activado o tu navegador esté bloqueando pop-ups.");
+    };
+
+    alert("✅ Enviado. Revisa la esquina inferior derecha de tu pantalla (o el centro de notificaciones).");
+
+  } catch (e) {
+    alert("❌ ERROR TÉCNICO: " + e.message);
   }
 }
 
-function sendDesktopNotification(title, body) {
-  // Silent: true (sin sonido), requireInteraction: true (no desaparece sola)
-  const notif = new Notification(title, {
-    body: body,
-    icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-    silent: true, 
-    requireInteraction: true,
-    tag: 'agenda-alert' // Evita que se acumulen muchas
-  });
-  notif.onclick = function() { window.focus(); this.close(); };
-}
-
-// Timer de chequeo
+// Timer de chequeo (Cada 5 seg)
 setInterval(() => {
+  // Solo continuar si hay permiso Y el usuario las tiene habilitadas
   if (Notification.permission !== "granted" || !isNotifEnabled) return; 
 
   const now = new Date();
@@ -1057,15 +1078,23 @@ setInterval(() => {
   eventsArray.forEach(evt => {
     if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
       if (!evt.desktopNotified) {
+        
+        // Tarjeta visual
         showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
-        sendDesktopNotification(`⏰ ${evt.time} - ${evt.title}`, `Responsable: ${evt.responsible || 'Sin asignar'}`);
+
+        // Notificación Sistema
+        const notif = new Notification(`⏰ ${evt.time} - ${evt.title}`, {
+          body: `Responsable: ${evt.responsible || 'Sin asignar'}`,
+          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+          silent: true, 
+          requireInteraction: true 
+        });
+        
+        notif.onclick = function() { window.focus(); this.close(); };
+
         evt.desktopNotified = true;
         setTimeout(() => { evt.desktopNotified = false; }, 65000);
       }
     }
   });
-}, 5000); // Check cada 5s para mayor precisión si el navegador se duerme
-
-</script>
-</body>
-</html>
+}, 5000);

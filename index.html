@@ -402,7 +402,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
         </button>
         <!-- Botón de Asistencia -->
         <button class="btn-icon" onclick="openModalAttendance()" title="Registrar Falta/Permiso" style="background:rgba(255,255,255,0.2)">
-            📋 Nueva Asistencia
+            📋 Inasistencia
         </button>
 
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
@@ -423,7 +423,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
       
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
         <option value="all">🌍 VER TODO</option>
-        <option value="asistencia_mode" style="background:#fee2e2; color:#b91c1c; font-weight:800;">🚫 SOLO ASISTENCIAS</option>
+        <option value="asistencia_mode" style="background:#fee2e2; color:#b91c1c; font-weight:800;">🚫 INASISTENCIAS</option>
         <option value="cobranza_comunal">👨🏽‍🤝‍👨🏻 COBRANZA BC/GS</option>
         <option value="cobranza_individual">👤 COBRANZA INDIVIDUAL</option>
         <option value="morosos">🛑 MOROSOS</option>
@@ -765,7 +765,7 @@ function renderCalendar() {
   const filterResp = document.getElementById("filterResponsible").value;
   const today = new Date();
   
-  // MODO ESPECIAL: Si selecciona "SOLO ASISTENCIAS"
+  // MODO ESPECIAL: Si selecciona " INASISTENCIAS"
   const isAbsenceMode = (filterCat === "asistencia_mode");
 
   for (let day = 1; day <= daysInMonth; day++) {

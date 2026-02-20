@@ -37,6 +37,7 @@
 .text-warning { color: var(--c-warning); }
 .text-dark { color: var(--c-navy-900); }
 .text-white { color: #ffffff; }
+.text-blue { color: var(--c-blue-500); }
 .text-capitalize { text-transform: capitalize; }
 .uppercase { text-transform: uppercase; letter-spacing: 0.5px; }
 

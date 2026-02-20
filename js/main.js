@@ -274,7 +274,7 @@ function updateNotifButtonUI() {
   const btn = document.getElementById("btnNotifToggle");
   if (Notification.permission === "granted") {
     if (State.notificationsEnabled) {
-      btn.innerHTML = "✅ Avisos Activos"; btn.className = "btn-icon bg-blue-light text-dark text-bold border-blue pl-md pr-md";
+      btn.innerHTML = "✅ Avisos Activos"; btn.className = "btn-icon bg-blue-light text-blue text-bold border-blue pl-md pr-md";
       silentAudio.play().catch(()=>{});
     } else {
       btn.innerHTML = "🔕 Pausado"; btn.className = "btn-icon bg-danger-light text-danger border-danger pl-md pr-md";

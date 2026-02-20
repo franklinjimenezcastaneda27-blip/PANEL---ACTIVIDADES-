@@ -37,8 +37,8 @@
 .text-warning { color: var(--c-warning); }
 .text-dark { color: var(--c-navy-900); }
 .text-white { color: #ffffff; }
-.text-blue { color: var(--c-blue-500); }
 .text-capitalize { text-transform: capitalize; }
+.text-blue { color: var(--c-blue-500); }
 .uppercase { text-transform: uppercase; letter-spacing: 0.5px; }
 
 .line-height-md { line-height: 1.4; }

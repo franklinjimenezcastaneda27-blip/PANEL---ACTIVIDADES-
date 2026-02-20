@@ -66,7 +66,7 @@ body {
 .login-box input { margin-bottom: 15px; }
 
 .app-container {
-  display: none; /* Se oculta hasta hacer login */
+  display: none; 
   flex-direction: column;
   height: 96vh;
   max-width: 1600px;
@@ -225,7 +225,7 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 .evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
 .evt-morosos { background: var(--tag-purple-bg); color: var(--tag-purple-text); }
 
-/* ESTILOS DE ASISTENCIA (NUEVO) */
+/* ESTILOS DE ASISTENCIA */
 .absence-tag {
   font-size: 0.65rem; background: #fee2e2; color: #b91c1c;
   padding: 2px 6px; border-radius: 4px; margin-top: 2px; margin-bottom: 4px;
@@ -238,6 +238,18 @@ select.filter-select option { color: var(--navy-brand); background: white; font-
 }
 .sidebar-absence h4 { color: #be123c; margin: 0 0 5px 0; font-size: 0.9rem; }
 .sidebar-absence p { font-size: 0.8rem; color: #881337; margin: 0; }
+
+/* ESTILO ESPECIAL MODO ASISTENCIA (TARJETAS GRANDES) */
+.absence-card-large {
+  background: #fee2e2; border: 1px solid #fecaca;
+  color: #b91c1c; padding: 8px; border-radius: 6px;
+  margin-bottom: 5px; cursor: pointer; font-weight: 700;
+  font-size: 0.8rem; display: flex; flex-direction: column; gap: 2px;
+  transition: transform 0.2s;
+}
+.absence-card-large:hover { transform: scale(1.03); border-color: #b91c1c; }
+.absence-card-large small { font-weight: 500; opacity: 0.9; font-size: 0.7rem; }
+
 
 .sidebar { 
   flex: 1; min-width: 360px; background: white;
@@ -388,9 +400,9 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
         <button id="btnNotif" class="btn-icon" onclick="toggleNotifications()" title="Gestionar alertas">
           🔔 Activar Avisos
         </button>
-        <!-- Botón de Asistencia NUEVO -->
+        <!-- Botón de Asistencia -->
         <button class="btn-icon" onclick="openModalAttendance()" title="Registrar Falta/Permiso" style="background:rgba(255,255,255,0.2)">
-            📋 Asistencia
+            📋 Nueva Asistencia
         </button>
 
         <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
@@ -411,6 +423,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
       
       <select id="filterCategory" class="filter-select" onchange="applyFilter()">
         <option value="all">🌍 VER TODO</option>
+        <option value="asistencia_mode" style="background:#fee2e2; color:#b91c1c; font-weight:800;">🚫 SOLO ASISTENCIAS</option>
         <option value="cobranza_comunal">👨🏽‍🤝‍👨🏻 COBRANZA BC/GS</option>
         <option value="cobranza_individual">👤 COBRANZA INDIVIDUAL</option>
         <option value="morosos">🛑 MOROSOS</option>
@@ -450,7 +463,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
   </div>
 </div>
 
-<!-- MODAL EDICIÓN / CREACIÓN -->
+<!-- MODAL EDICIÓN / CREACIÓN EVENTOS -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modal')">&times;</button>
@@ -543,7 +556,7 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
   </div>
 </div>
 
-<!-- MODAL ASISTENCIA NUEVO -->
+<!-- MODAL ASISTENCIA (AGREGAR) -->
 <div class="modal" id="modalAttendance">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal('modalAttendance')">&times;</button>
@@ -583,6 +596,20 @@ input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3
     </div>
 
     <button class="btn-main btn-danger" onclick="saveAttendance()">Registrar Falta</button>
+  </div>
+</div>
+
+<!-- MODAL ACCIONES ASISTENCIA (NUEVO) -->
+<div class="modal" id="modalAbsenceActions">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal('modalAbsenceActions')">&times;</button>
+    <div class="modal-header"><h3>Detalle de Ausencia</h3></div>
+    <input type="hidden" id="absenceIdDel">
+    <div id="absenceDetails" style="margin-bottom:20px; line-height:1.6; color:#334155;"></div>
+    <div style="background:#fee2e2; padding:15px; border-radius:8px; font-size:0.9rem; color:#b91c1c; margin-bottom:15px;">
+        ⚠️ Si te equivocaste, puedes eliminar este registro y crearlo de nuevo.
+    </div>
+    <button class="btn-main btn-danger" onclick="deleteAbsence()">🗑️ Eliminar Registro</button>
   </div>
 </div>
 
@@ -643,7 +670,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB1ZTwRXaR89ItkFTKGaqWo3cyfBAv5Cc4",
+  apiKey: "AIzaSyB1ZtWRXaR89lTkFTKGaqWo3cyfBAv5Cc4",
   authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
   projectId: "calendario-de-actividade-3b553",
   storageBucket: "calendario-de-actividade-3b553.firebasestorage.app",
@@ -694,7 +721,6 @@ onAuthStateChanged(auth, (user) => {
 });
 
 function initDataListeners() {
-  // Listener Eventos
   onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
     document.getElementById("loader").style.display = "none";
     eventsArray = [];
@@ -702,7 +728,6 @@ function initDataListeners() {
     refreshView();
   }, (error) => { console.error(error); showToast("Error datos", "error"); });
 
-  // Listener Asistencias
   onSnapshot(query(absencesRef), (snapshot) => {
     absencesArray = [];
     snapshot.forEach(docSnap => absencesArray.push({ id: docSnap.id, ...docSnap.data() }));
@@ -739,6 +764,9 @@ function renderCalendar() {
   const filterCat = document.getElementById("filterCategory").value;
   const filterResp = document.getElementById("filterResponsible").value;
   const today = new Date();
+  
+  // MODO ESPECIAL: Si selecciona "SOLO ASISTENCIAS"
+  const isAbsenceMode = (filterCat === "asistencia_mode");
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement("div");
@@ -748,51 +776,86 @@ function renderCalendar() {
     
     const dayString = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
 
-    // INDICADORES DE ASISTENCIA
+    // --- RENDERIZADO DE ASISTENCIAS ---
     const dayAbsences = absencesArray.filter(a => a.date === dayString);
     let absenceHtml = "";
+    
     dayAbsences.forEach(abs => {
         if(filterResp === "all" || abs.responsible === filterResp) {
-            absenceHtml += `<span class="absence-tag">🚫 ${abs.responsible}</span>`;
+            if(isAbsenceMode) {
+               // En modo asistencia, mostramos tarjetas GRANDES
+               let typeLabel = "Falta";
+               if(abs.type === "FALTA_MANANA") typeLabel = "Mañana";
+               if(abs.type === "FALTA_TARDE") typeLabel = "Tarde";
+               if(abs.type === "PERMISO") typeLabel = "Permiso";
+               
+               const el = document.createElement("div");
+               el.className = "absence-card-large";
+               el.innerHTML = `<span>🚫 ${abs.responsible}</span><small>${typeLabel}</small>`;
+               el.onclick = (e) => { e.stopPropagation(); openAbsenceDetails(abs); };
+               dayDiv.appendChild(el); // Se agrega directamente, no al string
+            } else {
+               // Modo normal, tag pequeño
+               absenceHtml += `<span class="absence-tag" onclick="event.stopPropagation(); openAbsenceDetails({id:'${abs.id}', responsible:'${abs.responsible}', date:'${abs.date}', type:'${abs.type}', obs:'${abs.obs}'})">🚫 ${abs.responsible}</span>`;
+            }
         }
     });
 
-    dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>${absenceHtml}`;
+    if(!isAbsenceMode) {
+        dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>${absenceHtml}`;
+    } else {
+        // En modo asistencia, si no había elementos agregados por el loop anterior, solo ponemos el numero
+        if(dayDiv.innerHTML === "") dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
+        else dayDiv.insertAdjacentHTML('afterbegin', `<div class="day-header"><span class="day-number">${day}</span></div>`);
+    }
     
-    // FILTRADO DE EVENTOS
-    const dayEvents = eventsArray.filter(e => {
-      const eDate = e.date.split('T')[0]; 
-      const matchesDate = eDate === dayString;
-      const matchesCat = (filterCat === "all" || e.type === filterCat);
-      const matchesResp = (filterResp === "all" || e.responsible === filterResp);
-      return matchesDate && matchesCat && matchesResp;
-    });
+    // --- RENDERIZADO DE EVENTOS (Solo si NO estamos en modo asistencia) ---
+    if (!isAbsenceMode) {
+        const dayEvents = eventsArray.filter(e => {
+          const eDate = e.date.split('T')[0]; 
+          const matchesDate = eDate === dayString;
+          const matchesCat = (filterCat === "all" || e.type === filterCat);
+          const matchesResp = (filterResp === "all" || e.responsible === filterResp);
+          return matchesDate && matchesCat && matchesResp;
+        });
 
-    const MAX_VISIBLE = 3; 
+        const MAX_VISIBLE = 3; 
 
-    dayEvents.slice(0, MAX_VISIBLE).forEach(evt => {
-      const evtDiv = document.createElement("div");
-      evtDiv.className = `event ${getClassByType(evt.type)}`;
-      if(evt.completed) evtDiv.classList.add("completed");
-      evtDiv.innerHTML = `${typeIcons[evt.type]||''} ${evt.title}`;
-      evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
-      dayDiv.appendChild(evtDiv);
-    });
+        dayEvents.slice(0, MAX_VISIBLE).forEach(evt => {
+          const evtDiv = document.createElement("div");
+          evtDiv.className = `event ${getClassByType(evt.type)}`;
+          if(evt.completed) evtDiv.classList.add("completed");
+          evtDiv.innerHTML = `${typeIcons[evt.type]||''} ${evt.title}`;
+          evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
+          dayDiv.appendChild(evtDiv);
+        });
 
-    if (dayEvents.length > MAX_VISIBLE) {
-      const moreDiv = document.createElement("div");
-      moreDiv.className = "event-more";
-      moreDiv.innerText = `+ ${dayEvents.length - MAX_VISIBLE} más`;
-      dayDiv.appendChild(moreDiv);
+        if (dayEvents.length > MAX_VISIBLE) {
+          const moreDiv = document.createElement("div");
+          moreDiv.className = "event-more";
+          moreDiv.innerText = `+ ${dayEvents.length - MAX_VISIBLE} más`;
+          dayDiv.appendChild(moreDiv);
+        }
     }
 
     dayDiv.onclick = (e) => {
-        if (!e.target.classList.contains('event')) {
+        if (!e.target.classList.contains('event') && !e.target.classList.contains('absence-card-large') && !e.target.classList.contains('absence-tag')) {
             selectedDateForSidebar = new Date(year, month, day);
             refreshView();
         }
     };
-    dayDiv.ondblclick = () => { selectedDateForSidebar = new Date(year, month, day); openModalForNew(); };
+    
+    // Doble click crea evento (Solo si no es modo asistencia)
+    dayDiv.ondblclick = () => { 
+        if(!isAbsenceMode) {
+            selectedDateForSidebar = new Date(year, month, day); 
+            openModalForNew(); 
+        } else {
+            selectedDateForSidebar = new Date(year, month, day); 
+            openModalAttendance(); // En modo asistencia, doble clic crea asistencia
+        }
+    };
+    
     calendarGrid.appendChild(dayDiv);
   }
 }
@@ -804,10 +867,11 @@ function renderSidebar(dateObj) {
   sidebarList.innerHTML = "";
   
   const filterResp = document.getElementById("filterResponsible").value;
-  const filterCat = document.getElementById("filterCategory").value; // FILTRO SINCRONIZADO
+  const filterCat = document.getElementById("filterCategory").value; 
+  const isAbsenceMode = (filterCat === "asistencia_mode");
   const dateString = dateObj.toISOString().split('T')[0];
   
-  // 1. Mostrar Ausencias
+  // 1. Mostrar Ausencias (Siempre se muestran si existen, prioridad)
   const dailyAbsences = absencesArray.filter(a => a.date === dateString);
   dailyAbsences.forEach(abs => {
     if(filterResp === "all" || abs.responsible === filterResp) {
@@ -818,37 +882,45 @@ function renderSidebar(dateObj) {
        if(abs.type === "FALTA_TARDE") typeText = "Falta (Tarde)";
        if(abs.type === "PERMISO") typeText = "Permiso";
        li.innerHTML = `<h4>⛔ ${abs.responsible} - ${typeText}</h4><p>${abs.obs || 'Sin detalles'}</p>`;
+       li.style.cursor = "pointer";
+       li.onclick = () => openAbsenceDetails(abs);
        sidebarList.appendChild(li);
     }
   });
 
-  // 2. Mostrar Eventos
-  const eventsForDay = eventsArray.filter(e => {
-    const isDate = e.date.startsWith(dateString);
-    const isResp = (filterResp === "all" || e.responsible === filterResp);
-    const isCat = (filterCat === "all" || e.type === filterCat);
-    return isDate && isResp && isCat;
-  });
-  
-  eventsForDay.sort((a,b) => a.time.localeCompare(b.time));
+  // 2. Mostrar Eventos (Solo si NO es modo asistencia)
+  if (!isAbsenceMode) {
+      const eventsForDay = eventsArray.filter(e => {
+        const isDate = e.date.startsWith(dateString);
+        const isResp = (filterResp === "all" || e.responsible === filterResp);
+        const isCat = (filterCat === "all" || e.type === filterCat);
+        return isDate && isResp && isCat;
+      });
+      
+      eventsForDay.sort((a,b) => a.time.localeCompare(b.time));
 
-  if (eventsForDay.length === 0 && dailyAbsences.length === 0) { 
-      sidebarList.innerHTML += '<li class="empty-msg">No hay actividades para este día.</li>'; return; 
+      if (eventsForDay.length === 0 && dailyAbsences.length === 0) { 
+          sidebarList.innerHTML += '<li class="empty-msg">No hay actividades para este día.</li>'; return; 
+      }
+
+      eventsForDay.forEach(evt => {
+        const li = document.createElement("li");
+        li.className = "sidebar-item";
+        li.style.borderLeftColor = getColorCode(evt.type); 
+        const check = evt.completed ? "✅ Completado" : "⏳ Pendiente";
+        const statusStyle = evt.completed ? "color:#10b981" : "color:#f59e0b";
+        
+        li.innerHTML = `<h4>${evt.title} <span style="font-size:0.8rem">${typeIcons[evt.type]}</span></h4>
+          <p>⏰ ${formatTime12h(evt.time)} | 👤 ${evt.responsible || '?'}</p>
+          <p style="${statusStyle}; font-weight:600; font-size:0.75rem; margin-top:5px;">${check}</p>`;
+        li.onclick = () => openActionModal(evt);
+        sidebarList.appendChild(li);
+      });
+  } else {
+      if(dailyAbsences.length === 0) {
+           sidebarList.innerHTML += '<li class="empty-msg">No hay faltas registradas.</li>';
+      }
   }
-
-  eventsForDay.forEach(evt => {
-    const li = document.createElement("li");
-    li.className = "sidebar-item";
-    li.style.borderLeftColor = getColorCode(evt.type); 
-    const check = evt.completed ? "✅ Completado" : "⏳ Pendiente";
-    const statusStyle = evt.completed ? "color:#10b981" : "color:#f59e0b";
-    
-    li.innerHTML = `<h4>${evt.title} <span style="font-size:0.8rem">${typeIcons[evt.type]}</span></h4>
-      <p>⏰ ${formatTime12h(evt.time)} | 👤 ${evt.responsible || '?'}</p>
-      <p style="${statusStyle}; font-weight:600; font-size:0.75rem; margin-top:5px;">${check}</p>`;
-    li.onclick = () => openActionModal(evt);
-    sidebarList.appendChild(li);
-  });
 }
 
 function getClassByType(type) {
@@ -882,7 +954,7 @@ window.openModalForNew = () => {
 
 // FUNCIONES MODAL ASISTENCIA
 window.openModalAttendance = () => {
-  document.getElementById("absDate").value = new Date().toISOString().split('T')[0];
+  document.getElementById("absDate").value = selectedDateForSidebar.toISOString().split('T')[0];
   document.getElementById("absObs").value = "";
   document.getElementById("modalAttendance").style.display = "flex";
 }
@@ -902,6 +974,37 @@ window.saveAttendance = async () => {
   } catch(e) {
     console.error(e); showToast("Error al guardar", "error");
   }
+}
+
+// FUNCIONES ELIMINAR ASISTENCIA
+window.openAbsenceDetails = (abs) => {
+    // Si viene como objeto plano del onclick inline, asegurar tipos
+    document.getElementById("absenceIdDel").value = abs.id;
+    let typeLabel = "Falta Día Completo";
+    if(abs.type === "FALTA_MANANA") typeLabel = "Falta Mañana";
+    if(abs.type === "FALTA_TARDE") typeLabel = "Falta Tarde";
+    if(abs.type === "PERMISO") typeLabel = "Permiso";
+
+    document.getElementById("absenceDetails").innerHTML = `
+        <strong>Responsable:</strong> ${abs.responsible}<br>
+        <strong>Fecha:</strong> ${abs.date}<br>
+        <strong>Tipo:</strong> ${typeLabel}<br>
+        <strong>Observación:</strong> ${abs.obs || '--'}
+    `;
+    document.getElementById("modalAbsenceActions").style.display = "flex";
+}
+
+window.deleteAbsence = async () => {
+    const id = document.getElementById("absenceIdDel").value;
+    if(confirm("¿Seguro que deseas eliminar este registro de asistencia?")) {
+        try {
+            await deleteDoc(doc(db, "asistencias", id));
+            closeModal("modalAbsenceActions");
+            showToast("Registro eliminado");
+        } catch(e) {
+            console.error(e); showToast("Error al eliminar", "error");
+        }
+    }
 }
 
 function openActionModal(evt) {

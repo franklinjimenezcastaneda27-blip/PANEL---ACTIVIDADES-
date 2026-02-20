@@ -1,1262 +1,280 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CEPRODEMIC - Agenda Corporativa</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CEPRODEMIC - Agenda Corporativa SaaS</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
 
-<style>
-:root {
-  /* --- PALETA CORPORATIVA --- */
-  --navy-brand: #0f2c4c;
-  --navy-dark: #081b30;        
-  --navy-light: #eef4fa;
-  --accent: #3b82f6;
-
-  --text-main: #1e293b;
-  --text-light: #64748b;
-  --border: #e2e8f0;
-
-  /* Colores de etiquetas */
-  --tag-red-bg: #fee2e2; --tag-red-text: #b91c1c;
-  --tag-orange-bg: #ffedd5; --tag-orange-text: #c2410c;
-  --tag-blue-bg: #dbeafe; --tag-blue-text: #1d4ed8;
-  --tag-green-bg: #dcfce7; --tag-green-text: #15803d;
-  --tag-yellow-bg: #fef9c3; --tag-yellow-text: #a16207;
-  --tag-purple-bg: #f3e8ff; --tag-purple-text: #7e22ce;
-
-  --glass-bg: rgba(255, 255, 255, 0.92); 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #f1f5f9;
-  background-image: linear-gradient(rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.3)), url('https://i.imghippo.com/files/jdb9603WY.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: var(--text-main);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* LOGIN OVERLAY */
-#loginOverlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(10px);
-  display: flex; justify-content: center; align-items: center;
-}
-.login-box {
-  background: white; padding: 40px; border-radius: 20px;
-  width: 100%; max-width: 400px; text-align: center;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.login-box h2 { color: var(--navy-brand); margin-bottom: 20px; }
-.login-box input { margin-bottom: 15px; }
-
-.app-container {
-  display: none; 
-  flex-direction: column;
-  height: 96vh;
-  max-width: 1600px;
-  margin: 2vh auto;
-  width: 98%;
-  background: var(--glass-bg);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(16px);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.6);
-}
-
-header {
-  padding: 16px 24px;
-  background: linear-gradient(135deg, var(--navy-brand) 0%, var(--navy-dark) 100%);
-  z-index: 10;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 20px; }
-
-.brand h1 { 
-  margin: 0; font-size: 1.5rem; font-weight: 800; color: white; 
-  letter-spacing: -0.025em; text-transform: uppercase;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.brand small { font-size: 0.8rem; color: #94a3b8; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; display: block; margin-top: 2px; }
-
-.search-box { flex: 1; max-width: 450px; position: relative; display: flex; align-items: center; }
-.search-box input { 
-  padding-left: 42px; border-radius: 12px; 
-  border: 1px solid rgba(255,255,255,0.15); 
-  background: rgba(255,255,255,0.1); 
-  height: 42px; transition: all 0.3s ease; 
-  color: white; font-weight: 500; font-size: 0.95rem; width: 100%;
-}
-.search-box input::placeholder { color: rgba(255,255,255,0.6); }
-.search-box input:focus { 
-  border-color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.2); 
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05); 
-}
-.search-icon { position: absolute; left: 14px; color: rgba(255,255,255,0.6); }
-
-.actions { display: flex; gap: 10px; }
-
-.btn-icon {
-  background: rgba(255,255,255,0.1); 
-  border: 1px solid rgba(255,255,255,0.2); 
-  border-radius: 10px; height: 42px; padding: 0 16px;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; 
-  color: white; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
-}
-.btn-icon:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
-
-.btn-add-global { 
-  background: white; color: var(--navy-brand); border: none; font-weight: 700;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.btn-add-global:hover { background: #f8fafc; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-
-.controls-bar {
-  display: flex; gap: 12px; align-items: center; 
-  background: rgba(0,0,0,0.2); padding: 8px 16px; 
-  border-radius: 12px; color: white; 
-  border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; 
-}
-
-select.filter-select { 
-  border: 1px solid rgba(255,255,255,0.15); 
-  background: rgba(0,0,0,0.2); 
-  font-size: 0.85rem; font-weight: 600; 
-  color: white; padding: 8px 16px; cursor: pointer; flex: 1; min-width: 160px; 
-  border-radius: 8px; transition: background 0.2s;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto;
-}
-select.filter-select:hover { background-color: rgba(255,255,255,0.1); }
-select.filter-select:focus { background-color: rgba(0,0,0,0.4); outline: none; border-color: rgba(255,255,255,0.3); }
-select.filter-select option { color: var(--navy-brand); background: white; font-weight: 500; }
-
-.month-nav { display: flex; align-items: center; gap: 10px; }
-.month-nav button { 
-  border: none; background: rgba(255,255,255,0.1); 
-  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-weight: 700; color: white; font-size: 1.2rem; transition: 0.2s; 
-}
-.month-nav button:hover { background: white; color: var(--navy-brand); }
-#currentMonthDisplay { 
-  min-width: 160px; text-align: center; font-weight: 800; font-size: 1.1rem; 
-  text-transform: uppercase; letter-spacing: 1px; color: white; 
-}
-
-.main-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-#loader { 
-  position: absolute; inset: 0; background: rgba(255,255,255,0.8); z-index: 50; 
-  display: flex; justify-content: center; align-items: center; font-weight: 600; 
-  color: var(--navy-brand); backdrop-filter: blur(5px); flex-direction: column; gap: 15px;
-}
-.spinner { 
-  width: 40px; height: 40px; border: 4px solid rgba(15, 44, 76, 0.1); 
-  border-radius: 50%; border-top-color: var(--navy-brand); 
-  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.calendar-wrapper { 
-  flex: 3; overflow-y: auto; padding: 25px; 
-  border-right: 1px solid var(--border); background: #f8fafc;
-}
-
-.weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 12px; }
-.weekdays div { 
-  color: var(--text-light); text-align: center; padding: 8px 0; 
-  font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;
-}
-
-#calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; padding-bottom: 30px; }
-
-.day { 
-  background: white; border: 1px solid #e2e8f0; border-radius: 12px; 
-  height: 150px; padding: 10px; display: flex; flex-direction: column; cursor: pointer; 
-  transition: all 0.2s ease; position: relative; box-shadow: var(--shadow-sm); overflow: hidden;
-}
-.day:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: #cbd5e1; z-index: 2; }
-.day.empty { background: transparent; border: none; cursor: default; box-shadow: none; }
-.day-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
-.day-number { 
-  font-size: 1rem; font-weight: 600; color: var(--text-light); 
-  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; 
-  transition: all 0.2s;
-}
-.day.today { background: linear-gradient(to bottom right, #ffffff, #eff6ff); border: 2px solid var(--navy-brand); }
-.day.today .day-number { background: var(--navy-brand); color: white; font-weight: 700; box-shadow: 0 4px 6px rgba(15, 44, 76, 0.3); }
-.day.selected-day { background-color: var(--navy-light); border-color: var(--accent); }
-.day.selected-day .day-number { color: var(--navy-brand); font-weight: 800; }
-
-.event { 
-  font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; margin-bottom: 5px; 
-  font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-  cursor: pointer; transition: all 0.2s; border: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  display: flex; align-items: center; gap: 4px;
-}
-.event:hover { filter: brightness(0.95); transform: scale(1.02); }
-.event.completed { text-decoration: line-through; opacity: 0.5; filter: grayscale(1); background: #f1f5f9 !important; color: #94a3b8 !important; }
-.event-more { font-size: 0.7rem; color: var(--text-light); font-weight: 700; padding: 4px; text-align: center; cursor: pointer; margin-top: auto; border-radius: 6px; }
-.event-more:hover { background: #f1f5f9; color: var(--navy-brand); }
-
-/* Etiquetas de color */
-.evt-banco { background: var(--tag-red-bg); color: var(--tag-red-text); }
-.evt-credito { background: var(--tag-orange-bg); color: var(--tag-orange-text); }
-.evt-visita { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
-.evt-desem { background: var(--tag-green-bg); color: var(--tag-green-text); }
-.evt-reunion { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
-.evt-morosos { background: var(--tag-purple-bg); color: var(--tag-purple-text); }
-
-/* ESTILOS DE ASISTENCIA */
-.absence-tag {
-  font-size: 0.65rem; background: #fee2e2; color: #b91c1c;
-  padding: 2px 6px; border-radius: 4px; margin-top: 2px; margin-bottom: 4px;
-  font-weight: 700; text-align: center; border: 1px solid #fecaca; display: block;
-}
-.sidebar-absence {
-  background: #fff1f2; border-left: 4px solid #e11d48;
-  padding: 10px; margin-bottom: 15px; border-radius: 8px;
-  margin-left: 20px;
-}
-.sidebar-absence h4 { color: #be123c; margin: 0 0 5px 0; font-size: 0.9rem; }
-.sidebar-absence p { font-size: 0.8rem; color: #881337; margin: 0; }
-
-/* ESTILO ESPECIAL MODO ASISTENCIA (TARJETAS GRANDES) */
-.absence-card-large {
-  background: #fee2e2; border: 1px solid #fecaca;
-  color: #b91c1c; padding: 8px; border-radius: 6px;
-  margin-bottom: 5px; cursor: pointer; font-weight: 700;
-  font-size: 0.8rem; display: flex; flex-direction: column; gap: 2px;
-  transition: transform 0.2s;
-}
-.absence-card-large:hover { transform: scale(1.03); border-color: #b91c1c; }
-.absence-card-large small { font-weight: 500; opacity: 0.9; font-size: 0.7rem; }
-
-
-.sidebar { 
-  flex: 1; min-width: 360px; background: white;
-  padding: 30px 25px; overflow-y: auto; display: flex; flex-direction: column; 
-  border-left: 1px solid var(--border);
-}
-.sidebar-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-.sidebar-header div { font-size: 1.25rem; font-weight: 800; color: var(--navy-brand); letter-spacing: -0.5px; }
-.sidebar-date { font-size: 0.95rem; color: var(--text-light); font-weight: 500; text-transform: capitalize; margin-top: 5px; display: block; }
-.sidebar-list { list-style: none; padding: 0 0 0 10px; margin: 0; position: relative; }
-.sidebar-list::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: #e2e8f0; border-radius: 2px; }
-.sidebar-item { 
-  position: relative; margin-left: 20px; margin-bottom: 15px;
-  background: white; padding: 16px; border-radius: 12px; 
-  box-shadow: var(--shadow-md); border: 1px solid #f1f5f9; 
-  cursor: pointer; transition: all 0.2s; 
-}
-.sidebar-item::before {
-  content: ''; position: absolute; left: -26px; top: 20px;
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--navy-brand); border: 2px solid white; box-shadow: 0 0 0 2px #e2e8f0; z-index: 2;
-}
-.sidebar-item:hover { transform: translateX(4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
-.sidebar-item h4 { margin: 0 0 8px 0; font-size: 1rem; font-weight: 700; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
-.sidebar-item p { margin: 0; font-size: 0.85rem; color: #64748b; display: flex; gap: 8px; align-items: center; line-height: 1.5; }
-.empty-msg { text-align: center; color: var(--text-light); padding: 30px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; font-size: 0.9rem; margin-left: 0; }
-
-.modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); padding: 20px; }
-.modal-content { 
-  background: white; padding: 35px; border-radius: 20px; width: 100%; max-width: 480px; 
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; 
-  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-  max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
-}
-@keyframes slideIn { from { transform: translateY(20px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-
-.close-btn { position: absolute; top: 25px; right: 25px; background: #f1f5f9; width: 32px; height: 32px; border-radius: 50%; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.close-btn:hover { background: #e2e8f0; color: var(--navy-brand); }
-.modal-header h3 { margin: 0 0 25px 0; font-size: 1.5rem; color: var(--navy-brand); font-weight: 800; letter-spacing: -0.5px; }
-
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-input, select { 
-  width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; 
-  background: #f8fafc; font-family: inherit; font-size: 1rem; color: var(--text-main); 
-  transition: all 0.2s; outline: none;
-}
-input:focus, select:focus { border-color: var(--navy-brand); box-shadow: 0 0 0 3px rgba(15, 44, 76, 0.1); background: white; }
-
-.time-selector-row { display: flex; gap: 10px; align-items: center; }
-.time-select { flex: 1; text-align: center; font-weight: 600; color: var(--navy-brand); background: white; }
-.time-separator { font-weight: bold; color: var(--text-light); }
-
-.btn-main { 
-  width: 100%; padding: 16px; border-radius: 10px; border: none; 
-  background: var(--navy-brand); color: white; font-weight: 700; 
-  cursor: pointer; margin-top: 10px; transition: all 0.2s; font-size: 1rem; 
-  box-shadow: 0 10px 15px -3px rgba(15, 44, 76, 0.2);
-}
-.btn-main:hover { background: var(--navy-dark); transform: translateY(-2px); box-shadow: 0 15px 20px -3px rgba(15, 44, 76, 0.3); }
-.btn-main:active { transform: scale(0.98); }
-
-.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-.btn-danger { background: #fee2e2; color: #b91c1c; box-shadow: none; } .btn-danger:hover { background: #fecaca; box-shadow: none; }
-.btn-success { background: #dcfce7; color: #15803d; box-shadow: none; } .btn-success:hover { background: #bbf7d0; box-shadow: none; }
-.btn-edit { background: #ffedd5; color: #c2410c; box-shadow: none; } .btn-edit:hover { background: #fed7aa; box-shadow: none; }
-
-#toast { visibility: hidden; min-width: 300px; background-color: var(--navy-dark); color: #fff; text-align: center; border-radius: 50px; padding: 16px 24px; position: fixed; z-index: 2000; left: 50%; bottom: 40px; transform: translateX(-50%) translateY(20px); font-size: 0.95rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); font-weight: 600; opacity: 0; transition: all 0.3s; }
-#toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
-
-#notification-card {
-  display: none; position: fixed; bottom: 30px; right: 30px; width: 360px; 
-  background: white; border-left: 6px solid var(--navy-brand);
-  border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); z-index: 9999;
-  padding: 20px; animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.notif-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.notif-title { font-weight: 800; color: var(--navy-brand); font-size: 1rem; }
-.notif-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #cbd5e1; line-height: 1; }
-.notif-close:hover { color: var(--navy-brand); }
-.notif-body { font-size: 0.95rem; color: #475569; line-height: 1.5; }
-
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.stat-card { background: #f8fafc; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; }
-.stat-val { display: block; font-size: 2.2rem; font-weight: 800; color: var(--navy-brand); line-height: 1; margin-bottom: 5px; }
-.stat-lbl { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-
-#searchResultsList { max-height: 350px; overflow-y: auto; margin-top: 15px; }
-.search-result-item { padding: 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; border-radius: 8px; color: var(--text-main); transition: background 0.2s; }
-.search-result-item:hover { background: #f1f5f9; }
-.search-result-item strong { color: var(--navy-brand); }
-
-@media(max-width: 900px) {
-  .main-layout { flex-direction: column; overflow-y: auto; }
-  .calendar-wrapper { border-right: none; flex: none; height: auto; padding: 15px; }
-  .sidebar { flex: none; height: auto; border-top: 1px solid var(--border); padding: 20px; min-width: 100%; border-left: none; }
-  .controls-bar, .header-row { flex-direction: column; align-items: stretch; gap: 10px; }
-  .search-box { max-width: 100%; order: 3; }
-  .actions { justify-content: space-between; order: 2; }
-  .brand { order: 1; display: flex; justify-content: space-between; align-items: center; }
-  .day { height: 110px; }
-  .app-container { height: 100%; margin: 0; border-radius: 0; width: 100%; border: none; }
-}
-@media print {
-  body { background: white; height: auto; overflow: visible; }
-  .app-container, .modal, .btn-icon, header, #notification-card, #loginOverlay { display: none !important; }
-  #printableArea { display: block !important; padding: 20px; }
-  table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
-  th { background: #003366; color: white; padding: 12px; text-align: left; }
-  td { border: 1px solid #ddd; padding: 10px; font-size: 12px; color: #333; }
-  tr:nth-child(even) { background-color: #f1f5f9; }
-  h2 { color: #003366; border-bottom: 2px solid #003366; padding-bottom: 10px; }
-}
-#printableArea { display: none; }
-</style>
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/calendar.css">
+  <link rel="stylesheet" href="./css/utilities.css">
 </head>
 <body>
 
-<!-- LOGIN OVERLAY -->
-<div id="loginOverlay">
-  <div class="login-box">
-    <h2>CEPRODEMIC</h2>
-    <p style="color:#64748b; margin-bottom:20px">Acceso a Agenda Corporativa</p>
-    <div class="form-group">
-      <input type="email" id="emailLogin" placeholder="Correo electrónico">
-      <input type="password" id="passLogin" placeholder="Contraseña">
+  <!-- Overlay de Login -->
+  <div id="loginOverlay" class="overlay-full active">
+    <div class="card login-card">
+      <h2>CEPRODEMIC</h2>
+      <p class="text-muted mb-lg">Acceso a Agenda Corporativa</p>
+      <div class="form-group">
+        <input type="email" id="emailLogin" class="input-control" placeholder="Correo electrónico">
+      </div>
+      <div class="form-group">
+        <input type="password" id="passLogin" class="input-control" placeholder="Contraseña">
+      </div>
+      <button id="btnLogin" class="btn btn-primary btn-block">Ingresar</button>
     </div>
-    <button class="btn-main" onclick="handleLogin()">Ingresar</button>
   </div>
-</div>
 
-<div class="app-container" id="appContainer">
-  <header>
-    <div class="header-row">
-      <div class="brand">
-        <div>
-          <h1>Agenda Corporativa</h1>
-          <small>CEPRODEMIC</small>
+  <!-- Contenedor Principal SaaS -->
+  <div id="appContainer" class="app-container hidden">
+    
+    <!-- Header Corporativo -->
+    <header class="app-header">
+      <div class="header-main">
+        <div class="brand-area flex-row gap-sm">
+          <button id="btnMobileMenu" class="btn-icon mobile-only">☰</button>
+          <div class="brand-titles">
+            <h1>Agenda Corporativa</h1>
+            <small>CEPRODEMIC</small>
+          </div>
+        </div>
+
+        <div class="search-area">
+          <span class="icon">🔍</span>
+          <input type="text" id="globalSearch" class="input-control pl-xl" placeholder="Buscar actividad o personal...">
+        </div>
+
+        <div class="actions-area flex-row gap-sm">
+          <button id="btnThemeToggle" class="btn-icon" title="Cambiar Tema">🌗</button>
+          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
+          <button id="btnStats" class="btn-icon hidden-mobile" title="Estadísticas">📊</button>
+          <button id="btnPrint" class="btn-icon hidden-mobile" title="Imprimir">🖨️</button>
+          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
+          <button id="btnNewEvent" class="btn btn-primary shadow-md">
+            <span>+</span> <span class="hidden-mobile">Crear Actividad</span>
+          </button>
         </div>
       </div>
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="globalSearch" placeholder="Buscar actividad o Encargado..." onkeyup="handleSearch()">
-      </div>
-      <div class="actions">
-        <!-- Botón de Notificaciones -->
-        <button id="btnNotif" class="btn-icon" onclick="toggleNotifications()" title="Gestionar alertas">
-          🔔 Activar Avisos
-        </button>
-        <!-- Botón de Asistencia -->
-        <button class="btn-icon" onclick="openModalAttendance()" title="Registrar Falta/Permiso" style="background:rgba(255,255,255,0.2)">
-            📋 Inasistencia
-        </button>
 
-        <button class="btn-icon btn-add-global" onclick="openModalForNew()" title="Nueva Actividad">
-          <span style="margin-right:5px; font-size:1.1rem;">+</span> Crear Actividad
-        </button>
-        <button class="btn-icon" onclick="goToToday()" title="Ir a Hoy">Hoy</button>
-        <button class="btn-icon" onclick="showStats()" title="Estadísticas">📊</button>
-        <button class="btn-icon" onclick="printReport()" title="Imprimir">🖨️</button>
-      </div>
-    </div>
-    
-    <div class="controls-bar">
-      <div class="month-nav">
-        <button onclick="changeMonth(-1)">&#8249;</button>
-        <div id="currentMonthDisplay">Cargando...</div>
-        <button onclick="changeMonth(1)">&#8250;</button>
-      </div>
-      
-      <select id="filterCategory" class="filter-select" onchange="applyFilter()">
-        <option value="all">🌍 VER TODO</option>
-        <option value="asistencia_mode" style="background:#fee2e2; color:#b91c1c; font-weight:800;">🚫 INASISTENCIAS</option>
-        <option value="cobranza_comunal">👨🏽‍🤝‍👨🏻 COBRANZA BC/GS</option>
-        <option value="cobranza_individual">👤 COBRANZA INDIVIDUAL</option>
-        <option value="morosos">🛑 MOROSOS</option>
-        <option value="visita">🏠 VISITAS</option>
-        <option value="desembolso">💵 DESEMBOLSOS</option>
-        <option value="reunion">📅 REUNIONES</option>
-      </select>
-
-      <select id="filterResponsible" class="filter-select" onchange="applyFilter()">
-        <option value="all">👥 TODO EL PERSONAL</option>
-        <option value="FRANKLIN">👨 FRANKLIN</option>
-        <option value="GIMER">👨 GIMER</option>
-        <option value="ALEJANDRO">👨 ALEJANDRO</option>
-        <option value="OSWALDO">👨 OSWALDO</option>
-        <option value="ELIZABETH">👩 ELIZABETH</option>
-        <option value="NOEMI">👩 NOEMI</option>
-        <option value="LUZ">👩 LUZ</option>
-      </select>
-    </div>
-  </header>
-
-  <div class="main-layout">
-    <div id="loader"><div class="spinner"></div> Cargando datos...</div>
-    <div class="calendar-wrapper">
-      <div class="weekdays"><div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div></div>
-      <div id="calendar"></div>
-    </div>
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <div>Agenda del Día</div>
-        <span id="sidebarDateLabel" class="sidebar-date">...</span>
-      </div>
-      <ul id="sidebarList" class="sidebar-list">
-        <li class="empty-msg">Selecciona un día para ver detalles.</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL EDICIÓN / CREACIÓN EVENTOS -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modal')">&times;</button>
-    <div class="modal-header"><h3 id="modalTitle">Nueva Actividad</h3></div>
-    <input type="hidden" id="eventId"> 
-
-    <div class="form-group">
-      <label>Fecha</label>
-      <input type="date" id="eventDateInput" required>
-    </div>
-
-    <div class="form-group">
-      <label>Hora</label>
-      <div class="time-selector-row">
-        <select id="selHour" class="time-select">
-          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          <option value="7">7</option><option value="8">8</option><option value="9" selected>9</option>
-          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-        </select>
-        <span class="time-separator">:</span>
-        <select id="selMin" class="time-select">
-          <option value="00">00</option><option value="05">05</option>
-          <option value="10">10</option><option value="15">15</option>
-          <option value="20">20</option><option value="25">25</option>
-          <option value="30">30</option><option value="35">35</option>
-          <option value="40">40</option><option value="45">45</option>
-          <option value="50">50</option><option value="55">55</option>
-        </select>
-        <select id="selAmpm" class="time-select">
-          <option value="AM" selected>AM</option>
-          <option value="PM">PM</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Título / Descripción</label>
-      <input type="text" id="eventTitle" placeholder="Ej: Visita Grupo Los Pinos" autocomplete="off">
-    </div>
-    
-    <div class="form-group">
-      <label>Responsable</label>
-      <select id="eventResponsible">
-        <option value="">-- Seleccionar --</option>
-        <option value="FRANKLIN">FRANKLIN</option>
-        <option value="ELIZABETH">ELIZABETH</option>
-        <option value="NOEMI">NOEMI</option>
-        <option value="GIMER">GIMER</option>
-        <option value="ALEJANDRO">ALEJANDRO</option>
-        <option value="OSWALDO">OSWALDO</option>
-        <option value="LUZ">LUZ</option>
-      </select>
-    </div>
-    
-    <div class="form-group">
-      <label>Tipo de Actividad</label>
-      <select id="eventType">
-        <option value="cobranza_comunal">👨🏽‍🤝‍👨🏻 COBRANZA BC/GS</option>
-        <option value="cobranza_individual">👤 COBRANZA INDIVIDUAL</option>
-        <option value="morosos">🛑 MOROSOS</option>
-        <option value="visita">🏠 VISITAS</option>
-        <option value="desembolso">💵 DESEMBOLSOS</option>
-        <option value="reunion">📅 REUNIONES</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="repeatMonthsGroup" style="display: none; background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #dbeafe;">
-      <label style="color:#003366">🔄 Repetir evento (Mensual)</label>
-      <select id="repeatMonths">
-        <option value="1">No repetir</option>
-        <option value="2">2 meses</option>
-        <option value="3">3 meses</option>
-        <option value="4">4 meses</option>
-        <option value="5">5 meses</option>
-        <option value="6">6 meses</option>
-        <option value="7">7 meses</option>
-        <option value="8">8 meses</option>
-        <option value="9">9 meses</option>
-        <option value="10">10 meses</option>
-        <option value="11">11 meses</option>
-        <option value="12">1 año (12 meses)</option>
-        <option value="18">1 año y medio (18 meses)</option>
-        <option value="24">2 años (24 meses)</option>
-      </select>
-      <small style="display:block; margin-top:5px; color:#64748b; font-size:0.75rem">Se creará una copia en la misma fecha de los meses siguientes.</small>
-    </div>
-    
-    <button class="btn-main" onclick="saveEvent()">Guardar</button>
-  </div>
-</div>
-
-<!-- MODAL ASISTENCIA (AGREGAR) -->
-<div class="modal" id="modalAttendance">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalAttendance')">&times;</button>
-    <div class="modal-header"><h3>Registrar Ausencia</h3></div>
-    
-    <div class="form-group">
-      <label>Fecha</label>
-      <input type="date" id="absDate">
-    </div>
-
-    <div class="form-group">
-      <label>Colaborador</label>
-      <select id="absResponsible">
-        <option value="FRANKLIN">FRANKLIN</option>
-        <option value="GIMER">GIMER</option>
-        <option value="ALEJANDRO">ALEJANDRO</option>
-        <option value="OSWALDO">OSWALDO</option>
-        <option value="ELIZABETH">ELIZABETH</option>
-        <option value="NOEMI">NOEMI</option>
-        <option value="LUZ">LUZ</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Tipo de Ausencia</label>
-      <select id="absType">
-        <option value="FALTA_DIA">⛔ Falta (Día Completo)</option>
-        <option value="FALTA_MANANA">🌅 Falta (Mañana)</option>
-        <option value="FALTA_TARDE">🌇 Falta (Tarde)</option>
-        <option value="PERMISO">🏥 Permiso Médico/Otros</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Observación</label>
-      <input type="text" id="absObs" placeholder="Ej: Cita médica, Asunto familiar...">
-    </div>
-
-    <button class="btn-main btn-danger" onclick="saveAttendance()">Registrar Falta</button>
-  </div>
-</div>
-
-<!-- MODAL ACCIONES ASISTENCIA (NUEVO) -->
-<div class="modal" id="modalAbsenceActions">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalAbsenceActions')">&times;</button>
-    <div class="modal-header"><h3>Detalle de Ausencia</h3></div>
-    <input type="hidden" id="absenceIdDel">
-    <div id="absenceDetails" style="margin-bottom:20px; line-height:1.6; color:#334155;"></div>
-    <div style="background:#fee2e2; padding:15px; border-radius:8px; font-size:0.9rem; color:#b91c1c; margin-bottom:15px;">
-        ⚠️ Si te equivocaste, puedes eliminar este registro y crearlo de nuevo.
-    </div>
-    <button class="btn-main btn-danger" onclick="deleteAbsence()">🗑️ Eliminar Registro</button>
-  </div>
-</div>
-
-<div class="modal" id="modalActions">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalActions')">&times;</button>
-    <div class="modal-header"><h3 id="actionTitle">Detalles</h3></div>
-    <div id="actionDetails" style="margin-bottom: 25px; color: #334155; font-size: 0.95rem; line-height: 1.6;"></div>
-    <div class="btn-row" style="grid-template-columns: 1fr 1fr;">
-      <button class="btn-main btn-success" onclick="toggleComplete()">✅ Estado</button>
-      <button class="btn-main btn-edit" onclick="editEventFromModal()">✏️ Editar</button>
-    </div>
-    <button class="btn-main btn-danger" style="margin-top:10px" onclick="deleteEvent()">🗑️ Eliminar Actividad</button>
-  </div>
-</div>
-
-<div class="modal" id="modalSearch">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalSearch')">&times;</button>
-    <div class="modal-header"><h3>Resultados</h3></div>
-    <div id="searchResultsList"></div>
-  </div>
-</div>
-
-<div class="modal" id="modalStats">
-  <div class="modal-content">
-    <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
-    <div class="modal-header"><h3>Resumen del Mes</h3></div>
-    <div class="stats-grid" id="statsContainer"></div>
-  </div>
-</div>
-
-<div id="toast">Notificación</div>
-
-<div id="notification-card">
-  <div class="notif-header">
-    <span class="notif-title">🔔 Recordatorio Agenda</span>
-    <button class="notif-close" onclick="closeNotification()">×</button>
-  </div>
-  <div id="notif-content" class="notif-body"></div>
-</div>
-
-<div id="printableArea">
-  <h2 id="printTitle" style="text-align:center; margin-bottom: 20px;">Reporte</h2>
-  <table id="printTable">
-    <thead>
-      <tr><th style="width:50px">Día</th><th style="width:70px">Hora</th><th>Actividad</th><th>Tipo</th><th>Responsable</th><th style="width:60px">Est.</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB1ZTwRXaR89ItkFTKGaqWo3cyfBAv5Cc4",
-  authDomain: "calendario-de-actividade-3b553.firebaseapp.com",
-  projectId: "calendario-de-actividade-3b553",
-  storageBucket: "calendario-de-actividade-3b553.firebasestorage.app",
-  messagingSenderId: "330806785515",
-  appId: "1:330806785515:web:3448d1f0ffc83422c795ae"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-const eventsRef = collection(db, "eventos");
-const absencesRef = collection(db, "asistencias");
-
-let currentDate = new Date(); 
-let selectedDateForSidebar = new Date(); 
-let eventsArray = []; 
-let absencesArray = [];
-let currentEventObj = null;
-
-const typeIcons = { "cobranza_comunal": "👨🏽‍🤝‍👨🏻", "cobranza_individual": "👤", "morosos": "🛑", "visita": "🏠", "desembolso": "💵", "reunion": "📅" };
-const typeLabels = { "cobranza_comunal": "Cobranza BC/GS", "cobranza_individual": "Cobranza Indiv.", "morosos": "Morosos", "visita": "Visita", "desembolso": "Desembolso", "reunion": "Reunión" };
-
-// --- LÓGICA DE LOGIN ---
-window.handleLogin = () => {
-  const email = document.getElementById("emailLogin").value;
-  const pass = document.getElementById("passLogin").value;
-  const btn = document.querySelector("#loginOverlay .btn-main");
-  btn.textContent = "Verificando..."; btn.disabled = true;
-
-  signInWithEmailAndPassword(auth, email, pass)
-    .then(() => { /* El onAuthStateChanged manejará el cambio */ })
-    .catch((error) => {
-      alert("Error: " + error.message);
-      btn.textContent = "Ingresar"; btn.disabled = false;
-    });
-};
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("loginOverlay").style.display = "none";
-    document.getElementById("appContainer").style.display = "flex";
-    initDataListeners();
-  } else {
-    document.getElementById("appContainer").style.display = "none";
-    document.getElementById("loginOverlay").style.display = "flex";
-  }
-});
-
-function initDataListeners() {
-  onSnapshot(query(eventsRef, orderBy("time")), (snapshot) => {
-    document.getElementById("loader").style.display = "none";
-    eventsArray = [];
-    snapshot.forEach(docSnap => eventsArray.push({ id: docSnap.id, ...docSnap.data() }));
-    refreshView();
-  }, (error) => { console.error(error); showToast("Error datos", "error"); });
-
-  onSnapshot(query(absencesRef), (snapshot) => {
-    absencesArray = [];
-    snapshot.forEach(docSnap => absencesArray.push({ id: docSnap.id, ...docSnap.data() }));
-    refreshView();
-  });
-}
-
-function refreshView() {
-    renderCalendar();
-    renderSidebar(selectedDateForSidebar);
-}
-
-function formatTime12h(time24) {
-  if (!time24) return "";
-  const [hours, minutes] = time24.split(':');
-  let h = parseInt(hours);
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  h = h % 12; h = h ? h : 12;
-  return `${h}:${minutes} ${ampm}`;
-}
-
-function renderCalendar() {
-  const calendarGrid = document.getElementById("calendar");
-  calendarGrid.innerHTML = "";
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-  document.getElementById("currentMonthDisplay").textContent = `${monthNames[month]} ${year}`;
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  for (let i = 0; i < firstDayIndex; i++) { calendarGrid.appendChild(document.createElement("div")).className = "day empty"; }
-
-  const filterCat = document.getElementById("filterCategory").value;
-  const filterResp = document.getElementById("filterResponsible").value;
-  const today = new Date();
-  
-  // MODO ESPECIAL: Si selecciona " INASISTENCIAS"
-  const isAbsenceMode = (filterCat === "asistencia_mode");
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayDiv = document.createElement("div");
-    dayDiv.className = "day";
-    if(day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayDiv.classList.add("today");
-    if(day === selectedDateForSidebar.getDate() && month === selectedDateForSidebar.getMonth() && year === selectedDateForSidebar.getFullYear()) dayDiv.classList.add("selected-day");
-    
-    const dayString = `${year}-${(month+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
-
-    // --- RENDERIZADO DE ASISTENCIAS ---
-    const dayAbsences = absencesArray.filter(a => a.date === dayString);
-    let absenceHtml = "";
-    
-    dayAbsences.forEach(abs => {
-        if(filterResp === "all" || abs.responsible === filterResp) {
-            if(isAbsenceMode) {
-               // En modo asistencia, mostramos tarjetas GRANDES
-               let typeLabel = "Falta";
-               if(abs.type === "FALTA_MANANA") typeLabel = "Mañana";
-               if(abs.type === "FALTA_TARDE") typeLabel = "Tarde";
-               if(abs.type === "PERMISO") typeLabel = "Permiso";
-               
-               const el = document.createElement("div");
-               el.className = "absence-card-large";
-               el.innerHTML = `<span>🚫 ${abs.responsible}</span><small>${typeLabel}</small>`;
-               el.onclick = (e) => { e.stopPropagation(); openAbsenceDetails(abs); };
-               dayDiv.appendChild(el); // Se agrega directamente, no al string
-            } else {
-               // Modo normal, tag pequeño
-               absenceHtml += `<span class="absence-tag" onclick="event.stopPropagation(); openAbsenceDetails({id:'${abs.id}', responsible:'${abs.responsible}', date:'${abs.date}', type:'${abs.type}', obs:'${abs.obs}'})">🚫 ${abs.responsible}</span>`;
-            }
-        }
-    });
-
-    if(!isAbsenceMode) {
-        dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>${absenceHtml}`;
-    } else {
-        // En modo asistencia, si no había elementos agregados por el loop anterior, solo ponemos el numero
-        if(dayDiv.innerHTML === "") dayDiv.innerHTML = `<div class="day-header"><span class="day-number">${day}</span></div>`;
-        else dayDiv.insertAdjacentHTML('afterbegin', `<div class="day-header"><span class="day-number">${day}</span></div>`);
-    }
-    
-    // --- RENDERIZADO DE EVENTOS (Solo si NO estamos en modo asistencia) ---
-    if (!isAbsenceMode) {
-        const dayEvents = eventsArray.filter(e => {
-          const eDate = e.date.split('T')[0]; 
-          const matchesDate = eDate === dayString;
-          const matchesCat = (filterCat === "all" || e.type === filterCat);
-          const matchesResp = (filterResp === "all" || e.responsible === filterResp);
-          return matchesDate && matchesCat && matchesResp;
-        });
-
-        const MAX_VISIBLE = 3; 
-
-        dayEvents.slice(0, MAX_VISIBLE).forEach(evt => {
-          const evtDiv = document.createElement("div");
-          evtDiv.className = `event ${getClassByType(evt.type)}`;
-          if(evt.completed) evtDiv.classList.add("completed");
-          evtDiv.innerHTML = `${typeIcons[evt.type]||''} ${evt.title}`;
-          evtDiv.onclick = (e) => { e.stopPropagation(); openActionModal(evt); };
-          dayDiv.appendChild(evtDiv);
-        });
-
-        if (dayEvents.length > MAX_VISIBLE) {
-          const moreDiv = document.createElement("div");
-          moreDiv.className = "event-more";
-          moreDiv.innerText = `+ ${dayEvents.length - MAX_VISIBLE} más`;
-          dayDiv.appendChild(moreDiv);
-        }
-    }
-
-    dayDiv.onclick = (e) => {
-        if (!e.target.classList.contains('event') && !e.target.classList.contains('absence-card-large') && !e.target.classList.contains('absence-tag')) {
-            selectedDateForSidebar = new Date(year, month, day);
-            refreshView();
-        }
-    };
-    
-    // Doble click crea evento (Solo si no es modo asistencia)
-    dayDiv.ondblclick = () => { 
-        if(!isAbsenceMode) {
-            selectedDateForSidebar = new Date(year, month, day); 
-            openModalForNew(); 
-        } else {
-            selectedDateForSidebar = new Date(year, month, day); 
-            openModalAttendance(); // En modo asistencia, doble clic crea asistencia
-        }
-    };
-    
-    calendarGrid.appendChild(dayDiv);
-  }
-}
-
-function renderSidebar(dateObj) {
-  const sidebarList = document.getElementById("sidebarList");
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById("sidebarDateLabel").textContent = dateObj.toLocaleDateString('es-ES', options);
-  sidebarList.innerHTML = "";
-  
-  const filterResp = document.getElementById("filterResponsible").value;
-  const filterCat = document.getElementById("filterCategory").value; 
-  const isAbsenceMode = (filterCat === "asistencia_mode");
-  const dateString = dateObj.toISOString().split('T')[0];
-  
-  // 1. Mostrar Ausencias (Siempre se muestran si existen, prioridad)
-  const dailyAbsences = absencesArray.filter(a => a.date === dateString);
-  dailyAbsences.forEach(abs => {
-    if(filterResp === "all" || abs.responsible === filterResp) {
-       const li = document.createElement("li");
-       li.className = "sidebar-absence";
-       let typeText = "Falta";
-       if(abs.type === "FALTA_MANANA") typeText = "Falta (Mañana)";
-       if(abs.type === "FALTA_TARDE") typeText = "Falta (Tarde)";
-       if(abs.type === "PERMISO") typeText = "Permiso";
-       li.innerHTML = `<h4>⛔ ${abs.responsible} - ${typeText}</h4><p>${abs.obs || 'Sin detalles'}</p>`;
-       li.style.cursor = "pointer";
-       li.onclick = () => openAbsenceDetails(abs);
-       sidebarList.appendChild(li);
-    }
-  });
-
-  // 2. Mostrar Eventos (Solo si NO es modo asistencia)
-  if (!isAbsenceMode) {
-      const eventsForDay = eventsArray.filter(e => {
-        const isDate = e.date.startsWith(dateString);
-        const isResp = (filterResp === "all" || e.responsible === filterResp);
-        const isCat = (filterCat === "all" || e.type === filterCat);
-        return isDate && isResp && isCat;
-      });
-      
-      eventsForDay.sort((a,b) => a.time.localeCompare(b.time));
-
-      if (eventsForDay.length === 0 && dailyAbsences.length === 0) { 
-          sidebarList.innerHTML += '<li class="empty-msg">No hay actividades para este día.</li>'; return; 
-      }
-
-      eventsForDay.forEach(evt => {
-        const li = document.createElement("li");
-        li.className = "sidebar-item";
-        li.style.borderLeftColor = getColorCode(evt.type); 
-        const check = evt.completed ? "✅ Completado" : "⏳ Pendiente";
-        const statusStyle = evt.completed ? "color:#10b981" : "color:#f59e0b";
+      <!-- Barra de controles / Filtros -->
+      <div class="controls-bar">
+        <div class="month-navigation flex-row gap-sm">
+          <button id="btnPrevMonth" class="btn-icon text-bold">‹</button>
+          <div id="currentMonthDisplay" class="month-label text-bold w-150 text-center">Cargando...</div>
+          <button id="btnNextMonth" class="btn-icon text-bold">›</button>
+          <button id="btnToday" class="btn btn-text text-bold">Hoy</button>
+        </div>
         
-        li.innerHTML = `<h4>${evt.title} <span style="font-size:0.8rem">${typeIcons[evt.type]}</span></h4>
-          <p>⏰ ${formatTime12h(evt.time)} | 👤 ${evt.responsible || '?'}</p>
-          <p style="${statusStyle}; font-weight:600; font-size:0.75rem; margin-top:5px;">${check}</p>`;
-        li.onclick = () => openActionModal(evt);
-        sidebarList.appendChild(li);
-      });
-  } else {
-      if(dailyAbsences.length === 0) {
-           sidebarList.innerHTML += '<li class="empty-msg">No hay faltas registradas.</li>';
-      }
-  }
-}
+        <div class="filters-group flex-row gap-sm">
+          <select id="filterCategory" class="select-control min-w-150">
+            <option value="all">🌍 VER TODO</option>
+            <option value="asistencia_mode">🚫 INASISTENCIAS</option>
+            <option value="cobranza_comunal">👨🏽‍🤝‍👨🏻 COBRANZA BC/GS</option>
+            <option value="cobranza_individual">👤 COBRANZA INDIVIDUAL</option>
+            <option value="morosos">🛑 MOROSOS</option>
+            <option value="visita">🏠 VISITAS</option>
+            <option value="desembolso">💵 DESEMBOLSOS</option>
+            <option value="reunion">📅 REUNIONES</option>
+          </select>
 
-function getClassByType(type) {
-  const map = { "cobranza_comunal": "evt-banco", "cobranza_individual": "evt-credito", "visita": "evt-visita", "desembolso": "evt-desem", "reunion": "evt-reunion", "morosos": "evt-morosos" };
-  return map[type] || "";
-}
-function getColorCode(type) {
-  const map = { "cobranza_comunal": "#b91c1c", "cobranza_individual": "#c2410c", "visita": "#1d4ed8", "desembolso": "#15803d", "reunion": "#a16207", "morosos": "#7e22ce" };
-  return map[type] || "#ccc";
-}
+          <select id="filterResponsible" class="select-control min-w-150">
+            <option value="all">👥 TODO EL PERSONAL</option>
+            <option value="FRANKLIN">👨 FRANKLIN</option>
+            <option value="GIMER">👨 GIMER</option>
+            <option value="ALEJANDRO">👨 ALEJANDRO</option>
+            <option value="OSWALDO">👨 OSWALDO</option>
+            <option value="ELIZABETH">👩 ELIZABETH</option>
+            <option value="NOEMI">👩 NOEMI</option>
+            <option value="LUZ">👩 LUZ</option>
+          </select>
+        </div>
+      </div>
+    </header>
 
-window.changeMonth = (step) => { currentDate.setMonth(currentDate.getMonth() + step); refreshView(); }
-window.goToToday = () => { currentDate = new Date(); selectedDateForSidebar = new Date(); refreshView(); }
-window.applyFilter = () => refreshView();
+    <!-- Layout Principal -->
+    <main class="main-layout">
+      <!-- Loading State -->
+      <div id="appLoader" class="loader-overlay active">
+        <div class="spinner"></div>
+        <div class="mt-sm text-bold text-main">Cargando datos...</div>
+      </div>
 
-window.openModalForNew = () => {
-  document.getElementById("modalTitle").textContent = "Nueva Actividad";
-  document.getElementById("eventId").value = ""; 
-  document.getElementById("eventDateInput").value = selectedDateForSidebar.toISOString().split('T')[0];
-  document.getElementById("eventTitle").value = "";
+      <!-- Calendario -->
+      <section class="calendar-section">
+        <div class="calendar-header">
+          <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
+      <!-- Sidebar (Drawer en Móvil) -->
+      <aside id="sidebarDrawer" class="sidebar-section">
+        <div class="sidebar-header flex-row justify-between">
+          <div>
+            <h2 class="sidebar-title text-main">Agenda del Día</h2>
+            <span id="sidebarDateLabel" class="sidebar-subtitle text-muted text-sm text-capitalize">...</span>
+          </div>
+          <button id="btnCloseMobileMenu" class="btn-icon mobile-only">✕</button>
+        </div>
+        <ul id="sidebarList" class="sidebar-list"></ul>
+      </aside>
+    </main>
+  </div>
+
+  <!-- SISTEMA DE MODALES -->
+  <div id="modalContainer" class="modal-backdrop hidden">
+    
+    <!-- Modal: Nueva Actividad -->
+    <div id="modalFormEvent" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 id="modalEventTitle" class="modal-title mb-md text-main">Nueva Actividad</h3>
+      <input type="hidden" id="eventId">
+      
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Fecha</label>
+        <input type="date" id="eventDate" class="input-control mt-xs">
+      </div>
+      
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Hora</label>
+        <div class="flex-row gap-sm mt-xs">
+          <select id="eventHour" class="select-control text-center"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option selected>9</option><option>10</option><option>11</option><option>12</option></select>
+          <span class="text-bold text-muted">:</span>
+          <select id="eventMin" class="select-control text-center"><option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option></select>
+          <select id="eventAmPm" class="select-control text-center"><option>AM</option><option>PM</option></select>
+        </div>
+      </div>
+
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Título / Descripción</label>
+        <input type="text" id="eventTitle" class="input-control mt-xs" placeholder="Ej: Visita Grupo Los Pinos" autocomplete="off">
+      </div>
+      
+      <div class="flex-row gap-md mb-md">
+        <div class="form-group flex-1">
+          <label class="text-muted text-sm text-bold uppercase">Responsable</label>
+          <select id="eventResponsible" class="select-control mt-xs">
+            <option value="">-- Seleccionar --</option>
+            <option value="FRANKLIN">FRANKLIN</option><option value="ELIZABETH">ELIZABETH</option><option value="NOEMI">NOEMI</option><option value="GIMER">GIMER</option><option value="ALEJANDRO">ALEJANDRO</option><option value="OSWALDO">OSWALDO</option><option value="LUZ">LUZ</option>
+          </select>
+        </div>
+        <div class="form-group flex-1">
+          <label class="text-muted text-sm text-bold uppercase">Tipo</label>
+          <select id="eventType" class="select-control mt-xs">
+            <option value="cobranza_comunal">COBRANZA BC/GS</option><option value="cobranza_individual">COBRANZA INDIV.</option><option value="morosos">MOROSOS</option><option value="visita">VISITAS</option><option value="desembolso">DESEMBOLSOS</option><option value="reunion">REUNIONES</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="eventRepeatGroup" class="form-group bg-blue-light p-md radius-md mb-md hidden border-blue">
+        <label class="text-main text-sm text-bold mb-xs block">🔄 Repetir evento (Mensual)</label>
+        <select id="eventRepeat" class="select-control">
+          <option value="1">No repetir</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">1 año (12 meses)</option>
+        </select>
+        <small class="text-muted mt-xs block text-xs">Crea copias en meses siguientes.</small>
+      </div>
+
+      <button id="btnSaveEvent" class="btn btn-primary btn-block mt-md">Guardar</button>
+    </div>
+
+    <!-- Modal: Acciones de Evento -->
+    <div id="modalEventActions" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 id="actionEventTitle" class="modal-title mb-lg text-main">Detalles</h3>
+      <div id="actionEventBody" class="modal-body text-main text-sm line-height-lg mb-lg"></div>
+      <div class="flex-row gap-sm mt-md">
+        <button id="btnToggleState" class="btn btn-success flex-1">✅ Estado</button>
+        <button id="btnEditEvent" class="btn btn-warning flex-1">✏️ Editar</button>
+      </div>
+      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm">🗑️ Eliminar Actividad</button>
+    </div>
+
+    <!-- Modal: Agregar Asistencia -->
+    <div id="modalFormAttendance" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 class="modal-title mb-md text-main">Registrar Ausencia</h3>
+      
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Fecha</label>
+        <input type="date" id="absDate" class="input-control mt-xs">
+      </div>
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Colaborador</label>
+        <select id="absResponsible" class="select-control mt-xs">
+          <option value="FRANKLIN">FRANKLIN</option><option value="GIMER">GIMER</option><option value="ALEJANDRO">ALEJANDRO</option><option value="OSWALDO">OSWALDO</option><option value="ELIZABETH">ELIZABETH</option><option value="NOEMI">NOEMI</option><option value="LUZ">LUZ</option>
+        </select>
+      </div>
+      <div class="form-group mb-md">
+        <label class="text-muted text-sm text-bold uppercase">Tipo de Ausencia</label>
+        <select id="absType" class="select-control mt-xs">
+          <option value="FALTA_DIA">⛔ Falta (Día Completo)</option><option value="FALTA_MANANA">🌅 Falta (Mañana)</option><option value="FALTA_TARDE">🌇 Falta (Tarde)</option><option value="PERMISO">🏥 Permiso Médico/Otros</option>
+        </select>
+      </div>
+      <div class="form-group mb-lg">
+        <label class="text-muted text-sm text-bold uppercase">Observación</label>
+        <input type="text" id="absObs" class="input-control mt-xs" placeholder="Ej: Cita médica...">
+      </div>
+      <button id="btnSaveAbsence" class="btn btn-danger btn-block">Registrar Falta</button>
+    </div>
+
+    <!-- Modal: Detalles de Asistencia -->
+    <div id="modalAbsenceActions" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 class="modal-title mb-md text-main">Detalle de Ausencia</h3>
+      <input type="hidden" id="absenceIdDel">
+      <div id="absenceDetails" class="text-main text-sm line-height-lg mb-md"></div>
+      <div class="bg-danger-light text-danger p-md radius-md text-sm mb-lg border-danger">
+        ⚠️ Si te equivocaste, puedes eliminar este registro.
+      </div>
+      <button id="btnDeleteAbsence" class="btn btn-danger btn-block">🗑️ Eliminar Registro</button>
+    </div>
+
+    <!-- Modal: Búsqueda Global -->
+    <div id="modalSearch" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 class="modal-title mb-md text-main">Resultados de Búsqueda</h3>
+      <div id="searchResultsList" class="search-list max-h-300 overflow-y-auto"></div>
+    </div>
+
+    <!-- Modal: Estadísticas -->
+    <div id="modalStats" class="modal-card hidden">
+      <button class="btn-close-modal" data-close>✕</button>
+      <h3 class="modal-title mb-lg text-main">Resumen del Mes</h3>
+      <div id="statsContainer" class="stats-grid grid-cols-2 gap-md"></div>
+    </div>
+
+  </div> <!-- /Modal Container -->
+
+  <!-- Toast y Tarjeta de Notificaciones (Fuera del overlay para ser siempre visibles) -->
+  <div id="toastContainer" class="toast hidden">Notificación</div>
   
-  document.getElementById("selHour").value = "9";
-  document.getElementById("selMin").value = "00";
-  document.getElementById("selAmpm").value = "AM";
-  
-  document.getElementById("eventResponsible").value = "";
-  document.getElementById("eventType").value = "cobranza_comunal";
-  document.getElementById("repeatMonthsGroup").style.display = "block";
-  document.getElementById("modal").style.display = "flex";
-}
+  <div id="notificationCard" class="notification-card hidden">
+    <div class="flex-row justify-between mb-xs">
+      <span class="text-bold text-main">🔔 Recordatorio Agenda</span>
+      <button class="btn-icon" onclick="document.getElementById('notificationCard').classList.add('hidden')">✕</button>
+    </div>
+    <div id="notifContent" class="text-sm text-muted line-height-md"></div>
+  </div>
 
-// FUNCIONES MODAL ASISTENCIA
-window.openModalAttendance = () => {
-  document.getElementById("absDate").value = selectedDateForSidebar.toISOString().split('T')[0];
-  document.getElementById("absObs").value = "";
-  document.getElementById("modalAttendance").style.display = "flex";
-}
+  <!-- Área de Impresión Oculta -->
+  <div id="printableArea" class="print-only hidden">
+    <h2 id="printTitle" class="text-center mb-lg pb-sm border-bottom-dark text-dark">Reporte</h2>
+    <table id="printTable" class="w-full text-left collapse-border">
+      <thead class="bg-dark text-white">
+        <tr><th class="p-sm">Día</th><th class="p-sm">Hora</th><th class="p-sm">Actividad</th><th class="p-sm">Tipo</th><th class="p-sm">Responsable</th><th class="p-sm">Est.</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-window.saveAttendance = async () => {
-  const date = document.getElementById("absDate").value;
-  const responsible = document.getElementById("absResponsible").value;
-  const type = document.getElementById("absType").value;
-  const obs = document.getElementById("absObs").value;
-
-  if(!date) return showToast("Seleccione fecha", "error");
-
-  try {
-    await addDoc(absencesRef, { date, responsible, type, obs });
-    showToast("Ausencia registrada", "warning");
-    closeModal('modalAttendance');
-  } catch(e) {
-    console.error(e); showToast("Error al guardar", "error");
-  }
-}
-
-// FUNCIONES ELIMINAR ASISTENCIA
-window.openAbsenceDetails = (abs) => {
-    // Si viene como objeto plano del onclick inline, asegurar tipos
-    document.getElementById("absenceIdDel").value = abs.id;
-    let typeLabel = "Falta Día Completo";
-    if(abs.type === "FALTA_MANANA") typeLabel = "Falta Mañana";
-    if(abs.type === "FALTA_TARDE") typeLabel = "Falta Tarde";
-    if(abs.type === "PERMISO") typeLabel = "Permiso";
-
-    document.getElementById("absenceDetails").innerHTML = `
-        <strong>Responsable:</strong> ${abs.responsible}<br>
-        <strong>Fecha:</strong> ${abs.date}<br>
-        <strong>Tipo:</strong> ${typeLabel}<br>
-        <strong>Observación:</strong> ${abs.obs || '--'}
-    `;
-    document.getElementById("modalAbsenceActions").style.display = "flex";
-}
-
-window.deleteAbsence = async () => {
-    const id = document.getElementById("absenceIdDel").value;
-    if(confirm("¿Seguro que deseas eliminar este registro de asistencia?")) {
-        try {
-            await deleteDoc(doc(db, "asistencias", id));
-            closeModal("modalAbsenceActions");
-            showToast("Registro eliminado");
-        } catch(e) {
-            console.error(e); showToast("Error al eliminar", "error");
-        }
-    }
-}
-
-function openActionModal(evt) {
-  currentEventObj = evt;
-  document.getElementById("actionTitle").textContent = evt.title;
-  const statusHtml = evt.completed ? '<span style="color:#10b981; font-weight:bold">✅ Completado</span>' : '<span style="color:#f59e0b; font-weight:bold">⏳ Pendiente</span>';
-  const [y, m, d] = evt.date.split('T')[0].split('-');
-  document.getElementById("actionDetails").innerHTML = `<strong>Fecha:</strong> ${d}/${m}/${y}<br><strong>Hora:</strong> ${formatTime12h(evt.time)}<br><strong>Tipo:</strong> ${typeIcons[evt.type]||''} ${typeLabels[evt.type] || evt.type}<br><strong>Responsable:</strong> ${evt.responsible || "---"}<br><strong>Estado:</strong> ${statusHtml}`;
-  document.getElementById("modalActions").style.display = "flex";
-}
-
-window.editEventFromModal = () => {
-  closeModal('modalActions');
-  const evt = currentEventObj;
-  document.getElementById("modalTitle").textContent = "Editar Actividad";
-  document.getElementById("eventId").value = evt.id;
-  document.getElementById("eventDateInput").value = evt.date.split('T')[0];
-  
-  const [hh, mm] = evt.time.split(':');
-  let h = parseInt(hh);
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  h = h % 12; h = h ? h : 12;
-  
-  document.getElementById("selHour").value = h;
-  document.getElementById("selMin").value = mm;
-  document.getElementById("selAmpm").value = ampm;
-
-  document.getElementById("eventTitle").value = evt.title;
-  document.getElementById("eventResponsible").value = evt.responsible;
-  document.getElementById("eventType").value = evt.type;
-  document.getElementById("repeatMonthsGroup").style.display = "none"; 
-  document.getElementById("modal").style.display = "flex";
-};
-
-window.saveEvent = async function() {
-  const id = document.getElementById("eventId").value;
-  const title = document.getElementById("eventTitle").value.trim();
-  const responsible = document.getElementById("eventResponsible").value;
-  const type = document.getElementById("eventType").value;
-  const dateVal = document.getElementById("eventDateInput").value; 
-  
-  let h = parseInt(document.getElementById("selHour").value);
-  const m = document.getElementById("selMin").value;
-  const ampm = document.getElementById("selAmpm").value;
-  if(ampm === "PM" && h !== 12) h += 12;
-  if(ampm === "AM" && h === 12) h = 0;
-  const timeVal = `${h.toString().padStart(2, '0')}:${m}`;
-  
-  if (!title || !dateVal) return showToast("Faltan datos", "error");
-
-  const btn = document.querySelector("#modal .btn-main");
-  btn.textContent = "Guardando..."; btn.disabled = true;
-
-  try {
-    if (id) {
-      await updateDoc(doc(db, "eventos", id), { title, responsible, type, date: dateVal, time: timeVal });
-      showToast("Actualizado");
-    } else {
-      const repeatVal = parseInt(document.getElementById("repeatMonths").value) || 1;
-      const baseDate = new Date(dateVal + "T12:00:00");
-      const batch = [];
-      for (let i = 0; i < repeatVal; i++) {
-        let nextDate = new Date(baseDate);
-        nextDate.setMonth(baseDate.getMonth() + i);
-        batch.push(addDoc(eventsRef, { title, responsible, type, time: timeVal, date: nextDate.toISOString().split('T')[0], completed: false }));
-      }
-      await Promise.all(batch);
-      showToast("Guardado");
-    }
-    closeModal('modal');
-    const [y,m,d] = dateVal.split('-');
-    selectedDateForSidebar = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
-    currentDate = new Date(selectedDateForSidebar);
-    refreshView();
-  } catch(e) { console.error(e); showToast("Error al guardar", "error"); } 
-  finally { btn.textContent = "Guardar"; btn.disabled = false; }
-}
-
-window.toggleComplete = async function() {
-  if(!currentEventObj) return;
-  try { await updateDoc(doc(db, "eventos", currentEventObj.id), { completed: !currentEventObj.completed }); closeModal('modalActions'); showToast("Estado actualizado"); } catch(e) { showToast("Error"); }
-}
-window.deleteEvent = async function() {
-  if(confirm("¿Eliminar actividad?")) { try { await deleteDoc(doc(db, "eventos", currentEventObj.id)); closeModal('modalActions'); showToast("Eliminado"); } catch(e) { showToast("Error"); } }
-}
-
-let searchTimeout;
-window.handleSearch = () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    const q = document.getElementById("globalSearch").value.toLowerCase();
-    const list = document.getElementById("searchResultsList");
-    list.innerHTML = "";
-    if(q.length < 2) return;
-    const results = eventsArray.filter(e => e.title.toLowerCase().includes(q) || (e.responsible && e.responsible.toLowerCase().includes(q)));
-    if(results.length === 0) list.innerHTML = "<div style='padding:10px; color:#888'>Sin resultados.</div>";
-    else {
-      results.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "search-result-item";
-        div.innerHTML = `<strong>${e.date}</strong> - ${e.title} <small>(${e.responsible})</small>`;
-        div.onclick = () => {
-          closeModal('modalSearch');
-          const [y,m,d] = e.date.split('-');
-          currentDate = new Date(y, m-1, 1);
-          selectedDateForSidebar = new Date(y, m-1, d);
-          refreshView();
-          openActionModal(e);
-        };
-        list.appendChild(div);
-      });
-    }
-    document.getElementById("modalSearch").style.display = "flex";
-  }, 400);
-}
-
-function showToast(text, type = 'success') {
-  const x = document.getElementById("toast");
-  x.textContent = text;
-  x.style.backgroundColor = type === 'error' ? '#ef4444' : (type === 'warning' ? '#f59e0b' : '#081b30');
-  x.className = "show";
-  setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
-}
-
-window.showStats = () => {
-  const currentMonthPrefix = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2,'0')}`;
-  const monthEvents = eventsArray.filter(e => e.date.startsWith(currentMonthPrefix));
-  const total = monthEvents.length;
-  const completed = monthEvents.filter(e => e.completed).length;
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-  document.getElementById("statsContainer").innerHTML = `<div class="stat-card"><span class="stat-val">${total}</span><span class="stat-lbl">Total</span></div><div class="stat-card"><span class="stat-val" style="color:#10b981">${percent}%</span><span class="stat-lbl">Cumplimiento</span></div><div class="stat-card"><span class="stat-val" style="color:#f59e0b">${total - completed}</span><span class="stat-lbl">Pendientes</span></div><div class="stat-card"><span class="stat-val" style="color:#3b82f6">${completed}</span><span class="stat-lbl">Realizadas</span></div>`;
-  document.getElementById("modalStats").style.display = "flex";
-}
-
-window.printReport = () => {
-  const tbody = document.querySelector("#printTable tbody");
-  tbody.innerHTML = "";
-  const currentMonthPrefix = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2,'0')}`;
-  
-  const filterCat = document.getElementById("filterCategory").value;
-  const filterResp = document.getElementById("filterResponsible").value;
-  
-  const monthEvents = eventsArray.filter(e => {
-      const matchDate = e.date.startsWith(currentMonthPrefix);
-      const matchesCat = (filterCat === "all" || e.type === filterCat);
-      const matchesResp = (filterResp === "all" || e.responsible === filterResp);
-      return matchDate && matchesCat && matchesResp;
-  });
-  
-  monthEvents.sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
-  document.getElementById("printTitle").textContent = "Reporte - " + document.getElementById("currentMonthDisplay").textContent;
-  if(monthEvents.length === 0) tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:20px'>Sin datos.</td></tr>";
-  monthEvents.forEach(e => {
-    const [y,m,d] = e.date.split('-');
-    tbody.innerHTML += `<tr><td>${d}</td><td>${formatTime12h(e.time)}</td><td>${e.title}</td><td style="font-size:11px">${typeLabels[e.type] || e.type}</td><td>${e.responsible||""}</td><td>${e.completed ? "OK" : "-"}</td></tr>`;
-  });
-  setTimeout(() => window.print(), 300);
-}
-
-document.getElementById("eventType").addEventListener('change', function() {
-  if(!document.getElementById("eventId").value) document.getElementById("repeatMonthsGroup").style.display = (this.value === "cobranza_comunal") ? 'block' : 'none';
-});
-window.closeModal = (id) => document.getElementById(id).style.display = "none";
-window.onclick = (e) => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }
-
-window.showNotificationCard = (title, body) => {
-  const card = document.getElementById("notification-card");
-  document.getElementById("notif-content").textContent = `${body} - ${title}`;
-  card.style.display = "block";
-  setTimeout(() => { card.style.display = "none"; }, 30000); 
-}
-window.closeNotification = () => { document.getElementById("notification-card").style.display = "none"; }
-
-/* --- LÓGICA DE NOTIFICACIONES --- */
-
-const btnNotif = document.getElementById("btnNotif");
-let isNotifEnabled = localStorage.getItem('notificationsEnabled') === 'true';
-
-const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
-silentAudio.loop = true;
-
-function updateButtonState() {
-  if (Notification.permission === "granted") {
-    if (isNotifEnabled) {
-      btnNotif.innerHTML = "✅ Avisos Activos";
-      btnNotif.style.background = "#dcfce7"; btnNotif.style.color = "#15803d";
-      silentAudio.play().catch(() => {}); 
-    } else {
-      btnNotif.innerHTML = "🔕 Pausado";
-      btnNotif.style.background = "#ffedd5"; btnNotif.style.color = "#c2410c";
-      silentAudio.pause();
-    }
-  } else if (Notification.permission === "denied") {
-    btnNotif.innerHTML = "🚫 Bloqueado";
-    btnNotif.title = "Notificaciones bloqueadas en navegador.";
-  } else {
-    btnNotif.innerHTML = "🔔 Activar";
-  }
-}
-
-if ("Notification" in window) updateButtonState();
-
-window.toggleNotifications = () => {
-  if (!("Notification" in window)) { alert("Tu navegador no soporta notificaciones."); return; }
-  
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      updateButtonState();
-      if (permission === "granted") {
-        isNotifEnabled = true;
-        localStorage.setItem('notificationsEnabled', 'true');
-        updateButtonState();
-        showToast("¡Avisos Activados!");
-      } else {
-        showToast("Permiso denegado", "error");
-      }
-    });
-  } else {
-    isNotifEnabled = !isNotifEnabled;
-    localStorage.setItem('notificationsEnabled', isNotifEnabled.toString());
-    updateButtonState();
-    showToast(isNotifEnabled ? "Avisos Activados" : "Avisos Pausados");
-  }
-};
-
-setInterval(() => {
-  if (Notification.permission !== "granted" || !isNotifEnabled) return; 
-
-  const now = new Date();
-  const currentHour = now.getHours().toString().padStart(2, '0');
-  const currentMin = now.getMinutes().toString().padStart(2, '0');
-  const currentTimeString = `${currentHour}:${currentMin}`;
-  const todayStr = now.toISOString().split('T')[0];
-
-  eventsArray.forEach(evt => {
-    if (evt.date.startsWith(todayStr) && evt.time === currentTimeString && !evt.completed) {
-      if (!evt.desktopNotified) {
-        showNotificationCard(evt.title, `🔔 AHORA: ${evt.responsible || 'Actividad'}`);
-        const notif = new Notification(`⏰ ${evt.time} - ${evt.title}`, {
-          body: `Responsable: ${evt.responsible || 'Sin asignar'}`,
-          icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
-          silent: true, 
-          requireInteraction: true 
-        });
-        notif.onclick = function() { window.focus(); this.close(); };
-        evt.desktopNotified = true;
-        setTimeout(() => { evt.desktopNotified = false; }, 65000);
-      }
-    }
-  });
-}, 5000); 
-
-</script>
+  <!-- Archivo JS Principal -->
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

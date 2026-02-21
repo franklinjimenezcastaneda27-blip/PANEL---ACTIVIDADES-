@@ -1,59 +1,104 @@
-.app-container {
-  display: flex; flex-direction: column;
-  height: 96vh; max-width: 1600px;
-  margin: 2vh auto; width: 98%;
-  background: var(--bg-surface);
-  box-shadow: var(--sh-lg);
-  border-radius: var(--rad-lg);
+/* Layout Principal SaaS */
+.app-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  background: var(--bg-body);
 }
 
-.app-header {
-  background: linear-gradient(135deg, var(--c-navy-800) 0%, var(--c-navy-900) 100%);
-  padding: var(--sp-md) var(--sp-lg);
-  z-index: var(--z-header);
-  box-shadow: var(--sh-md);
+/* 1. Sidebar Izquierdo (Fijo) */
+.saas-sidebar {
+  width: 260px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-sidebar);
+  transition: transform 0.3s ease;
 }
 
-.header-main { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-lg); margin-bottom: var(--sp-md); }
-.brand-titles h1 { font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.5px; text-transform: uppercase; }
-.brand-titles small { font-size: 0.8rem; color: #94a3b8; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; display: block; }
-
-.search-area { flex: 1; max-width: 450px; position: relative; display: flex; align-items: center; }
-.search-area .icon { position: absolute; left: 14px; color: rgba(255,255,255,0.6); }
-.search-area input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: var(--rad-md); height: 42px; width: 100%; transition: 0.3s; }
-.search-area input::placeholder { color: rgba(255,255,255,0.6); }
-.search-area input:focus { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.5); box-shadow: 0 0 0 3px rgba(255,255,255,0.05); }
-
-.controls-bar { display: flex; gap: var(--sp-md); align-items: center; background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: var(--rad-md); border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
-.month-label { color: white; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; }
-.controls-bar select { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: var(--rad-sm); padding: 8px 16px; flex: 1; appearance: none; cursor: pointer; }
-.controls-bar select option { background: var(--bg-surface); color: var(--text-main); }
-.controls-bar select:hover { background: rgba(255,255,255,0.1); }
-
-.main-layout { display: flex; flex: 1; overflow: hidden; position: relative; background: var(--bg-body); }
-.calendar-section { flex: 3; overflow-y: auto; padding: var(--sp-lg); border-right: 1px solid var(--border-color); }
-.sidebar-section { flex: 1; min-width: 360px; background: var(--bg-surface); padding: var(--sp-lg); overflow-y: auto; display: flex; flex-direction: column; }
-.sidebar-header { margin-bottom: var(--sp-lg); padding-bottom: var(--sp-md); border-bottom: 1px solid var(--border-color); }
-.sidebar-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; }
-.sidebar-list { list-style: none; padding: 0 0 0 10px; margin: 0; position: relative; flex: 1; }
-.sidebar-list::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--border-color); border-radius: 2px; }
-
-@media (max-width: 900px) {
-  .app-container { height: 100vh; margin: 0; width: 100%; border-radius: 0; border: none; }
-  .header-main { flex-direction: column; align-items: stretch; gap: 10px; }
-  .search-area { max-width: 100%; order: 3; }
-  .actions-area { justify-content: space-between; order: 2; overflow-x: auto; padding-bottom: 4px; }
-  .brand-area { order: 1; justify-content: space-between; width: 100%; }
-  .controls-bar { flex-direction: column; align-items: stretch; }
-  
-  .main-layout { flex-direction: column; }
-  .calendar-section { border-right: none; padding: var(--sp-sm); }
-  
-  .sidebar-section { position: fixed; top: 0; left: -100%; bottom: 0; width: 85%; max-width: 380px; z-index: var(--z-drawer); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--sh-lg); }
-  .sidebar-section.drawer-open { left: 0; }
-  .mobile-only { display: block !important; }
-  .hidden-mobile { display: none !important; }
+.sidebar-brand {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-lg);
+  border-bottom: 1px solid var(--border-color);
 }
-@media (min-width: 901px) { .mobile-only { display: none !important; } }
+.sidebar-brand h1 { font-size: 1.1rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+.sidebar-brand small { display: block; font-size: 0.7rem; color: var(--c-primary); font-weight: 700; letter-spacing: 1px; }
+
+.sidebar-menu {
+  flex: 1;
+  padding: var(--sp-md) 0;
+  overflow-y: auto;
+}
+.menu-section { margin-bottom: var(--sp-lg); }
+.menu-label { padding: 0 var(--sp-lg); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: var(--sp-sm); display: block; }
+.menu-item { display: flex; align-items: center; gap: 12px; padding: 10px var(--sp-lg); color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; border-left: 3px solid transparent; }
+.menu-item:hover { background: var(--bg-surface-hover); }
+.menu-item.active { background: var(--c-primary-light); color: var(--c-primary); border-left-color: var(--c-primary); }
+[data-theme="dark"] .menu-item.active { background: rgba(79, 70, 229, 0.2); }
+.menu-item.hidden { display: none !important; }
+
+/* 2. Área Central de Trabajo */
+.saas-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 2.1 Topbar (Header limpio) */
+.saas-topbar {
+  height: 70px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--sp-lg);
+  z-index: var(--z-topbar);
+}
+
+.topbar-search { flex: 1; max-width: 400px; position: relative; display: flex; align-items: center; }
+.topbar-search .icon { position: absolute; left: 14px; color: var(--text-muted); }
+.topbar-search input { background: var(--bg-body); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--rad-md); height: 40px; width: 100%; padding-left: 40px; transition: 0.2s; font-size: 0.9rem; }
+.topbar-search input:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); background: var(--bg-surface); }
+
+.topbar-actions { display: flex; align-items: center; gap: var(--sp-sm); }
+
+/* 2.2 Contenido de la Página */
+.saas-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+}
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--sp-md); }
+.page-title h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+.page-title p { font-size: 0.9rem; color: var(--text-muted); }
+
+.page-controls { display: flex; gap: var(--sp-sm); align-items: center; background: var(--bg-surface); padding: 8px; border-radius: var(--rad-md); border: 1px solid var(--border-color); box-shadow: var(--sh-sm); }
+.month-label { color: var(--text-main); text-transform: uppercase; font-size: 0.95rem; }
+
+/* 2.3 Grid Calendario + Sidebar Derecho */
+.calendar-layout { display: flex; gap: var(--sp-lg); align-items: flex-start; }
+.calendar-section { flex: 3; background: var(--bg-surface); border-radius: var(--rad-lg); padding: var(--sp-md); box-shadow: var(--sh-md); border: 1px solid var(--border-color); }
+.daily-agenda-section { flex: 1; min-width: 320px; background: var(--bg-surface); border-radius: var(--rad-lg); padding: var(--sp-md); box-shadow: var(--sh-md); border: 1px solid var(--border-color); max-height: calc(100vh - 200px); display: flex; flex-direction: column; }
+.sidebar-list { overflow-y: auto; padding-right: 5px; }
+
+@media (max-width: 1024px) {
+  .calendar-layout { flex-direction: column; }
+  .daily-agenda-section { width: 100%; max-height: 500px; }
+}
+
+@media (max-width: 768px) {
+  .saas-sidebar { position: fixed; left: -260px; top: 0; bottom: 0; box-shadow: var(--sh-lg); }
+  .saas-sidebar.drawer-open { left: 0; }
+  .topbar-search { display: none; }
+  .page-controls { flex-direction: column; align-items: stretch; width: 100%; }
+}

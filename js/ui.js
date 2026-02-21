@@ -39,18 +39,13 @@ export const UI = {
   },
 
   // NUEVO: Ocultar botones si es Colaborador
+  // (VERSIÓN NUEVA - RELAJADA)
   applyRoleRestrictions(currentUser) {
     if(!currentUser) return;
     const isAdmin = currentUser.rol === 'admin';
     
+    // SOLO oculta los botones que tengan la etiqueta '.admin-only'
     document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
-    
-    const displayStyle = isAdmin ? '' : 'none';
-    document.getElementById('btnNewAbsence').style.display = displayStyle;
-    document.getElementById('btnNewEvent').style.display = displayStyle;
-    document.getElementById('btnDeleteEvent').style.display = displayStyle;
-    document.getElementById('btnDeleteAbsence').style.display = displayStyle;
-    document.getElementById('btnEditEvent').style.display = displayStyle;
   },
 
   // NUEVO: Renderizar Lista de Personal en el Modal

@@ -95,10 +95,8 @@ function checkLoader(e, a) {
 const calendarActions = {
   onDayClick: (y, m, d) => State.selectDate(y, m, d),
   onDayDblClick: (y, m, d, isAbsMode) => { 
-    if(State.currentUser && State.currentUser.rol === 'admin') {
-      State.selectDate(y, m, d); 
-      if(isAbsMode) openNewAbsenceModal(); else openNewEventModal(); 
-    }
+    State.selectDate(y, m, d); 
+    if(isAbsMode) openNewAbsenceModal(); else openNewEventModal(); 
   },
   onEventClick: (id) => openEventActionsModal(id),
   onAbsenceClick: (id) => openAbsenceActionsModal(id)

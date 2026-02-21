@@ -219,7 +219,7 @@ function setupEventListeners() {
       } catch(error) {
         UI.showToast("Error al guardar gestión", "error");
       } finally {
-        btnUpdateStatus.innerHTML = "💾 Guardar Gestión"; 
+        btnUpdateStatus.innerHTML = "🌍 Guardar Ubicación"; 
         btnUpdateStatus.disabled = false; 
         if(fileInput) fileInput.value = "";
       }

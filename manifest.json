@@ -1,1 +1,17 @@
-
+{
+  "name": "CEPRODEMIC Agenda Corporativa",
+  "short_name": "Agenda SaaS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F1F5F9",
+  "theme_color": "#0F172A",
+  "description": "Sistema de control de cobranzas y trabajo de campo",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2693/2693507.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

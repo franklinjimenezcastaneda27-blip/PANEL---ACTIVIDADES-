@@ -30,7 +30,7 @@ export const CalendarHelper = {
   },
   
   getIcon: (type) => {
-    const map = { "cobranza_comunal": "👨🏽‍🤝‍👨🏻", "cobranza_individual": "👤", "morosos": "🛑", "visita": "🏠", "desembolso": "💵", "reunion": "📅" };
+    const map = { "cobranza_comunal": "👨🏽‍🤝‍👨🏻", "cobranza_individual": "🧍", "morosos": "🛑", "visita": "🏠", "desembolso": "💵", "reunion": "📅" };
     return map[type] || "📌";
   },
 

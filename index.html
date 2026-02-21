@@ -52,21 +52,20 @@
         </div>
 
         <div class="actions-area flex-row gap-sm">
-          <button id="btnThemeToggle" class="btn-icon" title="Cambiar Tema">🌗</button>
-          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
-          <button id="btnStats" class="btn-icon hidden-mobile" title="Estadísticas">📊</button>
-          <button id="btnPrint" class="btn-icon hidden-mobile" title="Imprimir">🖨️</button>
-          
-          <!-- NUEVOS BOTONES DE ADMIN (Ocultos por defecto) -->
-          <button id="btnAdminUsers" class="btn-icon admin-only hidden" title="Gestión de Personal">👥</button>
-          <button id="btnAdminAudit" class="btn-icon admin-only hidden" title="Auditoría de Cambios">🛡️</button>
-
-          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
+          <!-- Botones principales primero -->
           <button id="btnNewEvent" class="btn btn-primary shadow-md">
             <span>+</span> <span class="hidden-mobile">Crear Actividad</span>
           </button>
+          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
+          
+          <!-- Botones de Admin y Secundarios a la derecha -->
+          <button id="btnAdminUsers" class="btn-icon admin-only hidden" title="Gestión de Personal">👥</button>
+          <button id="btnAdminAudit" class="btn-icon admin-only hidden" title="Auditoría de Cambios">🛡️</button>
+          <button id="btnStats" class="btn-icon hidden-mobile" title="Estadísticas">📊</button>
+          <button id="btnPrint" class="btn-icon hidden-mobile" title="Imprimir">🖨️</button>
+          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
+          <button id="btnThemeToggle" class="btn-icon" title="Cambiar Tema">🌗</button>
         </div>
-      </div>
 
       <!-- Barra de controles / Filtros -->
       <div class="controls-bar">
@@ -207,9 +206,9 @@
 
       <div class="flex-row gap-sm mt-md">
         <button id="btnUpdateStatus" class="btn btn-success flex-1 shadow-md">💾 Guardar Gestión</button>
-        <button id="btnEditEvent" class="btn btn-warning flex-1 admin-only">✏️ Editar</button>
+        <button id="btnEditEvent" class="btn btn-warning flex-1">✏️ Editar</button>
       </div>
-      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm admin-only">🗑️ Eliminar Actividad</button>
+      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm">🗑️ Eliminar Actividad</button>
     </div>
 
     <!-- Modal: Agregar Asistencia -->

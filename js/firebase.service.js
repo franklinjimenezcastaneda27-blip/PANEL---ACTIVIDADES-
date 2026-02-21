@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -14,6 +14,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// ¡MAGIA OFFLINE!: Esto habilita la persistencia de datos sin internet
+enableIndexedDbPersistence(db).catch((err) => {
+  if (err.code == 'failed-precondition') {
+    console.warn("La persistencia offline solo funciona en una pestaña a la vez.");
+  } else if (err.code == 'unimplemented') {
+    console.warn("Este navegador no soporta el modo offline.");
+  }
+});
 
 export const FirebaseService = {
   login: (email, pass) => signInWithEmailAndPassword(auth, email, pass),
@@ -71,7 +80,6 @@ export const FirebaseService = {
     return deleteDoc(doc(db, "asistencias", id));
   },
 
-  // ACTUALIZADO: Solo actualiza los campos, ya no sube a Storage
   updateEventFieldManagement: async (id, updateData) => {
     return updateDoc(doc(db, "eventos", id), updateData);
   }

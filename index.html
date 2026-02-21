@@ -1,43 +1,10 @@
-<!DOCTYPE html>
-<html lang="es" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CEPRODEMIC - Agenda Corporativa SaaS</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2693/2693507.png" type="image/png">
-
-  <!-- Core CSS -->
-  <link rel="stylesheet" href="./css/base.css">
-  <link rel="stylesheet" href="./css/layout.css">
-  <link rel="stylesheet" href="./css/components.css">
-  <link rel="stylesheet" href="./css/calendar.css">
-  <link rel="stylesheet" href="./css/utilities.css">
-</head>
-<body>
-
-  <!-- Overlay de Login -->
-  <div id="loginOverlay" class="overlay-full active">
-    <div class="card login-card">
-      <h2>CEPRODEMIC</h2>
-      <p class="text-muted mb-lg">Acceso a Agenda Corporativa</p>
-      <div class="form-group">
-        <input type="email" id="emailLogin" class="input-control" placeholder="Correo electrónico">
-      </div>
-      <div class="form-group">
-        <input type="password" id="passLogin" class="input-control" placeholder="Contraseña">
-      </div>
-      <button id="btnLogin" class="btn btn-primary btn-block">Ingresar</button>
-    </div>
-  </div>
-
-  <!-- Contenedor Principal SaaS -->
-  <div id="appContainer" class="app-container hidden">
-    
-    <!-- Header Corporativo -->
+<!-- Header Corporativo Reorganizado -->
     <header class="app-header">
+      
+      <!-- FILA SUPERIOR: Marca, Búsqueda e Iconos -->
       <div class="header-main">
+        
+        <!-- 1. Marca (Izquierda) -->
         <div class="brand-area flex-row gap-sm">
           <button id="btnMobileMenu" class="btn-icon mobile-only">☰</button>
           <div class="brand-titles">
@@ -46,36 +13,43 @@
           </div>
         </div>
 
+        <!-- 2. Buscador (Centro) -->
         <div class="search-area">
           <span class="icon">🔍</span>
-          <input type="text" id="globalSearch" class="input-control pl-xl" placeholder="Buscar actividad o personal...">
+          <input type="text" id="globalSearch" class="input-control pl-xl" placeholder="Buscar actividad o personal (Ctrl+K)...">
         </div>
 
-        <div class="actions-area flex-row gap-sm">
-          <!-- Botones principales primero -->
-          <button id="btnNewEvent" class="btn btn-primary shadow-md">
-            <span>+</span> <span class="hidden-mobile">Crear Actividad</span>
-          </button>
-          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
-          
-          <!-- Botones de Admin y Secundarios a la derecha -->
+        <!-- 3. Iconos Secundarios (Derecha) -->
+        <div class="actions-icons flex-row gap-sm">
+          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
           <button id="btnAdminUsers" class="btn-icon admin-only hidden" title="Gestión de Personal">👥</button>
           <button id="btnAdminAudit" class="btn-icon admin-only hidden" title="Auditoría de Cambios">🛡️</button>
           <button id="btnStats" class="btn-icon hidden-mobile" title="Estadísticas">📊</button>
           <button id="btnPrint" class="btn-icon hidden-mobile" title="Imprimir">🖨️</button>
-          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
           <button id="btnThemeToggle" class="btn-icon" title="Cambiar Tema">🌗</button>
         </div>
+      </div>
 
-      <!-- Barra de controles / Filtros -->
-      <div class="controls-bar">
+      <!-- FILA INFERIOR: Navegación, Botones y Filtros -->
+      <div class="controls-bar flex-row justify-between">
+        
+        <!-- 1. Navegación del Mes (A la izquierda, debajo de la marca) -->
         <div class="month-navigation flex-row gap-sm">
           <button id="btnPrevMonth" class="btn-icon text-bold">‹</button>
           <div id="currentMonthDisplay" class="month-label text-bold w-150 text-center">Cargando...</div>
           <button id="btnNextMonth" class="btn-icon text-bold">›</button>
-          <button id="btnToday" class="btn btn-text text-bold">Hoy</button>
+          <button id="btnToday" class="btn btn-outline text-bold">Hoy</button>
+        </div>
+
+        <!-- 2. Botones Principales (Al Centro) -->
+        <div class="action-buttons flex-row gap-sm">
+          <button id="btnNewEvent" class="btn btn-primary shadow-md">
+            <span class="text-bold">+</span> <span class="hidden-mobile">Crear Actividad</span>
+          </button>
+          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
         </div>
         
+        <!-- 3. Filtros (A la Derecha) -->
         <div class="filters-group flex-row gap-sm">
           <select id="filterCategory" class="select-control min-w-150">
             <option value="all">🌍 VER TODO</option>
@@ -88,244 +62,10 @@
             <option value="reunion">📅 REUNIONES</option>
           </select>
 
-          <!-- LISTA DINÁMICA DE FILTRO (Nombres quitados) -->
+          <!-- LISTA DINÁMICA DE FILTRO -->
           <select id="filterResponsible" class="select-control min-w-150">
             <option value="all">👥 TODO EL PERSONAL</option>
           </select>
         </div>
       </div>
     </header>
-
-    <!-- Layout Principal -->
-    <main class="main-layout">
-      <!-- Loading State -->
-      <div id="appLoader" class="loader-overlay active">
-        <div class="spinner"></div>
-        <div class="mt-sm text-bold text-main">Cargando datos...</div>
-      </div>
-
-      <!-- Calendario -->
-      <section class="calendar-section">
-        <div class="calendar-header">
-          <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
-        </div>
-        <div id="calendarGrid" class="calendar-grid"></div>
-      </section>
-
-      <!-- Sidebar (Drawer en Móvil) -->
-      <aside id="sidebarDrawer" class="sidebar-section">
-        <div class="sidebar-header flex-row justify-between">
-          <div>
-            <h2 class="sidebar-title text-main">Agenda del Día</h2>
-            <span id="sidebarDateLabel" class="sidebar-subtitle text-muted text-sm text-capitalize">...</span>
-          </div>
-          <button id="btnCloseMobileMenu" class="btn-icon mobile-only">✕</button>
-        </div>
-        <ul id="sidebarList" class="sidebar-list"></ul>
-      </aside>
-    </main>
-  </div>
-
-  <!-- SISTEMA DE MODALES -->
-  <div id="modalContainer" class="modal-backdrop hidden">
-    
-    <!-- Modal: Nueva Actividad -->
-    <div id="modalFormEvent" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 id="modalEventTitle" class="modal-title mb-md text-main">Nueva Actividad</h3>
-      <input type="hidden" id="eventId">
-      
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Fecha</label>
-        <input type="date" id="eventDate" class="input-control mt-xs">
-      </div>
-      
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Hora</label>
-        <div class="flex-row gap-sm mt-xs">
-          <select id="eventHour" class="select-control text-center"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option selected>9</option><option>10</option><option>11</option><option>12</option></select>
-          <span class="text-bold text-muted">:</span>
-          <select id="eventMin" class="select-control text-center"><option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option></select>
-          <select id="eventAmPm" class="select-control text-center"><option>AM</option><option>PM</option></select>
-        </div>
-      </div>
-
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Título / Descripción</label>
-        <input type="text" id="eventTitle" class="input-control mt-xs" placeholder="Ej: Visita Grupo Los Pinos" autocomplete="off">
-      </div>
-      
-      <div class="flex-row gap-md mb-md">
-        <div class="form-group flex-1">
-          <label class="text-muted text-sm text-bold uppercase">Responsable</label>
-          <!-- LISTA DINÁMICA RESPONSABLE EVENTO -->
-          <select id="eventResponsible" class="select-control mt-xs">
-            <option value="">-- Seleccionar --</option>
-          </select>
-        </div>
-        <div class="form-group flex-1">
-          <label class="text-muted text-sm text-bold uppercase">Tipo</label>
-          <select id="eventType" class="select-control mt-xs">
-            <option value="cobranza_comunal">COBRANZA BC/GS</option><option value="cobranza_individual">COBRANZA INDIV.</option><option value="morosos">MOROSOS</option><option value="visita">VISITAS</option><option value="desembolso">DESEMBOLSOS</option><option value="reunion">REUNIONES</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="eventRepeatGroup" class="form-group bg-blue-light p-md radius-md mb-md hidden border-blue">
-        <label class="text-main text-sm text-bold mb-xs block">🔄 Repetir evento (Mensual)</label>
-        <select id="eventRepeat" class="select-control">
-          <option value="1">No repetir</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">1 año (12 meses)</option>
-        </select>
-        <small class="text-muted mt-xs block text-xs">Crea copias en meses siguientes.</small>
-      </div>
-
-      <button id="btnSaveEvent" class="btn btn-primary btn-block mt-md">Guardar</button>
-    </div>
-
-    <!-- Modal: Acciones de Evento -->
-<!-- Modal: Acciones de Evento -->
-    <div id="modalEventActions" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 id="actionEventTitle" class="modal-title mb-sm text-main">Detalles</h3>
-      <div id="actionEventBody" class="modal-body text-main text-sm line-height-lg mb-md"></div>
-      
-      <!-- NUEVO: SECCIÓN DE GESTIÓN DE CAMPO -->
-      <div class="field-control-section bg-slate-50 p-md radius-md border-blue mb-md">
-        <label class="text-sm text-bold text-main block mb-xs">📝 Actualizar Gestión:</label>
-        <select id="eventNewStatus" class="select-control mb-sm">
-          <option value="pendiente">⏳ Pendiente</option>
-          <option value="exitosa">🟢 Gestión Exitosa (Cobro/Visita)</option>
-          <option value="reprogramada">🟠 Promesa / Reprogramada</option>
-          <option value="fallida">🔴 Cliente Ausente / Fallida</option>
-        </select>
-        
-        <label class="text-sm text-bold text-main block mb-xs mt-sm">📷 Adjuntar Evidencia (Opcional):</label>
-        <input type="file" id="eventEvidence" accept="image/*" capture="environment" class="input-control text-sm bg-surface">
-        <small class="text-muted text-xs block mt-xs">Al guardar, se capturará tu ubicación GPS automáticamente 📍.</small>
-      </div>
-
-      <div class="flex-row gap-sm mt-md">
-        <button id="btnUpdateStatus" class="btn btn-success flex-1 shadow-md">💾 Guardar Gestión</button>
-        <button id="btnEditEvent" class="btn btn-warning flex-1">✏️ Editar</button>
-      </div>
-      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm">🗑️ Eliminar Actividad</button>
-    </div>
-
-    <!-- Modal: Agregar Asistencia -->
-    <div id="modalFormAttendance" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-md text-main">Registrar Ausencia</h3>
-      
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Fecha</label>
-        <input type="date" id="absDate" class="input-control mt-xs">
-      </div>
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Colaborador</label>
-        <!-- LISTA DINÁMICA ASISTENCIA -->
-        <select id="absResponsible" class="select-control mt-xs">
-          <option value="">-- Seleccionar --</option>
-        </select>
-      </div>
-      <div class="form-group mb-md">
-        <label class="text-muted text-sm text-bold uppercase">Tipo de Ausencia</label>
-        <select id="absType" class="select-control mt-xs">
-          <option value="FALTA_DIA">⛔ Falta (Día Completo)</option><option value="FALTA_MANANA">🌅 Falta (Mañana)</option><option value="FALTA_TARDE">🌇 Falta (Tarde)</option><option value="PERMISO">🏥 Permiso Médico/Otros</option>
-        </select>
-      </div>
-      <div class="form-group mb-lg">
-        <label class="text-muted text-sm text-bold uppercase">Observación</label>
-        <input type="text" id="absObs" class="input-control mt-xs" placeholder="Ej: Cita médica...">
-      </div>
-      <button id="btnSaveAbsence" class="btn btn-danger btn-block">Registrar Falta</button>
-    </div>
-
-    <!-- Modal: Detalles de Asistencia -->
-    <div id="modalAbsenceActions" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-md text-main">Detalle de Ausencia</h3>
-      <input type="hidden" id="absenceIdDel">
-      <div id="absenceDetails" class="text-main text-sm line-height-lg mb-md"></div>
-      <div class="bg-danger-light text-danger p-md radius-md text-sm mb-lg border-danger">
-        ⚠️ Si te equivocaste, puedes eliminar este registro.
-      </div>
-      <button id="btnDeleteAbsence" class="btn btn-danger btn-block">🗑️ Eliminar Registro</button>
-    </div>
-
-    <!-- Modal: Búsqueda Global -->
-    <div id="modalSearch" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-md text-main">Resultados de Búsqueda</h3>
-      <div id="searchResultsList" class="search-list max-h-300 overflow-y-auto"></div>
-    </div>
-
-    <!-- Modal: Estadísticas -->
-    <div id="modalStats" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-lg text-main">Resumen del Mes</h3>
-      <div id="statsContainer" class="stats-grid grid-cols-2 gap-md"></div>
-    </div>
-
-    <!-- NUEVO Modal: Gestión de Personal (Solo Admin) -->
-    <div id="modalUsers" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-md text-main">Gestión de Personal</h3>
-      
-      <div class="flex-row gap-sm mb-md">
-        <input type="text" id="newUserName" class="input-control flex-1" placeholder="Nombre completo">
-        <input type="email" id="newUserEmail" class="input-control flex-1" placeholder="Correo (Login)">
-        <select id="newUserRole" class="select-control w-150">
-          <option value="colaborador">Colaborador</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button id="btnSaveUser" class="btn btn-primary">+</button>
-      </div>
-
-      <div class="bg-blue-light p-sm radius-md text-sm mb-sm border-blue">
-        ℹ️ Los usuarios agregados aquí aparecerán en las listas desplegables.
-      </div>
-      
-      <div id="usersListContainer" class="max-h-300 overflow-y-auto mt-sm">
-        <!-- Lista dinámica de usuarios -->
-      </div>
-    </div>
-
-    <!-- NUEVO Modal: Auditoría (Solo Admin) -->
-    <div id="modalAudit" class="modal-card hidden">
-      <button class="btn-close-modal" data-close>✕</button>
-      <h3 class="modal-title mb-md text-main">Bitácora de Auditoría 🛡️</h3>
-      <p class="text-xs text-muted mb-md">Registro inalterable de actividades eliminadas.</p>
-      
-      <div id="auditListContainer" class="max-h-300 overflow-y-auto">
-        <!-- Lista dinámica de auditoría -->
-      </div>
-    </div>
-
-  </div> <!-- /Modal Container -->
-
-  <!-- Toast y Tarjeta de Notificaciones (Fuera del overlay para ser siempre visibles) -->
-  <div id="toastContainer" class="toast hidden">Notificación</div>
-  
-  <div id="notificationCard" class="notification-card hidden">
-    <div class="flex-row justify-between mb-xs">
-      <span class="text-bold text-main">🔔 Recordatorio Agenda</span>
-      <button class="btn-icon" onclick="document.getElementById('notificationCard').classList.add('hidden')">✕</button>
-    </div>
-    <div id="notifContent" class="text-sm text-muted line-height-md"></div>
-  </div>
-
-  <!-- Área de Impresión Oculta -->
-  <div id="printableArea" class="print-only hidden">
-    <h2 id="printTitle" class="text-center mb-lg pb-sm border-bottom-dark text-dark">Reporte</h2>
-    <table id="printTable" class="w-full text-left collapse-border">
-      <thead class="bg-dark text-white">
-        <tr><th class="p-sm">Día</th><th class="p-sm">Hora</th><th class="p-sm">Actividad</th><th class="p-sm">Tipo</th><th class="p-sm">Responsable</th><th class="p-sm">Est.</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- Archivo JS Principal -->
-  <script type="module" src="./js/main.js"></script>
-</body>
-</html>

@@ -134,6 +134,10 @@ function setupEventListeners() {
   const btnStats = document.getElementById("btnStats");
   if(btnStats) btnStats.addEventListener("click", () => UI.renderStats(State));
   
+  // ---> PEGA ESTO AQUÍ: Activa el botón del nuevo menú lateral <---
+  const btnStatsMenu = document.getElementById("btnStatsMenu");
+  if(btnStatsMenu) btnStatsMenu.addEventListener("click", () => UI.renderStats(State));
+  
   const btnPrint = document.getElementById("btnPrint");
   if(btnPrint) btnPrint.addEventListener("click", () => UI.renderPrint(State));
   

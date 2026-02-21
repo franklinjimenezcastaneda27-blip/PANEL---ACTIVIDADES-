@@ -35,9 +35,13 @@
   <!-- Contenedor Principal SaaS -->
   <div id="appContainer" class="app-container hidden">
     
-    <!-- Header Corporativo -->
+    <!-- Header Corporativo (Diseño Nuevo de Dos Filas) -->
     <header class="app-header">
+      
+      <!-- FILA SUPERIOR: Marca, Búsqueda e Iconos -->
       <div class="header-main">
+        
+        <!-- 1. Marca (Izquierda) -->
         <div class="brand-area flex-row gap-sm">
           <button id="btnMobileMenu" class="btn-icon mobile-only">☰</button>
           <div class="brand-titles">
@@ -46,36 +50,45 @@
           </div>
         </div>
 
+        <!-- 2. Buscador (Centro) -->
         <div class="search-area">
           <span class="icon">🔍</span>
-          <input type="text" id="globalSearch" class="input-control pl-xl" placeholder="Buscar actividad o personal...">
+          <input type="text" id="globalSearch" class="input-control pl-xl" placeholder="Buscar actividad o personal (Ctrl+K)...">
         </div>
 
+        <!-- 3. Iconos Secundarios (Derecha) -->
         <div class="actions-area flex-row gap-sm">
-          <!-- Botones principales primero -->
-          <button id="btnNewEvent" class="btn btn-primary shadow-md">
-            <span>+</span> <span class="hidden-mobile">Crear Actividad</span>
-          </button>
-          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
-          
-          <!-- Botones de Admin y Secundarios a la derecha -->
+          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
+          <!-- Botones de Admin (Ocultos a colaboradores) -->
           <button id="btnAdminUsers" class="btn-icon admin-only hidden" title="Gestión de Personal">👥</button>
           <button id="btnAdminAudit" class="btn-icon admin-only hidden" title="Auditoría de Cambios">🛡️</button>
+          
           <button id="btnStats" class="btn-icon hidden-mobile" title="Estadísticas">📊</button>
           <button id="btnPrint" class="btn-icon hidden-mobile" title="Imprimir">🖨️</button>
-          <button id="btnNotifToggle" class="btn-icon" title="Notificaciones">🔔</button>
           <button id="btnThemeToggle" class="btn-icon" title="Cambiar Tema">🌗</button>
         </div>
+      </div>
 
-      <!-- Barra de controles / Filtros -->
-      <div class="controls-bar">
+      <!-- FILA INFERIOR: Navegación del Mes, Botones de Creación y Filtros -->
+      <div class="controls-bar flex-row justify-between">
+        
+        <!-- 1. Navegación del Mes (A la izquierda, debajo de la marca) -->
         <div class="month-navigation flex-row gap-sm">
           <button id="btnPrevMonth" class="btn-icon text-bold">‹</button>
           <div id="currentMonthDisplay" class="month-label text-bold w-150 text-center">Cargando...</div>
           <button id="btnNextMonth" class="btn-icon text-bold">›</button>
-          <button id="btnToday" class="btn btn-text text-bold">Hoy</button>
+          <button id="btnToday" class="btn btn-outline text-bold">Hoy</button>
+        </div>
+
+        <!-- 2. Botones Principales (Al Centro) -->
+        <div class="action-buttons flex-row gap-sm">
+          <button id="btnNewEvent" class="btn btn-primary shadow-md">
+            <span class="text-bold">+</span> <span class="hidden-mobile">Crear Actividad</span>
+          </button>
+          <button id="btnNewAbsence" class="btn btn-outline" title="Inasistencia">📋 Inasistencia</button>
         </div>
         
+        <!-- 3. Filtros (A la Derecha) -->
         <div class="filters-group flex-row gap-sm">
           <select id="filterCategory" class="select-control min-w-150">
             <option value="all">🌍 VER TODO</option>
@@ -88,7 +101,7 @@
             <option value="reunion">📅 REUNIONES</option>
           </select>
 
-          <!-- LISTA DINÁMICA DE FILTRO (Nombres quitados) -->
+          <!-- LISTA DINÁMICA DE FILTRO DE PERSONAL -->
           <select id="filterResponsible" class="select-control min-w-150">
             <option value="all">👥 TODO EL PERSONAL</option>
           </select>
@@ -182,14 +195,13 @@
       <button id="btnSaveEvent" class="btn btn-primary btn-block mt-md">Guardar</button>
     </div>
 
-    <!-- Modal: Acciones de Evento -->
-<!-- Modal: Acciones de Evento -->
+    <!-- Modal: Acciones de Evento (CON CAMPO PARA FOTOS Y ESTADOS) -->
     <div id="modalEventActions" class="modal-card hidden">
       <button class="btn-close-modal" data-close>✕</button>
       <h3 id="actionEventTitle" class="modal-title mb-sm text-main">Detalles</h3>
       <div id="actionEventBody" class="modal-body text-main text-sm line-height-lg mb-md"></div>
       
-      <!-- NUEVO: SECCIÓN DE GESTIÓN DE CAMPO -->
+      <!-- SECCIÓN DE GESTIÓN DE CAMPO -->
       <div class="field-control-section bg-slate-50 p-md radius-md border-blue mb-md">
         <label class="text-sm text-bold text-main block mb-xs">📝 Actualizar Gestión:</label>
         <select id="eventNewStatus" class="select-control mb-sm">
@@ -204,6 +216,7 @@
         <small class="text-muted text-xs block mt-xs">Al guardar, se capturará tu ubicación GPS automáticamente 📍.</small>
       </div>
 
+      <!-- BOTONES DE EDITAR Y BORRAR HABILITADOS PARA TODOS (SIN admin-only) -->
       <div class="flex-row gap-sm mt-md">
         <button id="btnUpdateStatus" class="btn btn-success flex-1 shadow-md">💾 Guardar Gestión</button>
         <button id="btnEditEvent" class="btn btn-warning flex-1">✏️ Editar</button>
@@ -249,6 +262,7 @@
       <div class="bg-danger-light text-danger p-md radius-md text-sm mb-lg border-danger">
         ⚠️ Si te equivocaste, puedes eliminar este registro.
       </div>
+      <!-- Botón habilitado para todos -->
       <button id="btnDeleteAbsence" class="btn btn-danger btn-block">🗑️ Eliminar Registro</button>
     </div>
 
@@ -266,7 +280,7 @@
       <div id="statsContainer" class="stats-grid grid-cols-2 gap-md"></div>
     </div>
 
-    <!-- NUEVO Modal: Gestión de Personal (Solo Admin) -->
+    <!-- Modal: Gestión de Personal (Solo Admin) -->
     <div id="modalUsers" class="modal-card hidden">
       <button class="btn-close-modal" data-close>✕</button>
       <h3 class="modal-title mb-md text-main">Gestión de Personal</h3>
@@ -290,7 +304,7 @@
       </div>
     </div>
 
-    <!-- NUEVO Modal: Auditoría (Solo Admin) -->
+    <!-- Modal: Auditoría (Solo Admin) -->
     <div id="modalAudit" class="modal-card hidden">
       <button class="btn-close-modal" data-close>✕</button>
       <h3 class="modal-title mb-md text-main">Bitácora de Auditoría 🛡️</h3>

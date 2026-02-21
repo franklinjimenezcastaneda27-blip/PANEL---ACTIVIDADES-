@@ -12,10 +12,26 @@ document.addEventListener("DOMContentLoaded", () => {
   UI.setTheme(State.theme);
   updateNotifButtonUI();
   
-  FirebaseService.onAuthChange((user) => {
+  FirebaseService.onAuthChange(async (user) => {
     if (user) {
       document.getElementById("loginOverlay").classList.replace('active', 'hidden');
       document.getElementById("appContainer").classList.replace('hidden', 'flex-col');
+      
+      // NUEVO: Obtener Rol y Todos los usuarios al loguear
+      const profileData = await FirebaseService.getUserProfile(user.email);
+      
+      if(profileData.current) {
+         State.setCurrentUser(profileData.current);
+         State.updateData(null, null, profileData.users, null);
+         UI.applyRoleRestrictions(State.currentUser);
+      } else {
+         UI.showToast("Tu usuario no está registrado en la base de datos.", "error");
+         // Si es la primera vez que entraste y no tenías tu usuario en Firestore, 
+         // crearemos un usuario Admin genérico temporal en el Estado para que no te quedes bloqueado.
+         State.setCurrentUser({ nombre: "Administrador Temporal", rol: "admin", email: user.email });
+         UI.applyRoleRestrictions(State.currentUser);
+      }
+
       fetchData();
       startNotificationPolling();
     } else {
@@ -27,8 +43,20 @@ document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners();
   
   State.subscribe((newState) => {
+    // Si hay usuarios en State, actualizamos los selects
+    if(newState.users.length > 0) UI.renderUsers(newState.users);
+    
     UI.renderCalendar(newState, calendarActions);
     UI.renderSidebar(newState, calendarActions);
+
+    // Actualiza la lista del modal de Admin Usuarios en tiempo real si está abierto
+    if(document.getElementById('modalUsers').classList.contains('hidden') === false){
+      UI.renderAdminUsersModal(newState.users, toggleUserStatus);
+    }
+    // Actualiza el modal de Auditoría en tiempo real si está abierto
+    if(document.getElementById('modalAudit').classList.contains('hidden') === false){
+      UI.renderAdminAuditModal(newState.auditLogs);
+    }
   });
 });
 
@@ -38,15 +66,22 @@ function fetchData() {
   
   FirebaseService.listenEvents((data) => {
     eventsLoaded = true;
-    State.updateData(data, null);
+    State.updateData(data, null, null, null);
     checkLoader(eventsLoaded, absLoaded);
   });
   
   FirebaseService.listenAbsences((data) => {
     absLoaded = true;
-    State.updateData(null, data);
+    State.updateData(null, data, null, null);
     checkLoader(eventsLoaded, absLoaded);
   });
+
+  // NUEVO: Escuchar auditoría solo si es Admin
+  if(State.currentUser && State.currentUser.rol === 'admin') {
+     FirebaseService.listenAudit((logs) => {
+        State.updateData(null, null, null, logs);
+     });
+  }
 }
 
 function checkLoader(e, a) {
@@ -57,43 +92,38 @@ function checkLoader(e, a) {
 const calendarActions = {
   onDayClick: (y, m, d) => State.selectDate(y, m, d),
   onDayDblClick: (y, m, d, isAbsMode) => { 
-    State.selectDate(y, m, d); 
-    if(isAbsMode) openNewAbsenceModal(); 
-    else openNewEventModal(); 
+    // NUEVO: Restringir doble click a administradores
+    if(State.currentUser && State.currentUser.rol === 'admin') {
+      State.selectDate(y, m, d); 
+      if(isAbsMode) openNewAbsenceModal(); else openNewEventModal(); 
+    }
   },
   onEventClick: (id) => openEventActionsModal(id),
   onAbsenceClick: (id) => openAbsenceActionsModal(id)
 };
 
 function setupEventListeners() {
-  // Login
   document.getElementById("btnLogin").addEventListener("click", () => {
     const email = document.getElementById("emailLogin").value;
     const pass = document.getElementById("passLogin").value;
     FirebaseService.login(email, pass).catch(e => UI.showToast("Error de acceso", "error"));
   });
 
-  // Navegación Calendario
   document.getElementById("btnPrevMonth").addEventListener("click", () => State.changeMonth(-1));
   document.getElementById("btnNextMonth").addEventListener("click", () => State.changeMonth(1));
   document.getElementById("btnToday").addEventListener("click", () => {
     State.currentDate = new Date(); State.selectDate(State.currentDate.getFullYear(), State.currentDate.getMonth(), State.currentDate.getDate());
   });
 
-  // Filtros y Búsqueda
   document.getElementById("filterCategory").addEventListener("change", (e) => State.setFilters(e.target.value, undefined, undefined));
   document.getElementById("filterResponsible").addEventListener("change", (e) => State.setFilters(undefined, e.target.value, undefined));
   
   let searchTimeout;
   document.getElementById("globalSearch").addEventListener("input", (e) => {
     clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      State.setFilters(undefined, undefined, e.target.value);
-      UI.renderSearch(State, calendarActions);
-    }, 400);
+    searchTimeout = setTimeout(() => { State.setFilters(undefined, undefined, e.target.value); UI.renderSearch(State, calendarActions); }, 400);
   });
 
-  // Header Actions
   document.getElementById("btnThemeToggle").addEventListener("click", () => UI.setTheme(State.toggleTheme()));
   document.getElementById("btnNotifToggle").addEventListener("click", toggleNotifications);
   document.getElementById("btnStats").addEventListener("click", () => UI.renderStats(State));
@@ -101,40 +131,65 @@ function setupEventListeners() {
   document.getElementById("btnNewAbsence").addEventListener("click", openNewAbsenceModal);
   document.getElementById("btnNewEvent").addEventListener("click", () => openNewEventModal(null));
   
-  // Mobile
+  // NUEVO: Funciones de Botones Admin
+  document.getElementById("btnAdminUsers").addEventListener("click", () => {
+    UI.renderAdminUsersModal(State.users, toggleUserStatus);
+    UI.showModal("modalUsers");
+  });
+  
+  document.getElementById("btnAdminAudit").addEventListener("click", () => {
+    UI.renderAdminAuditModal(State.auditLogs);
+    UI.showModal("modalAudit");
+  });
+
+  document.getElementById("btnSaveUser").addEventListener("click", async () => {
+    const nombre = document.getElementById("newUserName").value.trim().toUpperCase();
+    const email = document.getElementById("newUserEmail").value.trim().toLowerCase();
+    const rol = document.getElementById("newUserRole").value;
+
+    if(!nombre || !email) return UI.showToast("Ingrese nombre y correo", "error");
+    document.getElementById("btnSaveUser").disabled = true;
+    try {
+      await FirebaseService.saveUser({ nombre, email, rol });
+      UI.showToast("Usuario guardado");
+      document.getElementById("newUserName").value = "";
+      document.getElementById("newUserEmail").value = "";
+    } catch(e) { UI.showToast("Error", "error"); }
+    document.getElementById("btnSaveUser").disabled = false;
+  });
+
   document.getElementById("btnMobileMenu").addEventListener("click", UI.toggleMobileMenu);
   document.getElementById("btnCloseMobileMenu").addEventListener("click", UI.toggleMobileMenu);
 
-  // Cerrar Modales
   document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener("click", () => UI.closeModals()));
 
-  // Guardados
   document.getElementById("btnSaveEvent").addEventListener("click", saveEvent);
   document.getElementById("btnSaveAbsence").addEventListener("click", saveAbsence);
   
-  // Acciones Evento
   document.getElementById("btnToggleState").addEventListener("click", async () => {
     if(!currentSelectedEvent) return;
     await FirebaseService.toggleEventStatus(currentSelectedEvent.id, currentSelectedEvent.completed);
     UI.closeModals(); UI.showToast("Estado actualizado");
   });
+  
+  // MODIFICADO: Eliminación con auditoría (pasa el título)
   document.getElementById("btnDeleteEvent").addEventListener("click", async () => {
-    if(confirm("¿Eliminar actividad?")) {
-      await FirebaseService.deleteEvent(currentSelectedEvent.id);
-      UI.closeModals(); UI.showToast("Eliminado");
+    if(confirm("¿Eliminar actividad permanentemente?")) {
+      await FirebaseService.deleteEvent(currentSelectedEvent.id, currentSelectedEvent.title);
+      UI.closeModals(); UI.showToast("Eliminado y registrado en auditoría");
     }
   });
   document.getElementById("btnEditEvent").addEventListener("click", () => openNewEventModal(currentSelectedEvent));
 
-  // Acciones Asistencia
+  // MODIFICADO: Eliminación con auditoría (pasa el responsable)
   document.getElementById("btnDeleteAbsence").addEventListener("click", async () => {
     if(confirm("¿Seguro que deseas eliminar este registro?")) {
-      await FirebaseService.deleteAbsence(currentSelectedAbsenceId);
+      const abs = State.absences.find(a => a.id === currentSelectedAbsenceId);
+      await FirebaseService.deleteAbsence(currentSelectedAbsenceId, abs.responsible);
       UI.closeModals(); UI.showToast("Registro eliminado");
     }
   });
 
-  // Interfaz Condicional en Formulario
   document.getElementById("eventType").addEventListener("change", (e) => {
     if(!document.getElementById("eventId").value) {
       const isComunal = e.target.value === "cobranza_comunal";
@@ -143,16 +198,22 @@ function setupEventListeners() {
   });
 }
 
+// NUEVO: Cambiar estado de usuario (Activar/Desactivar)
+async function toggleUserStatus(id, newStatus) {
+  try { await FirebaseService.saveUser({ activo: newStatus }, id); UI.showToast("Estado actualizado"); }
+  catch(e) { UI.showToast("Error al actualizar", "error"); }
+}
+
 // --- Modales ---
 function openNewEventModal(eventObj = null) {
   document.getElementById("modalEventTitle").textContent = eventObj ? "Editar Actividad" : "Nueva Actividad";
   document.getElementById("eventId").value = eventObj ? eventObj.id : "";
   document.getElementById("eventDate").value = eventObj ? eventObj.date.split('T')[0] : Cal.formatDateISO(State.selectedDate);
   document.getElementById("eventTitle").value = eventObj ? eventObj.title : "";
-  document.getElementById("eventResponsible").value = eventObj ? eventObj.responsible : "FRANKLIN";
   document.getElementById("eventType").value = eventObj ? eventObj.type : "cobranza_comunal";
   
   if(eventObj) {
+    document.getElementById("eventResponsible").value = eventObj.responsible;
     const [hh, mm] = eventObj.time.split(':');
     let h = parseInt(hh);
     document.getElementById("eventAmPm").value = h >= 12 ? 'PM' : 'AM';
@@ -160,6 +221,7 @@ function openNewEventModal(eventObj = null) {
     document.getElementById("eventMin").value = mm;
     document.getElementById("eventRepeatGroup").classList.add("hidden");
   } else {
+    document.getElementById("eventResponsible").value = "";
     document.getElementById("eventHour").value = "9";
     document.getElementById("eventMin").value = "00";
     document.getElementById("eventAmPm").value = "AM";
@@ -186,6 +248,7 @@ function openEventActionsModal(id) {
 function openNewAbsenceModal() {
   document.getElementById("absDate").value = Cal.formatDateISO(State.selectedDate);
   document.getElementById("absObs").value = "";
+  document.getElementById("absResponsible").value = "";
   UI.showModal("modalFormAttendance");
 }
 
@@ -203,13 +266,13 @@ function openAbsenceActionsModal(id) {
   UI.showModal("modalAbsenceActions");
 }
 
-// --- Lógica de Guardado ---
 async function saveEvent() {
   const id = document.getElementById("eventId").value;
   const title = document.getElementById("eventTitle").value.trim();
   const dateVal = document.getElementById("eventDate").value;
+  const respVal = document.getElementById("eventResponsible").value;
   
-  if(!title || !dateVal) return UI.showToast("Faltan datos", "error");
+  if(!title || !dateVal || !respVal) return UI.showToast("Por favor completa todos los datos obligatorios", "error");
 
   let h = parseInt(document.getElementById("eventHour").value);
   const m = document.getElementById("eventMin").value;
@@ -220,7 +283,7 @@ async function saveEvent() {
 
   const baseData = {
     title, time: timeVal,
-    responsible: document.getElementById("eventResponsible").value,
+    responsible: respVal,
     type: document.getElementById("eventType").value,
     completed: false
   };
@@ -256,11 +319,13 @@ async function saveEvent() {
 
 async function saveAbsence() {
   const date = document.getElementById("absDate").value;
-  if(!date) return UI.showToast("Seleccione fecha", "error");
+  const resp = document.getElementById("absResponsible").value;
+  if(!date || !resp) return UI.showToast("Seleccione fecha y colaborador", "error");
+  
   try {
     await FirebaseService.saveAbsence({
       date,
-      responsible: document.getElementById("absResponsible").value,
+      responsible: resp,
       type: document.getElementById("absType").value,
       obs: document.getElementById("absObs").value
     });
@@ -269,12 +334,11 @@ async function saveAbsence() {
   } catch(e) { UI.showToast("Error", "error"); }
 }
 
-// --- Notificaciones ---
 function updateNotifButtonUI() {
   const btn = document.getElementById("btnNotifToggle");
   if (Notification.permission === "granted") {
     if (State.notificationsEnabled) {
-      btn.innerHTML = "✅ Avisos Activos"; btn.className = "btn-icon bg-success-light text-white border-success pl-md pr-md";
+      btn.innerHTML = "✅ Avisos Activos"; btn.className = "btn-icon bg-blue-light text-blue text-bold border-blue pl-md pr-md";
       silentAudio.play().catch(()=>{});
     } else {
       btn.innerHTML = "🔕 Pausado"; btn.className = "btn-icon bg-danger-light text-danger border-danger pl-md pr-md";

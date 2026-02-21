@@ -184,15 +184,32 @@
     </div>
 
     <!-- Modal: Acciones de Evento -->
+<!-- Modal: Acciones de Evento -->
     <div id="modalEventActions" class="modal-card hidden">
       <button class="btn-close-modal" data-close>✕</button>
-      <h3 id="actionEventTitle" class="modal-title mb-lg text-main">Detalles</h3>
-      <div id="actionEventBody" class="modal-body text-main text-sm line-height-lg mb-lg"></div>
-      <div class="flex-row gap-sm mt-md">
-        <button id="btnToggleState" class="btn btn-success flex-1">✅ Estado</button>
-        <button id="btnEditEvent" class="btn btn-warning flex-1">✏️ Editar</button>
+      <h3 id="actionEventTitle" class="modal-title mb-sm text-main">Detalles</h3>
+      <div id="actionEventBody" class="modal-body text-main text-sm line-height-lg mb-md"></div>
+      
+      <!-- NUEVO: SECCIÓN DE GESTIÓN DE CAMPO -->
+      <div class="field-control-section bg-slate-50 p-md radius-md border-blue mb-md">
+        <label class="text-sm text-bold text-main block mb-xs">📝 Actualizar Gestión:</label>
+        <select id="eventNewStatus" class="select-control mb-sm">
+          <option value="pendiente">⏳ Pendiente</option>
+          <option value="exitosa">🟢 Gestión Exitosa (Cobro/Visita)</option>
+          <option value="reprogramada">🟠 Promesa / Reprogramada</option>
+          <option value="fallida">🔴 Cliente Ausente / Fallida</option>
+        </select>
+        
+        <label class="text-sm text-bold text-main block mb-xs mt-sm">📷 Adjuntar Evidencia (Opcional):</label>
+        <input type="file" id="eventEvidence" accept="image/*" capture="environment" class="input-control text-sm bg-surface">
+        <small class="text-muted text-xs block mt-xs">Al guardar, se capturará tu ubicación GPS automáticamente 📍.</small>
       </div>
-      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm">🗑️ Eliminar Actividad</button>
+
+      <div class="flex-row gap-sm mt-md">
+        <button id="btnUpdateStatus" class="btn btn-success flex-1 shadow-md">💾 Guardar Gestión</button>
+        <button id="btnEditEvent" class="btn btn-warning flex-1 admin-only">✏️ Editar</button>
+      </div>
+      <button id="btnDeleteEvent" class="btn btn-danger btn-block mt-sm admin-only">🗑️ Eliminar Actividad</button>
     </div>
 
     <!-- Modal: Agregar Asistencia -->

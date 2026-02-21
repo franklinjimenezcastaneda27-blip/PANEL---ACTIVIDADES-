@@ -1,43 +1,42 @@
 :root {
-  /* Colors */
-  --c-navy-900: #081b30;
-  --c-navy-800: #0f2c4c;
-  --c-blue-500: #3b82f6;
-  --c-blue-50: #eff6ff;
+  /* Paleta SaaS Premium (Índigo y Pizarra) */
+  --c-primary: #4f46e5;      /* Indigo 600 */
+  --c-primary-hover: #4338ca;/* Indigo 700 */
+  --c-primary-light: #e0e7ff;/* Indigo 100 */
   
   --c-slate-900: #0f172a;
+  --c-slate-800: #1e293b;
   --c-slate-700: #334155;
   --c-slate-500: #64748b;
   --c-slate-200: #e2e8f0;
-  --c-slate-100: #f1f5f9;
   --c-slate-50: #f8fafc;
   
-  --c-danger: #b91c1c;
+  --c-danger: #ef4444;
   --c-danger-bg: #fee2e2;
-  --c-success: #15803d;
-  --c-success-bg: #dcfce7;
-  --c-warning: #c2410c;
-  --c-warning-bg: #ffedd5;
+  --c-success: #10b981;
+  --c-success-bg: #d1fae5;
+  --c-warning: #f59e0b;
+  --c-warning-bg: #fef3c7;
   
-  /* Theme mapping (Light Default) */
-  --bg-body: #f1f5f9;
-  --bg-surface: #ffffff;
-  --bg-surface-hover: #f8fafc;
-  --text-main: #1e293b;
+  /* Mapeo de Tema Claro (Default) */
+  --bg-body: #f8fafc;        /* Gris muy sutil para fondo */
+  --bg-surface: #ffffff;     /* Blanco puro para tarjetas */
+  --bg-surface-hover: #f1f5f9;
+  --text-main: #0f172a;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
   
-  /* Spacing */
+  /* Espaciados */
   --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px;
   
-  /* Radii & Shadows */
-  --rad-sm: 6px; --rad-md: 12px; --rad-lg: 16px;
+  /* Bordes y Sombras Modernas */
+  --rad-sm: 6px; --rad-md: 10px; --rad-lg: 16px;
   --sh-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-  --sh-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-  --sh-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+  --sh-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --sh-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
   
   /* Z-Index */
-  --z-header: 100; --z-drawer: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500;
+  --z-sidebar: 100; --z-topbar: 90; --z-drawer: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500;
 }
 
 [data-theme="dark"] {
@@ -47,23 +46,16 @@
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-color: #334155;
+  --sh-md: 0 4px 6px -1px rgba(0,0,0,0.3);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
   height: 100vh;
   overflow: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-body::before {
-  content: ""; position: fixed; inset: 0; z-index: -1;
-  background-image: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), url('https://i.imghippo.com/files/jdb9603WY.png');
-  background-size: cover; background-position: center;
-  opacity: 0.15;
-}
-[data-theme="dark"] body::before { opacity: 0.05; }
